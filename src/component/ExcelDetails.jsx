@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 // const Base_url = process.env.Base_url;
 function ExcelDetails({ Base_url }) {
-  const [formDetails, setFormDetails] = useState([]);
+  const [formdetail, setformdetail] = useState([]);
   const [date, setDate] = useState("");
   const [array, setArray] = useState([]);
   const [enable, setEnable] = useState(true);
@@ -28,7 +28,7 @@ function ExcelDetails({ Base_url }) {
   //   }
   // }, []);
 
-  // console.log(formDetails);
+  // console.log(formdetail);
   const handleEdit = (id, value, loose, date) => {
     setEditIndex(id);
     console.log(id);
@@ -49,42 +49,41 @@ function ExcelDetails({ Base_url }) {
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     // console.log(response.data);
-    setFormDetails(response.data);
+    setformdetail(response.data);
     setArray(response.data);
   };
 
-  const totalClosingValue = formDetails.reduce((total, item) => {
+  const totalClosingValue = formdetail.reduce((total, item) => {
     return total + item.Closing_value;
   }, 0);
-  const totalSalesBottle = formDetails.reduce((total, item) => {
+  const totalSalesBottle = formdetail.reduce((total, item) => {
     return total + item.Sales_bottle;
   }, 0);
-  const totalSalesValue = formDetails.reduce((total, item) => {
+  const totalSalesValue = formdetail.reduce((total, item) => {
     return total + item.Sale_value;
   }, 0);
-  const totalClosingBottle = formDetails.reduce((total, item) => {
+  const totalClosingBottle = formdetail.reduce((total, item) => {
     return total + item.Closing_bottle;
   }, 0);
-  const totalValue = formDetails.reduce((total, item) => {
+  const totalValue = formdetail.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
   console.log(totalValue);
-  // console.log(formDetails);
-  const overallTotalBottle = formDetails.reduce((total, detail) => {
+  // console.log(formdetail);
+  const overallTotalBottle = formdetail.reduce((total, detail) => {
     return (
       total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
     );
   }, 0);
 
-  console.log("Overall Total Bottle:", overallTotalBottle);
-
-  const totalCase = formDetails.reduce((total, item) => {
+  const totalCase = formdetail.reduce((total, item) => {
     return total + item.Case;
   }, 0);
-  const totalLoose = formDetails.reduce((total, item) => {
-    return total + item.Loose;
+  console.log(totalCase);
+  const totalLoose = formdetail.reduce((total, item) => {
+    return total + parseInt(item.Loose);
   }, 0);
-  // console.log(formDetails);
+  // console.log(formdetail);
   const handleSubmit = async (id) => {
     console.log(id);
     const Data = {
@@ -92,7 +91,7 @@ function ExcelDetails({ Base_url }) {
       editedCaseValue,
       editedLooseValue,
       id,
-      formDetails,
+      formdetail,
     };
 
     try {
@@ -113,10 +112,11 @@ function ExcelDetails({ Base_url }) {
   const handlesave = async () => {
     try {
       console.log("save button");
-      const res = await axios.post(`${Base_url}/user/dailyData`, formDetails);
+      const formdetails = formdetail.filter((fil) => fil.Opening_bottle > 0);
+      const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
       console.log(res.data);
       toast.success("successfully submitted");
-      setFormDetails();
+      setformdetail();
     } catch (error) {
       console.log("Error in submiting the form : ", error);
       toast.warning("something is not right");
@@ -143,145 +143,140 @@ function ExcelDetails({ Base_url }) {
     ) {
       const filt = array.filter((d) => d.Product == findItem);
       console.log(filt);
-      setFormDetails(filt);
+      setformdetail(filt);
     } else {
       const filt = array.filter((d) => d.Item_Code == findItem);
       console.log(filt);
-      setFormDetails(filt);
+      setformdetail(filt);
     }
   };
-  // console.log(formDetails);
+  // console.log(formdetail);
   return (
     <>
       <Dashboard />
       <ToastContainer />
       {isFormVisible ? (
         <div className="table-container">
-          <div className="table-body-container">
-            <table className="table table-bordered border border-primary p-2 m-4">
-              <thead>
-                <tr>
-                  <th colSpan={3}>
-                    <input
-                      type="text"
-                      value={findItem}
-                      onChange={(e) => setFindItem(e.target.value)}
-                    />
+          <table className=" table table-bordered border border-primary p-2 m-4">
+            <thead>
+              <tr>
+                <th colSpan={3}>
+                  <input
+                    type="text"
+                    value={findItem}
+                    onChange={(e) => setFindItem(e.target.value)}
+                  />
 
-                    <button onClick={handleSearch}>Search</button>
-                  </th>
-                  <th colSpan={6}>
-                    {" "}
-                    you can seach using proper Product name (Beer like that) or
-                    item_code
-                  </th>
-                </tr>
-              </thead>
-              <thead>
-                <tr>
-                  <th>Item code</th>
-                  <th colSpan={2}>Brand Name</th>
-                  <th>Size</th>
-                  <th>MRP</th>
-                  <th>Total value</th>
-                  <th>Total Bottle</th>
-                  <th>Case</th>
-                  <th>Loose</th>
-                  <th></th>
-                  <th>Closing bottle</th>
-                  <th>Sales Bottle</th>
-                  <th>Sales Value</th>
-                  <th>Closing value</th>
-                </tr>
-              </thead>
-              <tbody>
-                {formDetails
-                  .filter((fil) => fil.Opening_bottle > 0)
-                  .map((d, i) => (
-                    <tr>
-                      <td>{d.Item_Code}</td>
-                      <td colSpan={2} style={{ width: "900px" }}>
-                        {d.Description}
-                      </td>
-                      <td>{d.Size}</td>
-                      <td>{d.MRP_Value}</td>
-                      <td>{d.Total_value}</td>
-                      <td>
-                        {parseInt(d.Receipt_bottle) +
-                          parseInt(d.Opening_bottle)}
-                      </td>
-                      <td>
-                        {editIndex === d._id ? (
-                          <input
-                            type="Number"
-                            value={editedCaseValue}
-                            onChange={(e) => setEditedCaseValue(e.target.value)}
-                          />
-                        ) : (
-                          d.Case
-                        )}
-                      </td>
-                      <td>
-                        {editIndex === d._id ? (
-                          <input
-                            type="Number"
-                            value={editedLooseValue}
-                            onChange={(e) =>
-                              setEditedLooseValue(e.target.value)
-                            }
-                          />
-                        ) : (
-                          d.Loose
-                        )}
-                      </td>
-                      <td>
-                        {editIndex === d._id ? (
-                          <button onClick={() => handleSubmit(d._id)}>
-                            Save
-                          </button>
-                        ) : (
-                          <button
-                            value={enable}
-                            onClick={() =>
-                              handleEdit(d._id, d.Case, d.Loose, d.Date)
-                            }
-                          >
-                            Edit
-                          </button>
-                        )}
-                      </td>
-                      <td>{d.Closing_bottle}</td>
-                      <td>{d.Sales_bottle} </td>
-                      <td>{d.Sale_value}</td>
-                      <td>{d.Closing_value}</td>
-                    </tr>
-                  ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td colSpan={5}>Total</td>
+                  <button onClick={handleSearch}>Search</button>
+                </th>
+                <th colSpan={6}>
+                  {" "}
+                  you can seach using proper Product name (Beer like that) or
+                  item_code
+                </th>
+              </tr>
+            </thead>
+            <thead className="table-primary">
+              <tr>
+                <th>Item code</th>
+                <th colSpan={2}>Brand Name</th>
+                <th>Size</th>
+                <th>MRP</th>
+                <th>Total value</th>
+                <th>Total Bottle</th>
+                <th>Case</th>
+                <th>Loose</th>
+                <th></th>
+                <th>Closing bottle</th>
+                <th>Sales Bottle</th>
+                <th>Sales Value</th>
+                <th>Closing value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {formdetail
+                .filter((fil) => fil.Opening_bottle > 0)
+                .map((d, i) => (
+                  <tr>
+                    <td>{d.Item_Code}</td>
+                    <td colSpan={2} style={{ width: "900px" }}>
+                      {d.Description}
+                    </td>
+                    <td>{d.Size}</td>
+                    <td>{d.MRP_Value}</td>
+                    <td>{d.Total_value}</td>
+                    <td>
+                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={editedCaseValue}
+                          onChange={(e) => setEditedCaseValue(e.target.value)}
+                        />
+                      ) : (
+                        d.Case
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={editedLooseValue}
+                          onChange={(e) => setEditedLooseValue(e.target.value)}
+                        />
+                      ) : (
+                        d.Loose
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <button onClick={() => handleSubmit(d._id)}>
+                          Save
+                        </button>
+                      ) : (
+                        <button
+                          value={enable}
+                          onClick={() =>
+                            handleEdit(d._id, d.Case, d.Loose, d.Date)
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
+                    <td>{d.Closing_bottle}</td>
+                    <td>{d.Sales_bottle} </td>
+                    <td>{d.Sale_value}</td>
+                    <td>{d.Closing_value}</td>
+                  </tr>
+                ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colSpan={5}>Total</td>
 
-                  <td>{totalValue}</td>
-                  <td>{overallTotalBottle}</td>
-                  <td>{totalCase}</td>
-                  <td>{totalLoose}</td>
-                  <td></td>
-                  <td>{totalClosingBottle}</td>
-                  <td>{totalSalesBottle}</td>
-                  <td>{totalSalesValue}</td>
-                  <td>{totalClosingValue}</td>
-                </tr>
-                <tr>
-                  <td colSpan={14}>
-                    {" "}
-                    <button className="custom-button" onClick={handlesave}>
-                      Submit
-                    </button>
-                  </td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+                <td>{totalValue}</td>
+                <td>{overallTotalBottle}</td>
+                <td>{totalCase}</td>
+                <td>{totalLoose}</td>
+                <td></td>
+                <td>{totalClosingBottle}</td>
+                <td>{totalSalesBottle}</td>
+                <td>{totalSalesValue}</td>
+                <td>{totalClosingValue}</td>
+              </tr>
+              <tr>
+                <td colSpan={14}>
+                  {" "}
+                  <button className="custom-button" onClick={handlesave}>
+                    Submit
+                  </button>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       ) : (
         <h1>Form Submitted Today. Please come back tomorrow.</h1>

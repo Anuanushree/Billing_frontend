@@ -119,166 +119,168 @@ function ItemMaster({ Base_url }) {
     <>
       <Dashboard />
       <ToastContainer />
-      <table className="table table-dark table-bordered border border-primary p-2 m-4">
-        <thead>
-          <tr>
-            <th>
-              <input
-                type="text"
-                value={findItem}
-                onChange={(e) => setFindItem(e.target.value)}
-              />
-            </th>
-            <th>
-              <button onClick={handleSearch}>Search</button>
-            </th>
-            <th colSpan={6}>
-              {" "}
-              you can seach using prpoper Product name(Beer like that) or
-              item_code
-            </th>
-            <th colSpan={3}>
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-
-              <button onClick={handleSearch1}>Search</button>
-            </th>
-          </tr>
-        </thead>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>S.No</th>
-            <th>Range</th>
-            <th>Product</th>
-            <th>Brand name</th>
-            <th>Item code</th>
-            <th>Size</th>
-            <th>Quantity</th>
-            <th>MRP</th>
-            <th>Opening Bottle</th>
-            <th>Opening value</th>
-            <th>Receipt Bottle</th>
-            <th>Receipt value</th>
-            <th>Total value</th>
-            <th>Total Bottle</th>
-            <th>invoice number </th>
-            <th></th>
-          </tr>
-        </thead>
-
-        {formDetails.map((d, i) => (
-          <tbody key={i}>
-            <tr>
-              <td>{d.Date}</td>
-              <td>{i + 1}</td>
-              <td>{d.Range}</td>
-              <td>{d.Product}</td>
-              {/* <td>{d.Description}</td> */}
-              <td>
-                {editIndex === d._id ? (
+      <div className="table-container">
+        <div className="table-body-container">
+          <table className="table table-dark table-bordered border border-primary p-2 m-4">
+            <thead className="table-primary">
+              <tr>
+                <th colSpan={3}>
                   <input
                     type="text"
-                    value={desciption}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={findItem}
+                    onChange={(e) => setFindItem(e.target.value)}
                   />
-                ) : (
-                  d.Description
-                )}
-              </td>
-              <td>{d.Item_Code}</td>
-              <td>{d.Size}</td>
 
-              <td>{d.Quantity}</td>
-
-              <td>
-                {editIndex === d._id ? (
+                  <button onClick={handleSearch}>Search</button>
+                </th>
+                <th colSpan={6}>
+                  {" "}
+                  you can seach using prpoper Product name(Beer like that) or
+                  item_code
+                </th>
+                <th colSpan={3}>
                   <input
-                    type="Number"
-                    value={editMRP}
-                    onChange={(e) => setEditMRP(e.target.value)}
+                    type="date"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
                   />
-                ) : (
-                  d.MRP_Value
-                )}
-              </td>
 
-              <td>
-                {editIndex === d._id ? (
-                  <input
-                    type="Number"
-                    value={OpeningBottle}
-                    onChange={(e) => setOpeningBottle(e.target.value)}
-                  />
-                ) : (
-                  d.Opening_bottle
-                )}
-              </td>
-              <td>{d.Opening_value}</td>
-              {/* <td>{d.Receipt_bottle}</td> */}
-              <td>
-                {editIndex === d._id ? (
-                  <input
-                    type="Number"
-                    value={ReceiptBottle}
-                    onChange={(e) => setReceiptBottle(e.target.value)}
-                  />
-                ) : (
-                  d.Receipt_bottle
-                )}
-              </td>
-              <td>{d.Receipt_value}</td>
-              <td>{d.Total_value}</td>
-              <td>
-            
-                {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-              </td>
-              <td>
-                {editIndex === d._id ? (
-                  <input
-                    type="text"
-                    value={invoice}
-                    onChange={(e) => setInvoice(e.target.value)}
-                  />
-                ) : (
-                  d.invoice
-                )}
-              </td>
+                  <button onClick={handleSearch1}>Search</button>
+                </th>
+              </tr>
+            </thead>
+            <thead className="table-secondary border-danger">
+              <tr>
+                {/* <th>Date</th> */}
+                <th>S.No</th>
+                <th>Range</th>
+                <th>Product</th>
+                <th>Brand name</th>
+                <th>Item code</th>
+                <th>Size</th>
+                <th>Quantity</th>
+                <th>MRP</th>
+                <th>Opening Bottle</th>
+                <th>Opening value</th>
+                <th>Receipt Bottle</th>
+                <th>Receipt value</th>
+                <th>Total value</th>
+                <th>Total Bottle</th>
+                <th>invoice number </th>
+                <th></th>
+              </tr>
+            </thead>
 
-              <td>
-                {editIndex === d._id ? (
-                  <button onClick={() => handleSubmit(d._id)}>Save</button>
-                ) : (
-                  <button
-                    onClick={() =>
-                      handleEdit(
-                        d._id,
-                        invoice,
-                        d.Receipt_bottle,
-                        d.Opening_bottle,
-                        d.MRP_Value,
-                        d.Item_Code,
-                        d.Description
-                      )
-                    }
-                  >
-                    Edit
-                  </button>
-                )}
-              </td>
-            </tr>
-          </tbody>
-        ))}
+            {formDetails.map((d, i) => (
+              <tbody key={i}>
+                <tr>
+                  {/* <td>{d.Date}</td> */}
+                  <td>{i + 1}</td>
+                  <td>{d.Range}</td>
+                  <td>{d.Product}</td>
+                  {/* <td>{d.Description}</td> */}
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="text"
+                        value={desciption}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    ) : (
+                      d.Description
+                    )}
+                  </td>
+                  <td>{d.Item_Code}</td>
+                  <td>{d.Size}</td>
 
-        <tfoot>
-          <tr>
-            <td colSpan={10}>Total</td>
-          </tr>
-        </tfoot>
-      </table>
+                  <td>{d.Quantity}</td>
+
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="Number"
+                        value={editMRP}
+                        onChange={(e) => setEditMRP(e.target.value)}
+                      />
+                    ) : (
+                      d.MRP_Value
+                    )}
+                  </td>
+
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="Number"
+                        value={OpeningBottle}
+                        onChange={(e) => setOpeningBottle(e.target.value)}
+                      />
+                    ) : (
+                      d.Opening_bottle
+                    )}
+                  </td>
+                  <td>{d.Opening_value}</td>
+                  {/* <td>{d.Receipt_bottle}</td> */}
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="Number"
+                        value={ReceiptBottle}
+                        onChange={(e) => setReceiptBottle(e.target.value)}
+                      />
+                    ) : (
+                      d.Receipt_bottle
+                    )}
+                  </td>
+                  <td>{d.Receipt_value}</td>
+                  <td>{d.Total_value}</td>
+                  <td>
+                    {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+                  </td>
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="text"
+                        value={invoice}
+                        onChange={(e) => setInvoice(e.target.value)}
+                      />
+                    ) : (
+                      d.invoice
+                    )}
+                  </td>
+
+                  <td>
+                    {editIndex === d._id ? (
+                      <button onClick={() => handleSubmit(d._id)}>Save</button>
+                    ) : (
+                      <button
+                        onClick={() =>
+                          handleEdit(
+                            d._id,
+                            invoice,
+                            d.Receipt_bottle,
+                            d.Opening_bottle,
+                            d.MRP_Value,
+                            d.Item_Code,
+                            d.Description
+                          )
+                        }
+                      >
+                        Edit
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              </tbody>
+            ))}
+
+            <tfoot>
+              <tr>
+                <td colSpan={10}>Total</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
     </>
   );
 }
