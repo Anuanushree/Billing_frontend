@@ -17,16 +17,16 @@ function ExcelDetails({ Base_url }) {
   const [findItem, setFindItem] = useState();
   const [isFormVisible, setIsFormVisible] = useState(true);
 
-  useEffect(() => {
-    // Check if form should be visible based on submission date
-    const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
-    if (lastSubmissionDate) {
-      const today = new Date().toLocaleDateString();
-      if (lastSubmissionDate === today) {
-        setIsFormVisible(false);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Check if form should be visible based on submission date
+  //   const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
+  //   if (lastSubmissionDate) {
+  //     const today = new Date().toLocaleDateString();
+  //     if (lastSubmissionDate === today) {
+  //       setIsFormVisible(false);
+  //     }
+  //   }
+  // }, []);
 
   // console.log(formDetails);
   const handleEdit = (id, value, loose, date) => {
