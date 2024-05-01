@@ -4,7 +4,7 @@ import Dashboard from "../dashboard/Dashboard";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import * as XLSX from "xlsx";
 
 function ExcelForm({ Base_url }) {
   const initialState = {
@@ -77,6 +77,51 @@ function ExcelForm({ Base_url }) {
       toast.warning("Something wrong when added data");
     }
   };
+  const [file, setFile] = useState(null);
+  const [jsonData, setJsonData] = useState("");
+
+  const handleConvert = () => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: "binary" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet);
+        const jsonDataString = JSON.stringify(json, null, 2);
+
+        setJsonData(jsonDataString); // Update the state with the JSON data
+
+        // Move the data processing logic here
+        const getdata = async () => {
+          const parsedJsonData = JSON.parse(jsonDataString);
+
+          for (const formData of parsedJsonData) {
+            try {
+              formData.Size = parseInt(formData.Size); // Ensure Size is parsed as an integer
+              console.log(formData);
+              const response = await axios.post(
+                `${Base_url}/user/create`,
+                formData,
+                headers
+              );
+              console.log(response.data);
+              // console.log(itemData);
+            } catch (error) {
+              console.log("Error in ExcelForm : ", error);
+              toast.warning("Something went wrong when adding data");
+            }
+          }
+
+          // Optionally, you can clear the JSON data state after processing
+          setJsonData("");
+        };
+        getdata();
+      };
+      reader.readAsBinaryString(file);
+    }
+  };
 
   return (
     <>
@@ -84,6 +129,14 @@ function ExcelForm({ Base_url }) {
       <ToastContainer />
 
       <div className="container-fluid form-container">
+        <div>
+          <input
+            type="file"
+            accept=".xls,.xlsx"
+            onChange={(e) => setFile(e.target.files[0])}
+          />
+          <button onClick={handleConvert}>Convert</button>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Range</label>
@@ -155,6 +208,7 @@ function ExcelForm({ Base_url }) {
               <option value={500}>500</option>
               <option value={650}>650</option>
               <option value={750}>750</option>
+              <option value={1000}>1000</option>
             </select>
           </div>
           <div className="form-group">

@@ -44,21 +44,49 @@ function Data2({ Base_url }) {
     };
     get();
   }, []);
+  // console.log(formDetails);
+  // const productWiseSales = formDetails.reduce((acc, item) => {
+  //   const { Product, Closing_value } = item;
+  //   if (!acc[Product]) {
+  //     acc[Product] = 0;
+  //   }
+  //   acc[Product] += Closing_value;
+  //   return acc;
+  // }, {});
+  // console.log(productWiseSales);
 
-  const productWiseSales = formDetails.reduce((acc, item) => {
-    const { Product, Closing_value } = item;
-    if (!acc[Product]) {
-      acc[Product] = 0;
-    }
-    acc[Product] += Closing_value;
-    return acc;
-  }, {});
-  console.log(productWiseSales);
+  const calculateProductWiseClosingSale = () => {
+    const productWiseClosingSale = {};
 
+    // Iterate over formDetails array
+    formDetails.forEach((item) => {
+      const { Product, Closing_value } = item;
+      if (Product && Closing_value) {
+        // Check if the product already exists in the productWiseClosingSale object
+        if (productWiseClosingSale[Product]) {
+          productWiseClosingSale[Product] += Closing_value;
+        } else {
+          productWiseClosingSale[Product] = Closing_value;
+        }
+      }
+    });
+
+    return productWiseClosingSale;
+  };
+
+  const productWiseClosingSale = calculateProductWiseClosingSale();
+  console.log(productWiseClosingSale);
   const totalClosingValue = formDetails.reduce((total, item) => {
-    return total + item.Closing_value;
+    // Check if Closing_value is a valid number
+    const closingValue = parseFloat(item.Closing_value);
+    if (!isNaN(closingValue)) {
+      return total + closingValue;
+    } else {
+      // If Closing_value is not a valid number, return the current total
+      return total;
+    }
   }, 0);
-
+  console.log(totalClosingValue);
   const handleSearch = async () => {
     console.log(date);
     const filt = data.filter((d) => d.Date.substring(0, 10) == date);
@@ -99,7 +127,7 @@ function Data2({ Base_url }) {
             <th>Sale Value</th>
           </tr>
         </thead>
-        {Object.entries(productWiseSales).map((d, i) => (
+        {Object.entries(productWiseClosingSale).map((d, i) => (
           <tbody key={i}>
             <tr>
               <td>{i + 1}</td>

@@ -8,24 +8,25 @@ import "react-toastify/dist/ReactToastify.css";
 function ExcelDetails({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [date, setDate] = useState("");
+  const [array, setArray] = useState([]);
   const [enable, setEnable] = useState(true);
   const [editIndex, setEditIndex] = useState(null);
   const [editedCaseValue, setEditedCaseValue] = useState();
   const [formDisable, setFormDisable] = useState(false);
   const [editedLooseValue, setEditedLooseValue] = useState();
-
+  const [findItem, setFindItem] = useState();
   const [isFormVisible, setIsFormVisible] = useState(true);
 
-  useEffect(() => {
-    // Check if form should be visible based on submission date
-    const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
-    if (lastSubmissionDate) {
-      const today = new Date().toLocaleDateString();
-      if (lastSubmissionDate === today) {
-        setIsFormVisible(false);
-      }
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Check if form should be visible based on submission date
+  //   const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
+  //   if (lastSubmissionDate) {
+  //     const today = new Date().toLocaleDateString();
+  //     if (lastSubmissionDate === today) {
+  //       setIsFormVisible(false);
+  //     }
+  //   }
+  // }, []);
 
   // console.log(formDetails);
   const handleEdit = (id, value, loose, date) => {
@@ -42,28 +43,18 @@ function ExcelDetails({ Base_url }) {
   };
 
   useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
-      console.log(response.data);
-      setFormDetails(response.data);
-    };
     get();
-  });
+  }, []);
+
+  var get = async () => {
+    const response = await axios.get(`${Base_url}/user/getData`, headers);
+    // console.log(response.data);
+    setFormDetails(response.data);
+    setArray(response.data);
+  };
 
   const totalClosingValue = formDetails.reduce((total, item) => {
     return total + item.Closing_value;
-  }, 0);
-  const totalOpeningBottle = formDetails.reduce((total, item) => {
-    return total + item.Opening_bottle;
-  }, 0);
-  const totalReciptBottle = formDetails.reduce((total, item) => {
-    return total + item.Receipt_bottle;
-  }, 0);
-  const totalOpeningValue = formDetails.reduce((total, item) => {
-    return total + item.Opening_value;
-  }, 0);
-  const totalReceiptValue = formDetails.reduce((total, item) => {
-    return total + item.Receipt_value;
   }, 0);
   const totalSalesBottle = formDetails.reduce((total, item) => {
     return total + item.Sales_bottle;
@@ -86,6 +77,7 @@ function ExcelDetails({ Base_url }) {
   const totalLoose = formDetails.reduce((total, item) => {
     return total + item.Loose;
   }, 0);
+  // console.log(formDetails);
 
   const handleSubmit = async (id) => {
     console.log(id);
@@ -104,7 +96,7 @@ function ExcelDetails({ Base_url }) {
         headers
       );
       console.log(response.data);
-      toast.success("Successfully updated!");
+      get();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("error in updating case and loose");
@@ -118,6 +110,7 @@ function ExcelDetails({ Base_url }) {
       const res = await axios.post(`${Base_url}/user/dailyData`, formDetails);
       console.log(res.data);
       toast.success("successfully submitted");
+      setFormDetails();
     } catch (error) {
       console.log("Error in submiting the form : ", error);
       toast.warning("something is not right");
@@ -130,7 +123,27 @@ function ExcelDetails({ Base_url }) {
     setIsFormVisible(false);
     alert("Form submitted successfully!");
   };
-
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    console.log(date);
+    if (
+      findItem == "Beer" ||
+      findItem == "Whisky" ||
+      findItem == "Rum" ||
+      findItem == " vodka" ||
+      findItem == "Wine" ||
+      findItem == "GIN" ||
+      findItem == "Brandy"
+    ) {
+      const filt = array.filter((d) => d.Product == findItem);
+      console.log(filt);
+      setFormDetails(filt);
+    } else {
+      const filt = array.filter((d) => d.Item_Code == findItem);
+      console.log(filt);
+      setFormDetails(filt);
+    }
+  };
   return (
     <>
       <Dashboard />
@@ -143,16 +156,32 @@ function ExcelDetails({ Base_url }) {
         >
           <thead>
             <tr>
-              <th>Description</th>
+              <th>
+                <input
+                  type="text"
+                  value={findItem}
+                  onChange={(e) => setFindItem(e.target.value)}
+                />
+              </th>
+              <th>
+                <button onClick={handleSearch}>Search</button>
+              </th>
+              <th colSpan={6}>
+                {" "}
+                you can seach using prpoper Product name(Beer like that) or
+                item_code
+              </th>
+            </tr>
+          </thead>
+          <thead>
+            <tr>
               <th>Item code</th>
+              <th> Brand Name</th>
+
               <th>Size</th>
 
-              {/* <th>Quantity</th> */}
               <th>MRP</th>
-              <th>Opening Bottle</th>
-              <th>Opening value</th>
-              <th>Receipt Bottle</th>
-              <th>Receipt value</th>
+
               <th>Total value</th>
               <th>Total Bottle</th>
               <th>Case</th>
@@ -171,15 +200,16 @@ function ExcelDetails({ Base_url }) {
           {formDetails.map((d, i) => (
             <tbody key={i}>
               <tr>
-                <td>{d.Description}</td>
                 <td>{d.Item_Code}</td>
+                <td>{d.Description}</td>
+
                 <td>{d.Size}</td>
 
                 <td>{d.MRP_Value}</td>
-                <td>{d.Opening_bottle}</td>
+                {/* <td>{d.Opening_bottle}</td>
                 <td>{d.Opening_value}</td>
                 <td>{d.Receipt_bottle}</td>
-                <td>{d.Receipt_value}</td>
+                <td>{d.Receipt_value}</td> */}
                 <td>{d.Total_value}</td>
                 <td>{d.Total_bottle}</td>
                 <td>
@@ -228,10 +258,10 @@ function ExcelDetails({ Base_url }) {
           <tfoot>
             <tr>
               <td colSpan={4}>Total</td>
-              <td>{totalOpeningBottle}</td>
+              {/* <td>{totalOpeningBottle}</td>
               <td>{totalOpeningValue}</td>
               <td>{totalReciptBottle}</td>
-              <td>{totalReceiptValue}</td>
+              <td>{totalReceiptValue}</td> */}
               <td>{totalValue}</td>
               <td>{totalBottle}</td>
               <td>{totalCase}</td>

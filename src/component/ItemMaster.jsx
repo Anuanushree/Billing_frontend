@@ -93,12 +93,12 @@ function ItemMaster({ Base_url }) {
     console.log(date);
     if (
       findItem == "Beer" ||
-      "Whisky" ||
-      "Rum" ||
-      "vodka" ||
-      "Wine" ||
-      "GIN" ||
-      "Brandy"
+      findItem == "Whisky" ||
+      findItem == "Rum" ||
+      findItem == " vodka" ||
+      findItem == "Wine" ||
+      findItem == "GIN" ||
+      findItem == "Brandy"
     ) {
       const filt = array.filter((d) => d.Product == findItem);
       console.log(filt);
@@ -117,7 +117,6 @@ function ItemMaster({ Base_url }) {
         <thead>
           <tr>
             <th>
-              {" "}
               <input
                 type="text"
                 value={findItem}
@@ -127,6 +126,11 @@ function ItemMaster({ Base_url }) {
             <th>
               <button onClick={handleSearch}>Search</button>
             </th>
+            <th colSpan={6}>
+              {" "}
+              you can seach using prpoper Product name(Beer like that) or
+              item_code
+            </th>
           </tr>
         </thead>
         <thead>
@@ -135,10 +139,9 @@ function ItemMaster({ Base_url }) {
             <th>S.No</th>
             <th>Range</th>
             <th>Product</th>
-            <th>Description</th>
+            <th>Brand name</th>
             <th>Item code</th>
             <th>Size</th>
-
             <th>Quantity</th>
             <th>MRP</th>
             <th>Opening Bottle</th>
