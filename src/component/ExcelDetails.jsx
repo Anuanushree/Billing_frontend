@@ -66,11 +66,18 @@ function ExcelDetails({ Base_url }) {
     return total + item.Closing_bottle;
   }, 0);
   const totalValue = formDetails.reduce((total, item) => {
-    return total + item.Total_value;
+    return total + parseInt(item.Total_value);
   }, 0);
-  const totalBottle = formDetails.reduce((total, item) => {
-    return total + item.Total_bottle;
+  console.log(totalValue);
+  // console.log(formDetails);
+  const overallTotalBottle = formDetails.reduce((total, detail) => {
+    return (
+      total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
+    );
   }, 0);
+
+  console.log("Overall Total Bottle:", overallTotalBottle);
+
   const totalCase = formDetails.reduce((total, item) => {
     return total + item.Case;
   }, 0);
@@ -78,7 +85,6 @@ function ExcelDetails({ Base_url }) {
     return total + item.Loose;
   }, 0);
   // console.log(formDetails);
-
   const handleSubmit = async (id) => {
     console.log(id);
     const Data = {
@@ -144,143 +150,136 @@ function ExcelDetails({ Base_url }) {
       setFormDetails(filt);
     }
   };
+  // console.log(formDetails);
   return (
     <>
       <Dashboard />
       <ToastContainer />
       {isFormVisible ? (
-        <table
-          id="disable "
-          // disabled={formDisable}
-          className="table table-bordered border border-primary p-2 m-4"
-        >
-          <thead>
-            <tr>
-              <th>
-                <input
-                  type="text"
-                  value={findItem}
-                  onChange={(e) => setFindItem(e.target.value)}
-                />
-              </th>
-              <th>
-                <button onClick={handleSearch}>Search</button>
-              </th>
-              <th colSpan={6}>
-                {" "}
-                you can seach using prpoper Product name(Beer like that) or
-                item_code
-              </th>
-            </tr>
-          </thead>
-          <thead>
-            <tr>
-              <th>Item code</th>
-              <th> Brand Name</th>
-
-              <th>Size</th>
-
-              <th>MRP</th>
-
-              <th>Total value</th>
-              <th>Total Bottle</th>
-              <th>Case</th>
-              <th>Loose</th>
-              <th></th>
-              <th>Closing bottle</th>
-              <th>Sales Bottle</th>
-
-              <th>Sales Value</th>
-
-              <th>Closing value</th>
-              <th>Item type</th>
-            </tr>
-          </thead>
-
-          {formDetails.map((d, i) => (
-            <tbody key={i}>
-              <tr>
-                <td>{d.Item_Code}</td>
-                <td>{d.Description}</td>
-
-                <td>{d.Size}</td>
-
-                <td>{d.MRP_Value}</td>
-                {/* <td>{d.Opening_bottle}</td>
-                <td>{d.Opening_value}</td>
-                <td>{d.Receipt_bottle}</td>
-                <td>{d.Receipt_value}</td> */}
-                <td>{d.Total_value}</td>
-                <td>{d.Total_bottle}</td>
-                <td>
-                  {editIndex === d._id ? (
+        <div className="table-container">
+          <div className="table-body-container">
+            <table className="table table-bordered border border-primary p-2 m-4">
+              <thead>
+                <tr>
+                  <th colSpan={3}>
                     <input
-                      type="Number"
-                      value={editedCaseValue}
-                      onChange={(e) => setEditedCaseValue(e.target.value)}
+                      type="text"
+                      value={findItem}
+                      onChange={(e) => setFindItem(e.target.value)}
                     />
-                  ) : (
-                    d.Case
-                  )}
-                </td>
-                <td>
-                  {editIndex === d._id ? (
-                    <input
-                      type="Number"
-                      value={editedLooseValue}
-                      onChange={(e) => setEditedLooseValue(e.target.value)}
-                    />
-                  ) : (
-                    d.Loose
-                  )}
-                </td>
-                <td>
-                  {editIndex === d._id ? (
-                    <button onClick={() => handleSubmit(d._id)}>Save</button>
-                  ) : (
-                    <button
-                      value={enable}
-                      onClick={() => handleEdit(d._id, d.Case, d.Loose, d.Date)}
-                    >
-                      Edit
+
+                    <button onClick={handleSearch}>Search</button>
+                  </th>
+                  <th colSpan={6}>
+                    {" "}
+                    you can seach using proper Product name (Beer like that) or
+                    item_code
+                  </th>
+                </tr>
+              </thead>
+              <thead>
+                <tr>
+                  <th>Item code</th>
+                  <th colSpan={2}>Brand Name</th>
+                  <th>Size</th>
+                  <th>MRP</th>
+                  <th>Total value</th>
+                  <th>Total Bottle</th>
+                  <th>Case</th>
+                  <th>Loose</th>
+                  <th></th>
+                  <th>Closing bottle</th>
+                  <th>Sales Bottle</th>
+                  <th>Sales Value</th>
+                  <th>Closing value</th>
+                </tr>
+              </thead>
+              <tbody>
+                {formDetails.map((d, i) => (
+                  <tr>
+                    <td>{d.Item_Code}</td>
+                    <td colSpan={2} style={{ width: "900px" }}>
+                      {d.Description}
+                    </td>
+                    <td>{d.Size}</td>
+                    <td>{d.MRP_Value}</td>
+                    <td>{d.Total_value}</td>
+                    <td>
+                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={editedCaseValue}
+                          onChange={(e) => setEditedCaseValue(e.target.value)}
+                        />
+                      ) : (
+                        d.Case
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={editedLooseValue}
+                          onChange={(e) => setEditedLooseValue(e.target.value)}
+                        />
+                      ) : (
+                        d.Loose
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <button onClick={() => handleSubmit(d._id)}>
+                          Save
+                        </button>
+                      ) : (
+                        <button
+                          value={enable}
+                          onClick={() =>
+                            handleEdit(d._id, d.Case, d.Loose, d.Date)
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
+                    <td>{d.Closing_bottle}</td>
+                    <td>{d.Sales_bottle} </td>
+                    <td>{d.Sale_value}</td>
+                    <td>{d.Closing_value}</td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colSpan={5}>Total</td>
+
+                  <td>{totalValue}</td>
+                  <td>{overallTotalBottle}</td>
+                  <td>{totalCase}</td>
+                  <td>{totalLoose}</td>
+                  <td></td>
+                  <td>{totalClosingBottle}</td>
+                  <td>{totalSalesBottle}</td>
+                  <td>{totalSalesValue}</td>
+                  <td>{totalClosingValue}</td>
+                </tr>
+                <tr>
+                  <td colSpan={14}>
+                    {" "}
+                    <button className="custom-button" onClick={handlesave}>
+                      Submit
                     </button>
-                  )}
-                </td>
-                <td>{d.Closing_bottle}</td>
-                <td>{d.Sales_bottle} </td>
-                <td>{d.Sale_value}</td>
-                <td>{d.Closing_value}</td>
-                <td>{d.Item_type}</td>
-              </tr>
-            </tbody>
-          ))}
-
-          <tfoot>
-            <tr>
-              <td colSpan={4}>Total</td>
-              {/* <td>{totalOpeningBottle}</td>
-              <td>{totalOpeningValue}</td>
-              <td>{totalReciptBottle}</td>
-              <td>{totalReceiptValue}</td> */}
-              <td>{totalValue}</td>
-              <td>{totalBottle}</td>
-              <td>{totalCase}</td>
-              <td>{totalLoose}</td>
-              <td></td>
-              <td>{totalClosingBottle}</td>
-              <td>{totalSalesBottle}</td>
-              <td>{totalSalesValue}</td>
-              <td>{totalClosingValue}</td>
-              <td>
-                {" "}
-                <button onClick={handlesave}>Submit</button>
-              </td>
-            </tr>
-            <tr></tr>
-          </tfoot>
-        </table>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       ) : (
-        <h1>Form Submitted Today. Please come back tomorr.</h1>
+        <h1>Form Submitted Today. Please come back tomorrow.</h1>
       )}
     </>
   );

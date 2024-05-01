@@ -7,23 +7,22 @@ import "react-toastify/dist/ReactToastify.css";
 function ItemMaster({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [date, setDate] = useState("");
-  // const [id, setID] = useState("");
+  const [invoice, setInvoice] = useState();
   const [array, setArray] = useState([]);
   const [desciption, setDescription] = useState();
   const [editIndex, setEditIndex] = useState(null);
-  const [editedCaseValue, setEditedCaseValue] = useState("0");
+  const [editedCaseValue, setEditedCaseValue] = useState(0);
   const [editMRP, setEditMRP] = useState();
   const [itemCode, setItemCode] = useState();
   const [findItem, setFindItem] = useState();
-  const [editedLooseValue, setEditedLooseValue] = useState("0");
+  const [editedLooseValue, setEditedLooseValue] = useState(0);
   const [ReceiptBottle, setReceiptBottle] = useState();
   const [OpeningBottle, setOpeningBottle] = useState();
 
   // console.log(formDetails);
   const handleEdit = (
     id,
-    value,
-    loose,
+    invoice,
     receiptbottle,
     openingBottle,
     mrp,
@@ -31,8 +30,7 @@ function ItemMaster({ Base_url }) {
     description
   ) => {
     setEditIndex(id);
-    setEditedCaseValue(value || 0);
-    setEditedLooseValue(loose || 0);
+    setInvoice(invoice);
     setReceiptBottle(receiptbottle || 0);
     setOpeningBottle(openingBottle || 0);
     setEditMRP(mrp);
@@ -56,12 +54,13 @@ function ItemMaster({ Base_url }) {
       setArray(response.data);
     };
     get();
-  }, []);
+  });
 
   const handleSubmit = async (id) => {
     console.log(id);
     const data = {
       date,
+      invoice,
       editedCaseValue,
       editedLooseValue,
       ReceiptBottle,
@@ -90,7 +89,6 @@ function ItemMaster({ Base_url }) {
   };
 
   const handleSearch = async () => {
-    console.log(date);
     if (
       findItem == "Beer" ||
       findItem == "Whisky" ||
@@ -109,6 +107,14 @@ function ItemMaster({ Base_url }) {
       setFormDetails(filt);
     }
   };
+
+  const handleSearch1 = async () => {
+    console.log(date);
+    const filt = array.filter((d) => d.Date.substring(0, 10) == date);
+    setFormDetails(filt);
+    console.log(formDetails);
+  };
+
   return (
     <>
       <Dashboard />
@@ -131,6 +137,15 @@ function ItemMaster({ Base_url }) {
               you can seach using prpoper Product name(Beer like that) or
               item_code
             </th>
+            <th colSpan={3}>
+              <input
+                type="date"
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+              />
+
+              <button onClick={handleSearch1}>Search</button>
+            </th>
           </tr>
         </thead>
         <thead>
@@ -150,8 +165,7 @@ function ItemMaster({ Base_url }) {
             <th>Receipt value</th>
             <th>Total value</th>
             <th>Total Bottle</th>
-            <th>Case</th>
-            <th>Loose</th>
+            <th>invoice number </th>
             <th></th>
           </tr>
         </thead>
@@ -223,24 +237,14 @@ function ItemMaster({ Base_url }) {
                 {editIndex === d._id ? (
                   <input
                     type="text"
-                    value={editedCaseValue}
-                    onChange={(e) => setEditedCaseValue(e.target.value)}
+                    value={invoice}
+                    onChange={(e) => setInvoice(e.target.value)}
                   />
                 ) : (
-                  d.Case
+                  d.invoice
                 )}
               </td>
-              <td>
-                {editIndex === d._id ? (
-                  <input
-                    type="Number"
-                    value={editedLooseValue}
-                    onChange={(e) => setEditedLooseValue(e.target.value)}
-                  />
-                ) : (
-                  d.Loose
-                )}
-              </td>
+
               <td>
                 {editIndex === d._id ? (
                   <button onClick={() => handleSubmit(d._id)}>Save</button>
@@ -249,8 +253,7 @@ function ItemMaster({ Base_url }) {
                     onClick={() =>
                       handleEdit(
                         d._id,
-                        d.Case,
-                        d.Loose,
+                        invoice,
                         d.Receipt_bottle,
                         d.Opening_bottle,
                         d.MRP_Value,
@@ -263,12 +266,6 @@ function ItemMaster({ Base_url }) {
                   </button>
                 )}
               </td>
-
-              {/* <td>{d.Closing_bottle}</td>
-              <td>{d.Sales_bottle} </td>
-              <td>{d.Sale_value}</td>
-              <td>{d.Closing_value}</td>
-              <td>{d.Item_type}</td> */}
             </tr>
           </tbody>
         ))}
