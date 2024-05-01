@@ -13,12 +13,13 @@ function Dashboard() {
   const navigate = useNavigate();
   const hanldleLogout = (event) => {
     event.preventDefault();
-    localStorage.removeItem(token);
-    localStorage.removeItem(id);
-    localStorage.removeItem(totalSaving);
+    // localStorage.removeItem(token);
+    // localStorage.removeItem(id);
+    // localStorage.removeItem(totalSaving);
 
     navigate("/");
   };
+
   return (
     <div>
       {/* <h2 className='text-right' id='headingStyle'>admin <span><a href='/userlist'>
@@ -87,6 +88,12 @@ function Dashboard() {
               <i class="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
               <span>Report</span>
             </Link>
+          </li>
+          <li className="nav-item ">
+            <div className="nav-link">
+              <i style={{ fontSize: "20px" }}></i>
+              <span onClick={hanldleLogout}>Logout</span>
+            </div>
           </li>
         </ul>
       </div>

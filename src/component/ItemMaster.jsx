@@ -232,7 +232,10 @@ function ItemMaster({ Base_url }) {
               </td>
               <td>{d.Receipt_value}</td>
               <td>{d.Total_value}</td>
-              <td>{d.Total_bottle}</td>
+              <td>
+            
+                {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+              </td>
               <td>
                 {editIndex === d._id ? (
                   <input
