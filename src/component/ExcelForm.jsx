@@ -129,14 +129,14 @@ function ExcelForm({ Base_url }) {
       <ToastContainer />
 
       <div className="container-fluid form-container">
-        <div>
+        {/* <div>
           <input
             type="file"
             accept=".xls,.xlsx"
             onChange={(e) => setFile(e.target.files[0])}
           />
-          <button onClick={handleConvert}>Convert</button>
-        </div>
+          <button onClick={handleConvert}>Convert</button> */}
+        {/* </div> */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Range</label>
@@ -172,7 +172,7 @@ function ExcelForm({ Base_url }) {
             </select>
           </div>
           <div className="form-group">
-            <label>Description</label>
+            <label>Brand name</label>
             <input
               type="text"
               name="Description"
