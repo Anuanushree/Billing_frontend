@@ -196,6 +196,7 @@ function ExcelDetails({ Base_url }) {
             <tbody>
               {formdetail
                 .filter((fil) => fil.Opening_bottle > 0)
+                .sort((a, b) => a.Description.localeCompare(b.Description))
                 .map((d, i) => (
                   <tr>
                     <td>{d.Item_Code}</td>
@@ -260,7 +261,8 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalValue}</td>
                 <td>{overallTotalBottle}</td>
                 <td>{totalCase}</td>
-                <td>{totalLoose}</td>
+                {totalLoose > 0 ? <td>{totalLoose}</td> : <td>0</td>}
+
                 <td></td>
                 <td>{totalClosingBottle}</td>
                 <td>{totalSalesBottle}</td>

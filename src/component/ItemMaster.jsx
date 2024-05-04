@@ -115,6 +115,36 @@ function ItemMaster({ Base_url }) {
     console.log(formDetails);
   };
 
+  const totalClosingValue = formDetails.reduce((total, item) => {
+    return total + item.Closing_value;
+  }, 0);
+
+  const totalValue = formDetails.reduce((total, item) => {
+    return total + parseInt(item.Total_value);
+  }, 0);
+
+  const OpeningValue = formDetails.reduce((total, item) => {
+    return total + parseInt(item.Opening_value);
+  }, 0);
+
+  const ReceiptValue = formDetails.reduce((total, item) => {
+    return total + parseInt(item.Receipt_value);
+  }, 0);
+
+  const openingBottle = formDetails.reduce((total, item) => {
+    return total + parseInt(item.Opening_bottle);
+  }, 0);
+
+  const receiptBottle = formDetails.reduce((total, item) => {
+    return total + parseInt(item.Receipt_bottle);
+  }, 0);
+
+  const overallTotalBottle = formDetails.reduce((total, detail) => {
+    return (
+      total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
+    );
+  }, 0);
+
   return (
     <>
       <Dashboard />
@@ -163,11 +193,11 @@ function ItemMaster({ Base_url }) {
                 <th>Opening Bottle</th>
                 <th>Opening value</th>
                 <th>Receipt Bottle</th>
+                <th></th>
                 <th>Receipt value</th>
                 <th>Total value</th>
                 <th>Total Bottle</th>
                 <th>invoice number </th>
-                <th></th>
               </tr>
             </thead>
 
@@ -231,23 +261,6 @@ function ItemMaster({ Base_url }) {
                       d.Receipt_bottle
                     )}
                   </td>
-                  <td>{d.Receipt_value}</td>
-                  <td>{d.Total_value}</td>
-                  <td>
-                    {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-                  </td>
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="text"
-                        value={invoice}
-                        onChange={(e) => setInvoice(e.target.value)}
-                      />
-                    ) : (
-                      d.invoice
-                    )}
-                  </td>
-
                   <td>
                     {editIndex === d._id ? (
                       <button onClick={() => handleSubmit(d._id)}>Save</button>
@@ -269,13 +282,36 @@ function ItemMaster({ Base_url }) {
                       </button>
                     )}
                   </td>
+                  <td>{d.Receipt_value}</td>
+                  <td>{d.Total_value}</td>
+                  <td>
+                    {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+                  </td>
+                  <td>
+                    {editIndex === d._id ? (
+                      <input
+                        type="text"
+                        value={invoice}
+                        onChange={(e) => setInvoice(e.target.value)}
+                      />
+                    ) : (
+                      d.invoice
+                    )}
+                  </td>
                 </tr>
               </tbody>
             ))}
 
             <tfoot>
               <tr>
-                <td colSpan={10}>Total</td>
+                <td colSpan={8}>Total</td>
+                <td>{openingBottle}</td>
+                <td>{OpeningValue}</td>
+                <td>{receiptBottle}</td>
+                <td></td>
+                <td>{ReceiptValue}</td>
+                <td>{totalValue}</td>
+                <td>{overallTotalBottle}</td>
               </tr>
             </tfoot>
           </table>
