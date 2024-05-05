@@ -49,7 +49,7 @@ function ItemMaster({ Base_url }) {
   }, [findItem, array]);
 
   const get = async () => {
-    const response = await axios.get(`${Base_url}/user/getItemMaster`, headers);
+    const response = await axios.get(`${Base_url}/user/getdata`, headers);
     // console.log(response.data);
     setFormDetails(response.data);
     setDummy(response.data);
@@ -83,12 +83,9 @@ function ItemMaster({ Base_url }) {
         headers
       );
       console.log(response.data);
-      toast.success("successfully added");
+      // toast.success("successfully added");
       const get1 = async () => {
-        const response = await axios.get(
-          `${Base_url}/user/getItemMaster`,
-          headers
-        );
+        const response = await axios.get(`${Base_url}/user/getdata`, headers);
         // console.log(response.data);
         setDummy(response.data);
         setArray(response.data);
@@ -163,7 +160,7 @@ function ItemMaster({ Base_url }) {
       total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
     );
   }, 0);
-
+// console.log(formDetails)
   return (
     <>
       <Dashboard />

@@ -85,9 +85,9 @@ function ExcelDetails({ Base_url }) {
   }, 0);
   // console.log(totalCase);
   const totalLoose = formdetail.reduce((total, item) => {
-    return total + parseInt(item.Loose);
+    return total + item.Loose;
   }, 0);
-
+  // console.log(totalLoose);
   var a;
   const filterData = () => {
     /// (formdetail);
