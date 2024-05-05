@@ -136,7 +136,7 @@ function ExcelDetails({ Base_url }) {
       findItem == "Beer" ||
       findItem == "Whisky" ||
       findItem == "Rum" ||
-      findItem == " vodka" ||
+      findItem == "Vodka" ||
       findItem == "Wine" ||
       findItem == "GIN" ||
       findItem == "Brandy"
@@ -193,82 +193,17 @@ function ExcelDetails({ Base_url }) {
                 <th>Closing value</th>
               </tr>
             </thead>
+
             <tbody>
               {formdetail
                 .filter(
                   (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
                 )
-                .filter((fil) => fil.Product.toLowerCase() === "beer")
+                .sort((a, b) => a.Product.localeCompare(b.Product))
                 .map((d, i) => (
                   <tr>
                     {/* <td>{i + 1} </td> */}
-                    {/* <td>{d.Product}</td> */}
-                    <td>{d.Item_Code}</td>
-                    <td colSpan={2} style={{ width: "900px" }}>
-                      {d.Description}
-                    </td>
-                    <td>{d.Size}</td>
-                    <td>{d.MRP_Value}</td>
-                    <td>{d.Total_value}</td>
-                    <td>
-                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-                    </td>
-                    <td>
-                      {editIndex === d._id ? (
-                        <input
-                          type="Number"
-                          value={editedCaseValue}
-                          onChange={(e) => setEditedCaseValue(e.target.value)}
-                        />
-                      ) : (
-                        d.Case
-                      )}
-                    </td>
-                    <td>
-                      {editIndex === d._id ? (
-                        <input
-                          type="Number"
-                          value={editedLooseValue}
-                          onChange={(e) => setEditedLooseValue(e.target.value)}
-                        />
-                      ) : (
-                        d.Loose
-                      )}
-                    </td>
-                    <td>
-                      {editIndex === d._id ? (
-                        <button onClick={() => handleSubmit(d._id)}>
-                          Save
-                        </button>
-                      ) : (
-                        <button
-                          value={enable}
-                          onClick={() =>
-                            handleEdit(d._id, d.Case, d.Loose, d.Date)
-                          }
-                        >
-                          Edit
-                        </button>
-                      )}
-                    </td>
-                    <td>{d.Closing_bottle}</td>
-                    <td>{d.Sales_bottle} </td>
-                    <td>{d.Sale_value}</td>
-                    <td>{d.Closing_value}</td>
-                  </tr>
-                ))}
-            </tbody>
-            <tbody>
-              {formdetail
-                .filter(
-                  (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
-                )
-                .filter((fil) => fil.Product !== "Beer")
-                .sort((a, b) => a.Description.localeCompare(b.Description))
-                .map((d, i) => (
-                  <tr>
-                    {/* <td>{i + 1} </td> */}
-                    {/* <td>{d.Product}</td> */}
+                    <td>{d.Product}</td>
                     <td>{d.Item_Code}</td>
                     <td colSpan={2} style={{ width: "900px" }}>
                       {d.Description}

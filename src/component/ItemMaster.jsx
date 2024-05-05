@@ -43,18 +43,15 @@ function ItemMaster({ Base_url }) {
     headers: { authorization: `${token}` },
   };
 
+  const get = async () => {
+    const response = await axios.get(`${Base_url}/user/getItemMaster`, headers);
+    // console.log(response.data);
+    setFormDetails(response.data);
+    setArray(response.data);
+  };
   useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(
-        `${Base_url}/user/getItemMaster`,
-        headers
-      );
-      // console.log(response.data);
-      setFormDetails(response.data);
-      setArray(response.data);
-    };
     get();
-  });
+  }, []);
 
   const handleSubmit = async (id) => {
     console.log(id);
@@ -81,6 +78,7 @@ function ItemMaster({ Base_url }) {
       );
       console.log(response.data);
       toast.success("successfully added");
+      get();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("something error");
@@ -93,9 +91,9 @@ function ItemMaster({ Base_url }) {
       findItem == "Beer" ||
       findItem == "Whisky" ||
       findItem == "Rum" ||
-      findItem == " vodka" ||
+      findItem == "Vodka" ||
       findItem == "Wine" ||
-      findItem == "GIN" ||
+      findItem == "Gin" ||
       findItem == "Brandy"
     ) {
       const filt = array.filter((d) => d.Product == findItem);
