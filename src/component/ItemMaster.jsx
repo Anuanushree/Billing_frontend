@@ -18,6 +18,7 @@ function ItemMaster({ Base_url }) {
   const [editedLooseValue, setEditedLooseValue] = useState(0);
   const [ReceiptBottle, setReceiptBottle] = useState();
   const [OpeningBottle, setOpeningBottle] = useState();
+  const [dummy, setDummy] = useState([]);
 
   // console.log(formDetails);
   const handleEdit = (
@@ -43,11 +44,15 @@ function ItemMaster({ Base_url }) {
     headers: { authorization: `${token}` },
   };
 
+  useEffect(() => {
+    filterdata();
+  }, [findItem, array]);
+
   const get = async () => {
     const response = await axios.get(`${Base_url}/user/getItemMaster`, headers);
     // console.log(response.data);
     setFormDetails(response.data);
-    setArray(response.data);
+    setDummy(response.data);
   };
   useEffect(() => {
     get();
@@ -70,6 +75,7 @@ function ItemMaster({ Base_url }) {
       desciption,
     };
     console.log(data);
+
     try {
       const response = await axios.put(
         `${Base_url}/user/updateReceipt`,
@@ -78,15 +84,30 @@ function ItemMaster({ Base_url }) {
       );
       console.log(response.data);
       toast.success("successfully added");
-      get();
+      const get1 = async () => {
+        const response = await axios.get(
+          `${Base_url}/user/getItemMaster`,
+          headers
+        );
+        // console.log(response.data);
+        setDummy(response.data);
+        setArray(response.data);
+      };
+      await get1();
+      filterdata();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("something error");
     }
     setEditIndex(null);
   };
-
-  const handleSearch = async () => {
+  0;
+  const handleSearch = (e) => {
+    e.preventDefault();
+    filterdata();
+  };
+  const filterdata = async () => {
+    let a = dummy;
     if (
       findItem == "Beer" ||
       findItem == "Whisky" ||
@@ -96,11 +117,11 @@ function ItemMaster({ Base_url }) {
       findItem == "Gin" ||
       findItem == "Brandy"
     ) {
-      const filt = array.filter((d) => d.Product == findItem);
+      const filt = a.filter((d) => d.Product == findItem);
       console.log(filt);
       setFormDetails(filt);
     } else {
-      const filt = array.filter((d) => d.Item_Code == findItem);
+      const filt = a.filter((d) => d.Item_Code == findItem);
       console.log(filt);
       setFormDetails(filt);
     }
@@ -199,106 +220,125 @@ function ItemMaster({ Base_url }) {
               </tr>
             </thead>
 
-            {formDetails.map((d, i) => (
-              <tbody key={i}>
-                <tr>
-                  {/* <td>{d.Date}</td> */}
-                  <td>{i + 1}</td>
-                  <td>{d.Range}</td>
-                  <td>{d.Product}</td>
-                  {/* <td>{d.Description}</td> */}
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="text"
-                        value={desciption}
-                        onChange={(e) => setDescription(e.target.value)}
-                      />
-                    ) : (
-                      d.Description
-                    )}
-                  </td>
-                  <td>{d.Item_Code}</td>
-                  <td>{d.Size}</td>
+            {formDetails
+              .sort((a, b) => a.Product.localeCompare(b.Product))
+              .map((d, i) => (
+                <tbody key={i}>
+                  <tr>
+                    {/* <td>{d.Date}</td> */}
+                    <td>{i + 1}</td>
+                    <td>{d.Range}</td>
+                    <td>{d.Product}</td>
+                    {/* <td>{d.Description}</td> */}
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="text"
+                          value={desciption}
+                          onChange={(e) => setDescription(e.target.value)}
+                        />
+                      ) : (
+                        d.Description
+                      )}
+                    </td>
+                    <td>{d.Item_Code}</td>
+                    <td>{d.Size}</td>
 
-                  <td>{d.Quantity}</td>
+                    <td>{d.Quantity}</td>
 
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="Number"
-                        value={editMRP}
-                        onChange={(e) => setEditMRP(e.target.value)}
-                      />
-                    ) : (
-                      d.MRP_Value
-                    )}
-                  </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={editMRP}
+                          style={{
+                            width: "60px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
+                          onChange={(e) => setEditMRP(e.target.value)}
+                        />
+                      ) : (
+                        d.MRP_Value
+                      )}
+                    </td>
 
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="Number"
-                        value={OpeningBottle}
-                        onChange={(e) => setOpeningBottle(e.target.value)}
-                      />
-                    ) : (
-                      d.Opening_bottle
-                    )}
-                  </td>
-                  <td>{d.Opening_value}</td>
-                  {/* <td>{d.Receipt_bottle}</td> */}
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="Number"
-                        value={ReceiptBottle}
-                        onChange={(e) => setReceiptBottle(e.target.value)}
-                      />
-                    ) : (
-                      d.Receipt_bottle
-                    )}
-                  </td>
-                  <td>
-                    {editIndex === d._id ? (
-                      <button onClick={() => handleSubmit(d._id)}>Save</button>
-                    ) : (
-                      <button
-                        onClick={() =>
-                          handleEdit(
-                            d._id,
-                            invoice,
-                            d.Receipt_bottle,
-                            d.Opening_bottle,
-                            d.MRP_Value,
-                            d.Item_Code,
-                            d.Description
-                          )
-                        }
-                      >
-                        Edit
-                      </button>
-                    )}
-                  </td>
-                  <td>{d.Receipt_value}</td>
-                  <td>{d.Total_value}</td>
-                  <td>
-                    {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-                  </td>
-                  <td>
-                    {editIndex === d._id ? (
-                      <input
-                        type="text"
-                        value={invoice}
-                        onChange={(e) => setInvoice(e.target.value)}
-                      />
-                    ) : (
-                      d.invoice
-                    )}
-                  </td>
-                </tr>
-              </tbody>
-            ))}
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={OpeningBottle}
+                          style={{
+                            width: "60px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
+                          onChange={(e) => setOpeningBottle(e.target.value)}
+                        />
+                      ) : (
+                        d.Opening_bottle
+                      )}
+                    </td>
+                    <td>{d.Opening_value}</td>
+                    {/* <td>{d.Receipt_bottle}</td> */}
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="Number"
+                          value={ReceiptBottle}
+                          style={{
+                            width: "60px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
+                          onChange={(e) => setReceiptBottle(e.target.value)}
+                        />
+                      ) : (
+                        d.Receipt_bottle
+                      )}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <button onClick={() => handleSubmit(d._id)}>
+                          Save
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            handleEdit(
+                              d._id,
+                              invoice,
+                              d.Receipt_bottle,
+                              d.Opening_bottle,
+                              d.MRP_Value,
+                              d.Item_Code,
+                              d.Description
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+                      )}
+                    </td>
+                    <td>{d.Receipt_value}</td>
+                    <td>{d.Total_value}</td>
+                    <td>
+                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
+                    </td>
+                    <td>
+                      {editIndex === d._id ? (
+                        <input
+                          type="text"
+                          value={invoice}
+                          onChange={(e) => setInvoice(e.target.value)}
+                        />
+                      ) : (
+                        d.invoice
+                      )}
+                    </td>
+                  </tr>
+                </tbody>
+              ))}
 
             <tfoot>
               <tr>

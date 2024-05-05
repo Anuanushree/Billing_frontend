@@ -9,6 +9,7 @@ function DailySalesReport({ Base_url }) {
   const [data, setData] = useState([]);
   const [Cash, setCash] = useState();
   const [Bank, setBank] = useState();
+  const [paytm, setPaytm] = useState();
   const [date, setDate] = useState(new Date());
   const [formDetails, setFormDetails] = useState([]);
 
@@ -46,6 +47,7 @@ function DailySalesReport({ Base_url }) {
       Cash: Cash,
       Bank: Bank,
       Sale: val,
+      Paytm: paytm,
     };
 
     try {
@@ -113,7 +115,7 @@ function DailySalesReport({ Base_url }) {
             <input
               type="Number"
               // type="text"
-              name="Description"
+              // name="Description"
               value={Cash}
               onChange={(e) => setCash(e.target.value)}
               class="form-control"
@@ -126,6 +128,17 @@ function DailySalesReport({ Base_url }) {
               // type="text"
               value={Bank}
               onChange={(e) => setBank(e.target.value)}
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label>Paytm</label>
+            <input
+              type="Number"
+              // type="text"
+              // name="Description"
+              value={paytm}
+              onChange={(e) => setPaytm(e.target.value)}
               class="form-control"
             />
           </div>
@@ -145,6 +158,7 @@ function DailySalesReport({ Base_url }) {
               <th>Pos</th>
               <th>Cash</th>
               <th>Bank</th>
+              <th>Paytm</th>
             </tr>
           </thead>
           <tbody>
@@ -155,6 +169,7 @@ function DailySalesReport({ Base_url }) {
                 <td>{d.Pos}</td>
                 <td>{d.Cash}</td>
                 <td>{d.Bank}</td>
+                <td>{d.Paytm}</td>
               </tr>
             ))}
             <tr></tr>

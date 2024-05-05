@@ -16,7 +16,7 @@ function ExcelDetails({ Base_url }) {
   const [editedLooseValue, setEditedLooseValue] = useState();
   const [findItem, setFindItem] = useState();
   const [isFormVisible, setIsFormVisible] = useState(true);
-
+  const [dummy, setDummy] = useState([]);
   useEffect(() => {
     // Check if form should be visible based on submission date
     const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
@@ -28,10 +28,10 @@ function ExcelDetails({ Base_url }) {
     }
   }, []);
 
-  console.log(formdetail);
+  // console.log(formdetail);
   const handleEdit = (id, value, loose, date) => {
     setEditIndex(id);
-    console.log(id);
+    // console.log(id);
     setEditedCaseValue(value || 0);
     setEditedLooseValue(loose || 0);
     setDate(date);
@@ -41,6 +41,11 @@ function ExcelDetails({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
+  // if(findItem0)
+  useEffect(() => {
+    filterData();
+  }, [findItem, array]);
+  // console.log(findItem, a);
 
   useEffect(() => {
     get();
@@ -48,9 +53,8 @@ function ExcelDetails({ Base_url }) {
 
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
-    // console.log(response.data);
     setformdetail(response.data);
-    setArray(response.data);
+    setDummy(response.data);
   };
 
   const totalClosingValue = formdetail.reduce((total, item) => {
@@ -68,7 +72,7 @@ function ExcelDetails({ Base_url }) {
   const totalValue = formdetail.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
-  console.log(totalValue);
+  // console.log(totalValue);
   // console.log(formdetail);
   const overallTotalBottle = formdetail.reduce((total, detail) => {
     return (
@@ -79,13 +83,40 @@ function ExcelDetails({ Base_url }) {
   const totalCase = formdetail.reduce((total, item) => {
     return total + item.Case;
   }, 0);
-  console.log(totalCase);
+  // console.log(totalCase);
   const totalLoose = formdetail.reduce((total, item) => {
     return total + parseInt(item.Loose);
   }, 0);
-  // console.log(formdetail);
+
+  var a;
+  const filterData = () => {
+    /// (formdetail);
+    a = dummy;
+    if (
+      findItem == "Beer" ||
+      findItem == "Whisky" ||
+      findItem == "Rum" ||
+      findItem == "Vodka" ||
+      findItem == "Wine" ||
+      findItem == "Gin" ||
+      findItem == "Brandy"
+    ) {
+      const filt = a.filter((d) => d.Product == findItem);
+      setformdetail(filt);
+
+      console.log(formdetail);
+    } else {
+      const filt = array.filter((d) => d.Item_Code == findItem);
+      console.log(filt);
+      setformdetail(filt);
+    }
+  };
+
+  const handleSearch = async () => {
+    filterData();
+  };
   const handleSubmit = async (id) => {
-    console.log(id);
+    // console.log(id);
     const Data = {
       date,
       editedCaseValue,
@@ -101,14 +132,24 @@ function ExcelDetails({ Base_url }) {
         headers
       );
       console.log(response.data);
-      get();
+
+      var get1 = async () => {
+        const response = await axios.get(`${Base_url}/user/getData`, headers);
+        //  setformdetail(response.data);
+        setArray(response.data);
+        setDummy(response.data);
+      };
+      await get1();
+
+      // Reapply search filter
+      filterData();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("error in updating case and loose");
     }
     setEditIndex(null);
   };
-
+  // filterData();
   const handlesave = async () => {
     try {
       console.log("save button");
@@ -129,27 +170,7 @@ function ExcelDetails({ Base_url }) {
     setIsFormVisible(false);
     alert("Form submitted successfully!");
   };
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    console.log(date);
-    if (
-      findItem == "Beer" ||
-      findItem == "Whisky" ||
-      findItem == "Rum" ||
-      findItem == "Vodka" ||
-      findItem == "Wine" ||
-      findItem == "GIN" ||
-      findItem == "Brandy"
-    ) {
-      const filt = array.filter((d) => d.Product == findItem);
-      console.log(filt);
-      setformdetail(filt);
-    } else {
-      const filt = array.filter((d) => d.Item_Code == findItem);
-      console.log(filt);
-      setformdetail(filt);
-    }
-  };
+
   // console.log(formdetail);
   return (
     <>
@@ -203,7 +224,7 @@ function ExcelDetails({ Base_url }) {
                 .map((d, i) => (
                   <tr>
                     {/* <td>{i + 1} </td> */}
-                    <td>{d.Product}</td>
+                    {/* <td>{d.Product}</td> */}
                     <td>{d.Item_Code}</td>
                     <td colSpan={2} style={{ width: "900px" }}>
                       {d.Description}
@@ -218,6 +239,11 @@ function ExcelDetails({ Base_url }) {
                       {editIndex === d._id ? (
                         <input
                           type="Number"
+                          style={{
+                            width: "70px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
                           value={editedCaseValue}
                           onChange={(e) => setEditedCaseValue(e.target.value)}
                         />
@@ -230,6 +256,11 @@ function ExcelDetails({ Base_url }) {
                         <input
                           type="Number"
                           value={editedLooseValue}
+                          style={{
+                            width: "70px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
                           onChange={(e) => setEditedLooseValue(e.target.value)}
                         />
                       ) : (
