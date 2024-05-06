@@ -26,6 +26,13 @@ function ExcelDetails({ Base_url }) {
         setIsFormVisible(false);
       }
     }
+
+    const today = new Date().toLocaleDateString();
+    const endOfDay = new Date(today + " 23:59:59");
+    const timeRemaining = endOfDay.getTime() - new Date().getTime();
+    setTimeout(() => {
+      handlesave(); // Auto-submit the form
+    }, timeRemaining);
   }, []);
 
   // console.log(formdetail);
@@ -53,13 +60,15 @@ function ExcelDetails({ Base_url }) {
 
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
-    setformdetail(response.data);
+    const fil = response.data.filter((f) => f.Opening_bottle > 0);
+    setformdetail(fil);
     setDummy(response.data);
   };
-
+  // console.log(formdetail);
   const totalClosingValue = formdetail.reduce((total, item) => {
     return total + item.Closing_value;
   }, 0);
+
   const totalSalesBottle = formdetail.reduce((total, item) => {
     return total + item.Sales_bottle;
   }, 0);
@@ -72,13 +81,21 @@ function ExcelDetails({ Base_url }) {
   const totalValue = formdetail.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
-  // console.log(totalValue);
+  // const totalValue = formdetail.reduce((total, item) => {
+  //   return total + parseInt(item.Opening_bottle) * item.MRP_Value;
+  // }, 0);
+  const openingBottle = formdetail.reduce((total, item) => {
+    return total + parseInt(item.Opening_bottle);
+  }, 0);
+  // console.log(openingBottle);
+  // console.log();
+  console.log(totalValue);
   // console.log(formdetail);
   const overallTotalBottle = formdetail.reduce((total, detail) => {
-    return (
-      total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
-    );
+    return total + parseInt(detail.Opening_bottle);
   }, 0);
+
+  // console.log(overallTotalBottle);
 
   const totalCase = formdetail.reduce((total, item) => {
     return total + item.Case;
@@ -153,7 +170,7 @@ function ExcelDetails({ Base_url }) {
   const handlesave = async () => {
     try {
       console.log("save button");
-      const formdetails = formdetail.filter((fil) => fil.Sales_bottle > 0);
+      const formdetails = formdetail;
       const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
       console.log(res.data);
       toast.success("successfully submitted");
@@ -232,9 +249,7 @@ function ExcelDetails({ Base_url }) {
                     <td>{d.Size}</td>
                     <td>{d.MRP_Value}</td>
                     <td>{d.Total_value}</td>
-                    <td>
-                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-                    </td>
+                    <td>{parseInt(d.Total_bottle)}</td>
                     <td>
                       {editIndex === d._id ? (
                         <input
@@ -305,14 +320,14 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalSalesValue}</td>
                 <td>{totalClosingValue}</td>
               </tr>
-              <tr>
+              {/* <tr>
                 <td colSpan={14}>
                   {" "}
                   <button className="custom-button" onClick={handlesave}>
                     Submit
                   </button>
                 </td>
-              </tr>
+              </tr> */}
             </tfoot>
           </table>
         </div>
