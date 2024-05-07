@@ -144,23 +144,22 @@ function ItemMaster({ Base_url }) {
   }, 0);
 
   const ReceiptValue = formDetails.reduce((total, item) => {
-    return total + parseInt(item.Receipt_value);
+    return total + item.Receipt_value;
   }, 0);
 
   const openingBottle = formDetails.reduce((total, item) => {
-    return total + parseInt(item.Opening_bottle);
+    return total + item.Opening_bottle;
   }, 0);
 
   const receiptBottle = formDetails.reduce((total, item) => {
-    return total + parseInt(item.Receipt_bottle);
+    return total + item.Receipt_bottle;
   }, 0);
 
-  const overallTotalBottle = formDetails.reduce((total, detail) => {
-    return (
-      total + parseInt(detail.Opening_bottle) + parseInt(detail.Receipt_bottle)
-    );
+  const overallTotalBottle = formDetails.reduce((total, d) => {
+    return total + d.Total_bottle;
   }, 0);
-// console.log(formDetails)
+  // console.log(formDetails)
+  console.log(overallTotalBottle);
   return (
     <>
       <Dashboard />
@@ -319,9 +318,7 @@ function ItemMaster({ Base_url }) {
                     </td>
                     <td>{d.Receipt_value}</td>
                     <td>{d.Total_value}</td>
-                    <td>
-                      {parseInt(d.Receipt_bottle) + parseInt(d.Opening_bottle)}
-                    </td>
+                    <td>{d.Total_bottle}</td>
                     <td>
                       {editIndex === d._id ? (
                         <input
@@ -340,13 +337,13 @@ function ItemMaster({ Base_url }) {
             <tfoot>
               <tr>
                 <td colSpan={8}>Total</td>
-                <td>{openingBottle}</td>
-                <td>{OpeningValue}</td>
-                <td>{receiptBottle}</td>
+                <td>{openingBottle > 0 ? openingBottle : 0}</td>
+                <td>{OpeningValue > 0 ? OpeningValue : 0}</td>
+                <td>{receiptBottle > 0 ? receiptBottle : 0}</td>
                 <td></td>
-                <td>{ReceiptValue}</td>
-                <td>{totalValue}</td>
-                <td>{overallTotalBottle}</td>
+                <td>{ReceiptValue > 0 ? ReceiptValue : 0}</td>
+                <td>{totalValue > 0 ? totalValue : 0}</td>
+                <td>{overallTotalBottle > 0 ? overallTotalBottle : 0}</td>
               </tr>
             </tfoot>
           </table>

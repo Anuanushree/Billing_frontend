@@ -22,7 +22,10 @@ function DailySalesReport({ Base_url }) {
 
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getSale`, headers);
+      const response = await axios.get(
+        `${Base_url}/user/getdailyData`,
+        headers
+      );
       // console.log(response.data);
       setFormDetails(response.data);
     };
