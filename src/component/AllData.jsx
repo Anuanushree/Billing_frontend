@@ -36,15 +36,16 @@ function AllData({ Base_url }) {
       // console.log(response.data);
       setFormDetails(response.data);
       setData(response.data);
-      // console.log(formDetails);
+      console.log(formDetails);
     };
     get();
   }, []);
 
   const handleSearch = async () => {
     console.log(date);
-    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
+    const filt = data.filter((d) => d.updatedAt.substring(0, 10) == date);
     setFormDetails(filt);
+    console.log(filt);
   };
 
   const totalClosingValue = formDetails.reduce((total, item) => {
@@ -147,13 +148,13 @@ function AllData({ Base_url }) {
 
             <th>Closing value</th>
             <th>Item type</th>
-
           </tr>
         </thead>
 
         {formDetails.map((d, i) => (
           <tbody key={i}>
             <tr>
+              <td>{i + 1}</td>
               <td>{d.Date}</td>
               <td>{d.Description}</td>
               <td>{d.Item_Code}</td>

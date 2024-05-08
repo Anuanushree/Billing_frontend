@@ -19,6 +19,8 @@ function ExcelDetails({ Base_url }) {
   const [dummy, setDummy] = useState([]);
   useEffect(() => {
     // Check if form should be visible based on submission date
+
+    get();
     const lastSubmissionDate = localStorage.getItem("lastSubmissionDate");
     if (lastSubmissionDate) {
       const today = new Date().toLocaleDateString();
@@ -54,10 +56,6 @@ function ExcelDetails({ Base_url }) {
   }, [findItem, array]);
   // console.log(findItem, a);
 
-  useEffect(() => {
-    get();
-  }, []);
-
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     const fil = response.data.filter((f) => f.Opening_bottle > 0);
@@ -81,14 +79,7 @@ function ExcelDetails({ Base_url }) {
   const totalValue = formdetail.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
-  // const totalValue = formdetail.reduce((total, item) => {
-  //   return total + parseInt(item.Opening_bottle) * item.MRP_Value;
-  // }, 0);
-  const openingBottle = formdetail.reduce((total, item) => {
-    return total + parseInt(item.Opening_bottle);
-  }, 0);
-  // console.log(openingBottle);
-  // console.log();
+
   console.log(totalValue);
   // console.log(formdetail);
   const overallTotalBottle = formdetail.reduce((total, detail) => {
@@ -123,7 +114,7 @@ function ExcelDetails({ Base_url }) {
 
       console.log(formdetail);
     } else {
-      const filt = array.filter((d) => d.Item_Code == findItem);
+      const filt = a.filter((d) => d.Item_Code == findItem);
       console.log(filt);
       setformdetail(filt);
     }
@@ -141,7 +132,6 @@ function ExcelDetails({ Base_url }) {
       id,
       formdetail,
     };
-
     try {
       const response = await axios.put(
         `${Base_url}/user/updateData`,
@@ -168,6 +158,7 @@ function ExcelDetails({ Base_url }) {
   };
   // filterData();
   const handlesave = async () => {
+    get()
     try {
       console.log("save button");
       const formdetails = formdetail;
