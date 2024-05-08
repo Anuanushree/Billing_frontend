@@ -4,6 +4,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+naresh;
 // const Base_url = process.env.Base_url;
 function ExcelDetails({ Base_url }) {
   const [formdetail, setformdetail] = useState([]);
@@ -62,7 +63,7 @@ function ExcelDetails({ Base_url }) {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     const fil = response.data.filter((f) => f.Opening_bottle > 0);
     setformdetail(fil);
-    setDummy(response.data);
+    setDummy(fil);
   };
   // console.log(formdetail);
   const totalClosingValue = formdetail.reduce((total, item) => {
@@ -81,16 +82,13 @@ function ExcelDetails({ Base_url }) {
   const totalValue = formdetail.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
-  // const totalValue = formdetail.reduce((total, item) => {
-  //   return total + parseInt(item.Opening_bottle) * item.MRP_Value;
-  // }, 0);
+
   const openingBottle = formdetail.reduce((total, item) => {
     return total + parseInt(item.Opening_bottle);
   }, 0);
-  // console.log(openingBottle);
-  // console.log();
+
   console.log(totalValue);
-  // console.log(formdetail);
+
   const overallTotalBottle = formdetail.reduce((total, detail) => {
     return total + parseInt(detail.Opening_bottle);
   }, 0);
@@ -100,11 +98,11 @@ function ExcelDetails({ Base_url }) {
   const totalCase = formdetail.reduce((total, item) => {
     return total + item.Case;
   }, 0);
-  // console.log(totalCase);
+
   const totalLoose = formdetail.reduce((total, item) => {
     return total + item.Loose;
   }, 0);
-  // console.log(totalLoose);
+
   var a;
   const filterData = () => {
     /// (formdetail);
@@ -149,17 +147,18 @@ function ExcelDetails({ Base_url }) {
         headers
       );
       console.log(response.data);
-
-      var get1 = async () => {
-        const response = await axios.get(`${Base_url}/user/getData`, headers);
-        //  setformdetail(response.data);
-        setArray(response.data);
-        setDummy(response.data);
-      };
-      await get1();
+      get();
+      // var get1 = async () => {
+      //   const response = await axios.get(`${Base_url}/user/getData`, headers);
+      //   //  setformdetail(response.data);
+      //   setArray(response.data);
+      //   setDummy(response.data);
+      // };
+      // await get1();
+      setArray(dummy);
 
       // Reapply search filter
-      filterData();
+      // filterData();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("error in updating case and loose");
@@ -185,7 +184,7 @@ function ExcelDetails({ Base_url }) {
     const today = new Date().toLocaleDateString();
     localStorage.setItem("lastSubmissionDate", today);
     setIsFormVisible(false);
-    alert("Form submitted successfully!");
+    // alert("Form submitted successfully!");
   };
 
   // console.log(formdetail);
