@@ -32,8 +32,8 @@ function ItemMaster({ Base_url }) {
   ) => {
     setEditIndex(id);
     setInvoice(invoice);
-    setReceiptBottle(receiptbottle || 0);
-    setOpeningBottle(openingBottle || 0);
+    setReceiptBottle(receiptbottle );
+    setOpeningBottle(openingBottle );
     setEditMRP(mrp);
     setItemCode(itemCode);
     setDescription(description);
