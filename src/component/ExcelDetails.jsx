@@ -378,7 +378,7 @@ function ExcelDetails({ Base_url }) {
     get();
     const today = new Date();
     // Set end of day to 23:59:58
-    today.setHours(23, 47, 2);
+    today.setHours(23, 59, 59);
     const timeRemaining = today.getTime() - Date.now();
     // Ensure timeRemaining is positive
     if (timeRemaining > 0) {
@@ -400,9 +400,7 @@ function ExcelDetails({ Base_url }) {
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`);
     // console.log(response.data);
-    const fil = response.data.filter(
-      (f) => f.Opening_bottle > 0 && f.Opening_bottle < 6
-    );
+    const fil = response.data.filter((f) => f.Opening_bottle > 0);
     setformdetail(fil);
     setDummy(response.data);
   };
