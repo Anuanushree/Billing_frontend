@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -19,6 +19,7 @@ function ItemMaster({ Base_url }) {
   const [ReceiptBottle, setReceiptBottle] = useState();
   const [OpeningBottle, setOpeningBottle] = useState();
   const [dummy, setDummy] = useState([]);
+  const [invoicedata, setinvoiceData] = useState([]);
 
   // console.log(formDetails);
   const handleEdit = (
@@ -31,9 +32,9 @@ function ItemMaster({ Base_url }) {
     description
   ) => {
     setEditIndex(id);
-    setInvoice(invoice);
-    setReceiptBottle(receiptbottle );
-    setOpeningBottle(openingBottle );
+    setInvoice(invoice || 0);
+    setReceiptBottle(receiptbottle);
+    setOpeningBottle(openingBottle);
     setEditMRP(mrp);
     setItemCode(itemCode);
     setDescription(description);
@@ -58,6 +59,14 @@ function ItemMaster({ Base_url }) {
     get();
   }, []);
 
+  useEffect(() => {
+    const getinvoice = async () => {
+      const response = await axios.get(`${Base_url}/user/getinvoice`, headers);
+      setinvoiceData(response.data);
+      // console.log(invoicedata);
+    };
+    getinvoice();
+  }, []);
   const handleSubmit = async (id) => {
     console.log(id);
     const data = {
@@ -83,14 +92,13 @@ function ItemMaster({ Base_url }) {
         headers
       );
       console.log(response.data);
-      // toast.success("successfully added");
+
       const get1 = async () => {
         const response = await axios.get(`${Base_url}/user/getdata`, headers);
-        // console.log(response.data);
         setDummy(response.data);
         setArray(response.data);
       };
-      await get1();
+      get1();
       filterdata();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
@@ -123,18 +131,18 @@ function ItemMaster({ Base_url }) {
       setFormDetails(filt);
     }
   };
-
+  var filt1 = [];
   const handleSearch1 = async () => {
     console.log(date);
-    const filt = array.filter((d) => d.Date.substring(0, 10) == date);
+    const filt = await array.filter((d) => d.Date.substring(0, 10) == date);
+    filt1 = await invoicedata.filter((d) => d.Date.substring(0, 10) == date);
     setFormDetails(filt);
+    // setinvoiceData(filt1);
+    console.log(filt1);
+    setinvoiceData(filt1);
     console.log(formDetails);
   };
-
-  const totalClosingValue = formDetails.reduce((total, item) => {
-    return total + item.Closing_value;
-  }, 0);
-
+  // console.log(invoicedata.Invoice);
   const totalValue = formDetails.reduce((total, item) => {
     return total + parseInt(item.Total_value);
   }, 0);
@@ -154,12 +162,25 @@ function ItemMaster({ Base_url }) {
   const receiptBottle = formDetails.reduce((total, item) => {
     return total + item.Receipt_bottle;
   }, 0);
-
-  const overallTotalBottle = formDetails.reduce((total, d) => {
-    return total + d.Total_bottle;
-  }, 0);
+  const overallTotalBottle = useMemo(() => {
+    return formDetails.reduce((total, detail) => {
+      return total + parseInt(detail.Total_bottle);
+    }, 0);
+  }, [formDetails]);
   // console.log(formDetails)
   console.log(overallTotalBottle);
+  const handleInvoice = async () => {
+    try {
+      const data = {
+        formDetails,
+        invoice,
+      };
+      const response = await axios.post(`${Base_url}/user/invoice`, data);
+      console.log(response.data);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
   return (
     <>
       <Dashboard />
@@ -192,6 +213,18 @@ function ItemMaster({ Base_url }) {
 
                   <button onClick={handleSearch1}>Search</button>
                 </th>
+                <th>
+                  <input
+                    value={invoice}
+                    onChange={(e) => setInvoice(e.target.value)}
+                  />{" "}
+                  <button onClick={handleInvoice}>Add invoice</button>
+                </th>
+
+                {invoicedata &&
+                  invoicedata.map((d) => (
+                    <th colSpan={3}>Invoice Number :{d.Invoice}</th>
+                  ))}
               </tr>
             </thead>
             <thead className="table-secondary border-danger">
@@ -221,8 +254,8 @@ function ItemMaster({ Base_url }) {
               .map((d, i) => (
                 <tbody key={i}>
                   <tr>
-                    {/* <td>{d.Date}</td> */}
-                    <td>{i + 1}</td>
+                    <td>{d.Date}</td>
+                    {/* <td>{i + 1}</td> */}
                     <td>{d.Range}</td>
                     <td>{d.Product}</td>
                     {/* <td>{d.Description}</td> */}

@@ -351,14 +351,46 @@ function ExcelDetails({ Base_url }) {
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [dummy, setDummy] = useState([]);
 
+  const handlesave = async () => {
+    try {
+      get();
+      console.log("save button clicked");
+      const formdetails = formdetail;
+      console.log(formdetails);
+      // Make sure to await the axios call and store the response
+      const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
+      console.log(res.data);
+      toast.success("successfully submitted");
+      setformdetail([]);
+    } catch (error) {
+      console.log("Error in submitting the form:", error);
+      toast.warning("Something went wrong while submitting the form");
+    } finally {
+      setFormDisable(true);
+    }
+    //     const today = new Date().toLocaleDateString();
+    //     localStorage.setItem("lastSubmissionDate", today);
+    //     setIsFormVisible(false);
+    //     alert("Form submitted successfully!");
+  };
+
   useEffect(() => {
     get();
-    const today = new Date().toLocaleDateString();
-    const endOfDay = new Date(today + " 23:59:59");
-    const timeRemaining = endOfDay.getTime() - new Date().getTime();
-    setTimeout(() => {
-      handlesave(); // Auto-submit the form
-    }, timeRemaining);
+    const today = new Date();
+    // Set end of day to 23:59:58
+    today.setHours(23, 47, 2);
+    const timeRemaining = today.getTime() - Date.now();
+    // Ensure timeRemaining is positive
+    if (timeRemaining > 0) {
+      const timer = setTimeout(() => {
+        handlesave(); // Auto-submit the form
+      }, timeRemaining);
+      // Clear the timer when the component unmounts
+      return () => clearTimeout(timer);
+    }
+    get();
+    // If timeRemaining is negative, the end of day has already passed, handle accordingly
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -367,20 +399,23 @@ function ExcelDetails({ Base_url }) {
 
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`);
-    const fil = response.data.filter((f) => f.Opening_bottle > 0);
+    // console.log(response.data);
+    const fil = response.data.filter(
+      (f) => f.Opening_bottle > 0 && f.Opening_bottle < 6
+    );
     setformdetail(fil);
     setDummy(response.data);
   };
-
+  // get();
   const totalValue = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + parseInt(item.Total_value);
+      return total + item.Total_value;
     }, 0);
   }, [formdetail]);
 
   const overallTotalBottle = useMemo(() => {
     return formdetail.reduce((total, detail) => {
-      return total + parseInt(detail.Opening_bottle);
+      return total + detail.Opening_bottle;
     }, 0);
   }, [formdetail]);
 
@@ -390,6 +425,7 @@ function ExcelDetails({ Base_url }) {
     }, 0);
   }, [formdetail]);
 
+  console.log(formdetail);
   const totalLoose = useMemo(() => {
     return formdetail.reduce((total, item) => {
       return total + item.Loose;
@@ -442,29 +478,6 @@ function ExcelDetails({ Base_url }) {
     setEditIndex(null);
   };
 
-  const handlesave = async () => {
-    try {
-      get();
-      console.log("save button clicked");
-      const formdetails = formdetail;
-      console.log(formdetails);
-      // Make sure to await the axios call and store the response
-      const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
-      console.log(res.data);
-      toast.success("successfully submitted");
-      setformdetail([]);
-    } catch (error) {
-      console.log("Error in submitting the form:", error);
-      toast.warning("Something went wrong while submitting the form");
-    } finally {
-      setFormDisable(true);
-    }
-
-    const today = new Date().toLocaleDateString();
-    localStorage.setItem("lastSubmissionDate", today);
-    setIsFormVisible(false);
-    alert("Form submitted successfully!");
-  };
   const handleEdit = (id, value, loose, date) => {
     setEditIndex(id);
     setEditedCaseValue(value);
@@ -538,20 +551,21 @@ function ExcelDetails({ Base_url }) {
             </thead>
             <tbody>
               {formdetail
-                .filter(
-                  (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
-                )
+                // .filter(
+                //   (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
+                // )
                 .sort((a, b) => a.Product.localeCompare(b.Product))
                 .map((d, i) => (
                   <tr key={i}>
+                    {/* <td>{i+1}</td> */}
                     <td>{d.Item_Code}</td>
                     <td colSpan={2} style={{ width: "900px" }}>
                       {d.Description}
                     </td>
                     <td>{d.Size}</td>
                     <td>{d.MRP_Value}</td>
-                    <td>{parseInt(d.Total_value)}</td>
-                    <td>{parseInt(d.Total_bottle)}</td>
+                    <td>{d.Total_value}</td>
+                    <td>{d.Opening_bottle}</td>
                     <td>
                       {editIndex === d._id ? (
                         <input
