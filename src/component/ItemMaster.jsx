@@ -164,9 +164,11 @@ function ItemMaster({ Base_url }) {
   }, 0);
   const overallTotalBottle = useMemo(() => {
     return formDetails.reduce((total, detail) => {
-      return total + parseInt(detail.Total_bottle);
+      // ParseInt will return NaN for null values, so we handle them with || 0
+      return total + (parseInt(detail.Total_bottle) || 0);
     }, 0);
   }, [formDetails]);
+  // console.log(overallTotalBottle);
   // console.log(formDetails)
   console.log(overallTotalBottle);
   const handleInvoice = async () => {
@@ -229,8 +231,8 @@ function ItemMaster({ Base_url }) {
             </thead>
             <thead className="table-secondary border-danger">
               <tr>
-                {/* <th>Date</th> */}
-                <th>S.No</th>
+                <th>Date</th>
+                {/* <th>S.No</th> */}
                 <th>Range</th>
                 <th>Product</th>
                 <th>Brand name</th>

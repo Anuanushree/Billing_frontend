@@ -400,7 +400,7 @@ function ExcelDetails({ Base_url }) {
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`);
     // console.log(response.data);
-    const fil = response.data.filter((f) => f.Opening_bottle > 0);
+    const fil = response.data.filter((f) => f.Total_bottle > 0);
     setformdetail(fil);
     setDummy(response.data);
   };
@@ -413,7 +413,8 @@ function ExcelDetails({ Base_url }) {
 
   const overallTotalBottle = useMemo(() => {
     return formdetail.reduce((total, detail) => {
-      return total + detail.Opening_bottle;
+      // ParseInt will return NaN for null values, so we handle them with || 0
+      return total + (parseInt(detail.Total_bottle) || 0);
     }, 0);
   }, [formdetail]);
 
