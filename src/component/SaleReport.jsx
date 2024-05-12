@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -43,6 +43,32 @@ function DailySalesReport({ Base_url }) {
   // console.log(formDetails);
   // console.log(formDetails.data.Date);
 
+  const totalPos = useMemo(() => {
+    return data.reduce((total, item) => {
+      return total + item.Pos;
+    }, 0);
+  }, [data]);
+  const totalcash = useMemo(() => {
+    return data.reduce((total, item) => {
+      return total + item.Cash;
+    }, 0);
+  }, [data]);
+  const totalsale = useMemo(() => {
+    return data.reduce((total, item) => {
+      return total + item.Sale;
+    }, 0);
+  }, [data]);
+
+  const totalbank = useMemo(() => {
+    return data.reduce((total, item) => {
+      return total + item.Bank;
+    }, 0);
+  }, [data]);
+  const totalpaytm = useMemo(() => {
+    return data.reduce((total, item) => {
+      return total + parseInt(item.Paytm);
+    }, 0);
+  }, [data]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
@@ -111,6 +137,7 @@ function DailySalesReport({ Base_url }) {
               value={Pos}
               onChange={(e) => setPos(e.target.value)}
               class="form-control"
+              required
             />
           </div>
           <div class="form-group">
@@ -122,6 +149,7 @@ function DailySalesReport({ Base_url }) {
               value={Cash}
               onChange={(e) => setCash(e.target.value)}
               class="form-control"
+              required
             />
           </div>
           <div class="form-group">
@@ -132,6 +160,7 @@ function DailySalesReport({ Base_url }) {
               value={Bank}
               onChange={(e) => setBank(e.target.value)}
               class="form-control"
+              required
             />
           </div>
           <div class="form-group">
@@ -143,6 +172,7 @@ function DailySalesReport({ Base_url }) {
               value={paytm}
               onChange={(e) => setPaytm(e.target.value)}
               class="form-control"
+              required
             />
           </div>
           <button
@@ -179,8 +209,12 @@ function DailySalesReport({ Base_url }) {
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={2}>Total</td>
-              <td></td>
+              <td colSpan={1}>Total</td>
+              <td>{totalsale}</td>
+              <td>{totalPos}</td>
+              <td>{totalcash}</td>
+              <td>{totalbank}</td>
+              <td>{totalpaytm}</td>
             </tr>
           </tfoot>
         </table>
