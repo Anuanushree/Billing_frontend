@@ -407,7 +407,7 @@ function ExcelDetails({ Base_url }) {
   // get();
   const totalValue = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Total_value;
+      return total + (parseInt(item.Total_value) || 0);
     }, 0);
   }, [formdetail]);
 
@@ -420,14 +420,14 @@ function ExcelDetails({ Base_url }) {
 
   const totalCase = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Case;
+      return total + (parseInt(item.Case) || 0);
     }, 0);
   }, [formdetail]);
 
   console.log(formdetail);
   const totalLoose = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Loose;
+      return total + (parseInt(item.Loose) || 0);
     }, 0);
   }, [formdetail]);
 
@@ -485,25 +485,25 @@ function ExcelDetails({ Base_url }) {
   };
   const totalClosingBottle = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Closing_bottle;
+      return total + (parseInt(item.Closing_bottle) || 0);
     }, 0);
   }, [formdetail]);
 
   const totalSalesBottle = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Sales_bottle;
+      return total + (parseInt(item.Sales_bottle) || 0);
     }, 0);
   }, [formdetail]);
 
   const totalSalesValue = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Sale_value;
+      return total + (parseInt(item.Sale_value) || 0);
     }, 0);
   }, [formdetail]);
 
   const totalClosingValue = useMemo(() => {
     return formdetail.reduce((total, item) => {
-      return total + item.Closing_value;
+      return total + (parseInt(item.Closing_value) || 0);
     }, 0);
   }, [formdetail]);
 
@@ -564,7 +564,7 @@ function ExcelDetails({ Base_url }) {
                     <td>{d.Size}</td>
                     <td>{d.MRP_Value}</td>
                     <td>{d.Total_value}</td>
-                    <td>{d.Opening_bottle}</td>
+                    <td>{d.Total_bottle}</td>
                     <td>
                       {editIndex === d._id ? (
                         <input
@@ -624,15 +624,15 @@ function ExcelDetails({ Base_url }) {
               <tr>
                 <td colSpan={5}>Total</td>
                 <td>{totalValue}</td>
-                <td>{overallTotalBottle}</td>
+                <td>{overallTotalBottle > 0 ? overallTotalBottle : 0}</td>
                 <td>{totalCase}</td>
                 {totalLoose > 0 ? <td>{totalLoose}</td> : <td>0</td>}
                 <td></td>
                 {/* <td>{totalClosingValue}</td> */}
-                <td>{totalClosingBottle}</td>
-                <td>{totalSalesBottle}</td>
-                <td>{totalSalesValue}</td>
-                <td>{totalClosingValue}</td>
+                <td>{totalClosingBottle > 0 ? totalClosingBottle : 0}</td>
+                <td>{totalSalesBottle > 0 ? totalSalesBottle : 0}</td>
+                <td>{totalSalesValue > 0 ? totalSalesValue : 0}</td>
+                <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
               {/* <tr>
                 <td colSpan={14}>

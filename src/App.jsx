@@ -20,9 +20,10 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Report from "./component/Report";
 import Sample from "./component/sample";
+import Invoice from "./component/Invoice";
 
-// const Base_url = " https://billingbackend-xo8c.onrender.com";
-const Base_url = "http://localhost:3001";
+const Base_url = " https://billingbackend-xo8c.onrender.com";
+// const Base_url = "http://localhost:3001";
 
 function App() {
   const [user, setuser] = useState([]);
@@ -72,6 +73,7 @@ function App() {
               path="/sample"
               element={<MyComponent Base_url={Base_url} />}
             />
+            <Route path="/invoice" element={<Invoice Base_url={Base_url} />} />
           </Routes>
         </div>
       </div>

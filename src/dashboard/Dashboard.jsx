@@ -90,6 +90,12 @@ function Dashboard() {
             </Link>
           </li>
           <li className="nav-item ">
+            <Link className="nav-link" to="/invoice">
+              <i class="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              <span>Invoice Data</span>
+            </Link>
+          </li>
+          <li className="nav-item ">
             <div className="nav-link">
               <i style={{ fontSize: "20px" }}></i>
               <span onClick={hanldleLogout}>Logout</span>
