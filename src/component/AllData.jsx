@@ -129,6 +129,8 @@ function AllData({ Base_url }) {
         <thead>
           <tr>
             <th>Date</th>
+            <th>Range</th>
+            <th>Product</th>
             <th>Description</th>
             <th>Item code</th>
             <th>Size</th>
@@ -154,8 +156,10 @@ function AllData({ Base_url }) {
         {formDetails.map((d, i) => (
           <tbody key={i}>
             <tr>
-              <td>{i + 1}</td>
+              {/* <td>{i + 1}</td> */}
               <td>{d.Date}</td>
+              <td>{d.Range}</td>
+              <td>{d.Product}</td>
               <td>{d.Description}</td>
               <td>{d.Item_Code}</td>
               <td>{d.Size}</td>
