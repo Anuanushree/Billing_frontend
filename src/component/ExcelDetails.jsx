@@ -351,16 +351,55 @@ function ExcelDetails({ Base_url }) {
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [dummy, setDummy] = useState([]);
 
+  // const handlesave = async () => {
+  //   try {
+  //     get();
+  //     console.log("save button clicked");
+  //     const formdetails = formdetail;
+  //     console.log(formdetails);
+  //     // Make sure to await the axios call and store the response
+  //     const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
+  //     console.log(res.data);
+  //     toast.success("successfully submitted");
+  //     setformdetail([]);
+
+  //   } catch (error) {
+  //     console.log("Error in submitting the form:", error);
+  //     toast.warning("Something went wrong while submitting the form");
+  //   } finally {
+  //     setFormDisable(true);
+  //   }
+  //   //     const today = new Date().toLocaleDateString();
+  //   //     localStorage.setItem("lastSubmissionDate", today);
+  //   //     setIsFormVisible(false);
+  //   //     alert("Form submitted successfully!");
+  // };
+
+  // useEffect(() => {
+  //   get();
+  //   const today = new Date();
+  //   // Set end of day to 23:59:58
+  //   today.setHours(21, 48, 4);
+  //   const timeRemaining = today.getTime() - Date.now();
+  //   // Ensure timeRemaining is positive
+  //   if (timeRemaining > 0) {
+  //     const timer = setTimeout(() => {
+  //       handlesave(); // Auto-submit the form
+  //     }, timeRemaining);
+  //     // Clear the timer when the component unmounts
+  //     return () => clearTimeout(timer);
+  //   }
+  //   get();
+  //   // If timeRemaining is negative, the end of day has already passed, handle accordingly
+  //   return () => {};
+  // }, []);
+
   const handlesave = async () => {
     try {
-      get();
       console.log("save button clicked");
-      const formdetails = formdetail;
-      console.log(formdetails);
-      // Make sure to await the axios call and store the response
-      const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
+      const res = await axios.post(`${Base_url}/user/dailyData`, formdetail);
       console.log(res.data);
-      toast.success("successfully submitted");
+      toast.success("Successfully submitted");
       setformdetail([]);
     } catch (error) {
       console.log("Error in submitting the form:", error);
@@ -368,31 +407,33 @@ function ExcelDetails({ Base_url }) {
     } finally {
       setFormDisable(true);
     }
-    //     const today = new Date().toLocaleDateString();
-    //     localStorage.setItem("lastSubmissionDate", today);
-    //     setIsFormVisible(false);
-    //     alert("Form submitted successfully!");
   };
 
   useEffect(() => {
     get();
     const today = new Date();
-    // Set end of day to 23:59:58
-    today.setHours(23, 59, 59);
+    // Set end of day to 9:48:04 PM
+    today.setHours(24, 59, 58);
     const timeRemaining = today.getTime() - Date.now();
-    // Ensure timeRemaining is positive
+
     if (timeRemaining > 0) {
-      const timer = setTimeout(() => {
-        handlesave(); // Auto-submit the form
+      const timer = setTimeout(async () => {
+        try {
+          await handlesave(); 
+          get();
+          // Auto-submit the form
+        } catch (error) {
+          console.log("Error in auto-submit:", error);
+          toast.warning("Something went wrong while auto-submitting the form");
+        }
       }, timeRemaining);
+
       // Clear the timer when the component unmounts
       return () => clearTimeout(timer);
+    } else {
+      console.log("End of day has already passed.");
     }
-    get();
-    // If timeRemaining is negative, the end of day has already passed, handle accordingly
-    return () => {};
   }, []);
-
   useEffect(() => {
     filterData();
   }, [findItem, array]);
