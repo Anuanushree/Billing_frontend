@@ -444,7 +444,7 @@ function ExcelDetails({ Base_url }) {
     // console.log(response.data);
     const fil = response.data.filter((f) => f.Total_bottle > 0);
     setformdetail(fil);
-    setDummy(response.data);
+    setDummy(fil);
   };
   // get();
   const totalValue = useMemo(() => {

@@ -131,7 +131,7 @@ function AllData({ Base_url }) {
             <th>Date</th>
             <th>Range</th>
             <th>Product</th>
-            <th>Description</th>
+            <th>Brand name</th>
             <th>Item code</th>
             <th>Size</th>
             <th>MRP</th>
