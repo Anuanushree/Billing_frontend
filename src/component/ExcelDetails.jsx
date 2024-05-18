@@ -498,8 +498,8 @@ function ExcelDetails({ Base_url }) {
   const handleSubmit = async (id) => {
     const Data = {
       date,
-      editedCaseValue,
-      editedLooseValue,
+      editedCaseValue: editedCaseValue || 0,
+      editedLooseValue: editedLooseValue || 0,
       id,
       formdetail,
     };
@@ -507,8 +507,9 @@ function ExcelDetails({ Base_url }) {
       await axios.put(`${Base_url}/user/updateData`, Data);
       var get1 = async () => {
         const response = await axios.get(`${Base_url}/user/getData`);
-        setArray(response.data);
-        setDummy(response.data);
+        const fil = response.data.filter((f) => f.Total_bottle > 0);
+        setArray(fil);
+        setDummy(fil);
       };
       await get1();
       filterData();

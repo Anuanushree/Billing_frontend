@@ -20,11 +20,7 @@ function Report({ Base_url }) {
     };
     get();
   }, []);
-  // const handleSearch = async () => {
-  //   console.log(date);
-  //   const filt = data.filter((d) => d.Date.substring(0, 10) == date);
-  //   setFormDetails(filt);
-  // };
+
   return (
     <>
       <Dashboard />

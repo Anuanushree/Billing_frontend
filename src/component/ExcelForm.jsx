@@ -135,8 +135,8 @@ function ExcelForm({ Base_url }) {
             accept=".xls,.xlsx"
             onChange={(e) => setFile(e.target.files[0])}
           />
-          <button onClick={handleConvert}>Convert</button> */}
-        {/* </div> */}
+          <button onClick={handleConvert}>Convert</button>
+        </div> */}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Range</label>

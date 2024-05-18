@@ -6,9 +6,6 @@ import Dashboard from "../dashboard/Dashboard";
 
 function Sample({ Base_url, formDetails, valueType }) {
   const [T, setT] = useState("");
-  // const [formDetails, setFormDetails] = useState([]);
-
-  // const [val, setVal] = useState();
   const [data, setData] = useState([]);
   const val = data;
   // useEffect(() => {
@@ -23,21 +20,31 @@ function Sample({ Base_url, formDetails, valueType }) {
   // }, []);
   const totalOpeningBottles = {};
 
+  // formDetails.forEach((item) => {
+  //   const { Range, Size, Item_type } = item;
+  //   const value = item[valueType];
+  //   if (!totalOpeningBottles[Item_type]) {
+  //     totalOpeningBottles[Item_type] = {};
+  //   }
+  //   if (!totalOpeningBottles[Item_type][Range]) {
+  //     totalOpeningBottles[Item_type][Range] = {};
+  //   }
+  //   if (!totalOpeningBottles[Item_type][Range][Size]) {
+  //     totalOpeningBottles[Item_type][Range][Size] = 0;
+  //   }
+  //   totalOpeningBottles[Item_type][Range][Size] += value || 0;
+  // });
   formDetails.forEach((item) => {
-    const { Range, Size, Item_type } = item;
+    const { Range, Size } = item;
     const value = item[valueType];
-    if (!totalOpeningBottles[Item_type]) {
-      totalOpeningBottles[Item_type] = {};
+    if (!totalOpeningBottles[Range]) {
+      totalOpeningBottles[Range] = {};
     }
-    if (!totalOpeningBottles[Item_type][Range]) {
-      totalOpeningBottles[Item_type][Range] = {};
+    if (!totalOpeningBottles[Range][Size]) {
+      totalOpeningBottles[Range][Size] = 0;
     }
-    if (!totalOpeningBottles[Item_type][Range][Size]) {
-      totalOpeningBottles[Item_type][Range][Size] = 0;
-    }
-    totalOpeningBottles[Item_type][Range][Size] += value || 0;
+    totalOpeningBottles[Range][Size] += value || 0;
   });
-
   const ranges = [...new Set(formDetails.map((item) => item.Range))];
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
   const itemTypes = [...new Set(formDetails.map((item) => item.Item_type))];
@@ -49,30 +56,56 @@ function Sample({ Base_url, formDetails, valueType }) {
     XLSX.writeFile(wb, "sales_data.xlsx");
   };
 
+  // const generateExportData = () => {
+  //   const exportData = [];
+  //   itemTypes.forEach((itemType) => {
+  //     sizes.forEach((size) => {
+  //       const rowData = { Size: size, ItemType: itemType };
+  //       ranges.forEach((range) => {
+  //         const value =
+  //           totalOpeningBottles[itemType] &&
+  //           totalOpeningBottles[itemType][range] &&
+  //           totalOpeningBottles[itemType][range][size]
+  //             ? totalOpeningBottles[itemType][range][size]
+  //             : 0;
+  //         rowData[range] = value;
+  //       });
+  //       rowData["Total"] = ranges.reduce((acc, range) => {
+  //         return (
+  //           ((totalOpeningBottles[itemType] &&
+  //             totalOpeningBottles[itemType][range] &&
+  //             totalOpeningBottles[itemType][range][size]) ||
+  //             0) + acc
+  //         );
+  //       }, 0);
+  //       exportData.push(rowData);
+  //     });
+  //   });
+  //   return exportData;
+  // };
+
   const generateExportData = () => {
     const exportData = [];
-    itemTypes.forEach((itemType) => {
-      sizes.forEach((size) => {
-        const rowData = { Size: size, ItemType: itemType };
-        ranges.forEach((range) => {
-          const value =
-            totalOpeningBottles[itemType] &&
-            totalOpeningBottles[itemType][range] &&
-            totalOpeningBottles[itemType][range][size]
-              ? totalOpeningBottles[itemType][range][size]
-              : 0;
-          rowData[range] = value;
+    sizes.forEach((size) => {
+      const rowData = { Size: size };
+      ranges.forEach((range) => {
+        let total = 0;
+        const filteredFormDetails = formDetails.filter(
+          (item) => item[valueType] === "Opening Bottle"
+        );
+        filteredFormDetails.forEach((item) => {
+          total +=
+            (totalOpeningBottles[item.Item_type] &&
+              totalOpeningBottles[item.Item_type][range] &&
+              totalOpeningBottles[item.Item_type][range][size]) ||
+            0;
         });
-        rowData["Total"] = ranges.reduce((acc, range) => {
-          return (
-            ((totalOpeningBottles[itemType] &&
-              totalOpeningBottles[itemType][range] &&
-              totalOpeningBottles[itemType][range][size]) ||
-              0) + acc
-          );
-        }, 0);
-        exportData.push(rowData);
+        rowData[range] = total;
       });
+      rowData["Total"] = ranges.reduce((acc, range) => {
+        return acc + rowData[range];
+      }, 0);
+      exportData.push(rowData);
     });
     return exportData;
   };
@@ -96,7 +129,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                 </tr>
               </thead>
               <tbody>
-                {sizes.map((size) => (
+                {/* {sizes.map((size) => (
                   <tr key={size}>
                     <td>{size}</td>
                     {ranges.map((range) => (
@@ -114,6 +147,28 @@ function Sample({ Base_url, formDetails, valueType }) {
                           ((totalOpeningBottles[itemType] &&
                             totalOpeningBottles[itemType][range] &&
                             totalOpeningBottles[itemType][range][size]) ||
+                            0) + acc
+                        );
+                      }, 0)}
+                    </td>
+                  </tr>
+                ))} */}
+                {sizes.map((size) => (
+                  <tr key={size}>
+                    <td>{size}</td>
+                    {ranges.map((range) => (
+                      <td key={`${range}-${size}`}>
+                        {totalOpeningBottles[range] &&
+                        totalOpeningBottles[range][size]
+                          ? totalOpeningBottles[range][size]
+                          : 0}
+                      </td>
+                    ))}
+                    <td>
+                      {ranges.reduce((acc, range) => {
+                        return (
+                          ((totalOpeningBottles[range] &&
+                            totalOpeningBottles[range][size]) ||
                             0) + acc
                         );
                       }, 0)}
