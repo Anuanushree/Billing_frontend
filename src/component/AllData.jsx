@@ -103,105 +103,106 @@ function AllData({ Base_url }) {
   return (
     <>
       <Dashboard />
-      <div></div>
-      <table className="table table-dark table-bordered border border-primary p-2 m-4">
-        <thead>
-          <tr>
-            <th>
-              {" "}
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-              />
-            </th>
-            <th>
-              <button onClick={handleSearch}>Search</button>
-            </th>
-            <th colSpan={3}>
-              <button onClick={handleAllDate}>All data</button>
-            </th>
-            <th colSpan={6}>
-              <button onClick={handleClick}>Export to Excel</button>
-            </th>
-          </tr>
-        </thead>
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Range</th>
-            <th>Product</th>
-            <th>Brand name</th>
-            <th>Item code</th>
-            <th>Size</th>
-            <th>MRP</th>
-            <th>Opening Bottle</th>
-            <th>Opening value</th>
-            <th>Receipt Bottle</th>
-            <th>Receipt value</th>
-            <th>Total value</th>
-            <th>Total Bottle</th>
-            <th>Case</th>
-            <th>Loose</th>
-
-            <th>Closing bottle</th>
-            <th>Sales Bottle</th>
-            <th>Sales Value</th>
-
-            <th>Closing value</th>
-            <th>Item type</th>
-          </tr>
-        </thead>
-
-        {formDetails.map((d, i) => (
-          <tbody key={i}>
+      <div className="table-container">
+        <table className="table table-dark table-bordered border border-primary p-2 m-4">
+          <thead>
             <tr>
-              {/* <td>{i + 1}</td> */}
-              <td>{d.Date}</td>
-              <td>{d.Range}</td>
-              <td>{d.Product}</td>
-              <td>{d.Description}</td>
-              <td>{d.Item_Code}</td>
-              <td>{d.Size}</td>
-              <td>{d.MRP_Value}</td>
-              <td>{d.Opening_bottle}</td>
-              <td>{d.Opening_value}</td>
-              <td>{d.Receipt_bottle}</td>
-              <td>{d.Receipt_value}</td>
-              <td>{d.Total_value}</td>
-              <td>{d.Total_bottle}</td>
-              <td>{d.Case}</td>
-              <td>{d.Loose}</td>
-
-              <td>{d.Closing_bottle}</td>
-              <td>{d.Sales_bottle} </td>
-              <td>{d.Sale_value}</td>
-              <td>{d.Closing_value}</td>
-              <td>{d.Item_type}</td>
+              <th>
+                {" "}
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </th>
+              <th>
+                <button onClick={handleSearch}>Search</button>
+              </th>
+              <th colSpan={3}>
+                <button onClick={handleAllDate}>All data</button>
+              </th>
+              <th colSpan={6}>
+                <button onClick={handleClick}>Export to Excel</button>
+              </th>
             </tr>
-          </tbody>
-        ))}
+          </thead>
+          <thead className="table-secondary border-danger">
+            <tr>
+              <th>Date</th>
+              <th>Range</th>
+              <th>Product</th>
+              <th>Brand name</th>
+              <th>Item code</th>
+              <th>Size</th>
+              <th>MRP</th>
+              <th>Opening Bottle</th>
+              <th>Opening value</th>
+              <th>Receipt Bottle</th>
+              <th>Receipt value</th>
+              <th>Total value</th>
+              <th>Total Bottle</th>
+              <th>Case</th>
+              <th>Loose</th>
 
-        <tfoot>
-          <tr>
-            <td colSpan={5}>Total</td>
-            <td>{totalOpeningBottle}</td>
-            <td>{totalOpeningValue}</td>
-            <td>{totalReciptBottle}</td>
-            <td>{totalReceiptValue}</td>
-            <td>{totalValue}</td>
-            <td>{totalBottle}</td>
-            <td>{totalCase}</td>
-            <td>{totalLoose}</td>
+              <th>Closing bottle</th>
+              <th>Sales Bottle</th>
+              <th>Sales Value</th>
 
-            <td>{totalClosingBottle}</td>
-            <td>{totalSalesBottle}</td>
-            <td>{totalSalesValue}</td>
-            <td>{totalClosingValue}</td>
-          </tr>
-          <tr></tr>
-        </tfoot>
-      </table>
+              <th>Closing value</th>
+              <th>Item type</th>
+            </tr>
+          </thead>
+
+          {formDetails.map((d, i) => (
+            <tbody key={i}>
+              <tr>
+                {/* <td>{i + 1}</td> */}
+                <td>{d.Date}</td>
+                <td>{d.Range}</td>
+                <td>{d.Product}</td>
+                <td>{d.Description}</td>
+                <td>{d.Item_Code}</td>
+                <td>{d.Size}</td>
+                <td>{d.MRP_Value}</td>
+                <td>{d.Opening_bottle}</td>
+                <td>{d.Opening_value}</td>
+                <td>{d.Receipt_bottle}</td>
+                <td>{d.Receipt_value}</td>
+                <td>{d.Total_value}</td>
+                <td>{d.Total_bottle}</td>
+                <td>{d.Case}</td>
+                <td>{d.Loose}</td>
+
+                <td>{d.Closing_bottle}</td>
+                <td>{d.Sales_bottle} </td>
+                <td>{d.Sale_value}</td>
+                <td>{d.Closing_value}</td>
+                <td>{d.Item_type}</td>
+              </tr>
+            </tbody>
+          ))}
+
+          <tfoot>
+            <tr>
+              <td colSpan={7}>Total</td>
+              <td>{totalOpeningBottle}</td>
+              <td>{totalOpeningValue}</td>
+              <td>{totalReciptBottle}</td>
+              <td>{totalReceiptValue}</td>
+              <td>{totalValue}</td>
+              <td>{totalBottle}</td>
+              <td>{totalCase}</td>
+              <td>{totalLoose}</td>
+
+              <td>{totalClosingBottle}</td>
+              <td>{totalSalesBottle}</td>
+              <td>{totalSalesValue}</td>
+              <td>{totalClosingValue}</td>
+            </tr>
+            <tr></tr>
+          </tfoot>
+        </table>
+      </div>
     </>
   );
 }
