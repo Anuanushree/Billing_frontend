@@ -411,7 +411,7 @@ function ExcelDetails({ Base_url }) {
   useEffect(() => {
     const today = new Date();
     // Set end of day to 9:48:04 PM
-    today.setHours(13, 55, 58);
+    today.setHours(23, 59, 58);
     const timeRemaining = today.getTime() - Date.now();
 
     if (timeRemaining > 0) {
