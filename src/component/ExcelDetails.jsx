@@ -408,18 +408,16 @@ function ExcelDetails({ Base_url }) {
       setFormDisable(true);
     }
   };
-
   useEffect(() => {
-    get();
     const today = new Date();
     // Set end of day to 9:48:04 PM
-    today.setHours(24, 59, 58);
+    today.setHours(13, 55, 58);
     const timeRemaining = today.getTime() - Date.now();
 
     if (timeRemaining > 0) {
       const timer = setTimeout(async () => {
         try {
-          await handlesave(); 
+          await handlesave();
           get();
           // Auto-submit the form
         } catch (error) {
@@ -433,6 +431,9 @@ function ExcelDetails({ Base_url }) {
     } else {
       console.log("End of day has already passed.");
     }
+  });
+  useEffect(() => {
+    get();
   }, []);
   useEffect(() => {
     filterData();
