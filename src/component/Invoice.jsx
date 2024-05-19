@@ -70,20 +70,20 @@ function Invoice({ Base_url }) {
         <table className="table table-dark table-bordered border border-primary p-2 m-4">
           <thead>
             <tr>
-              <th>Invoice Date</th>
-              <th>Invoice No</th>
-              <th>IMFL Cases</th>
-              <th>BEER Cases</th>
-              <th>Total Cases</th>
-              <th>1000</th>
-              <th>750</th>
-              <th>375</th>
+              <th rowSpan={2}>Invoice Date</th>
+              <th rowSpan={2}>Invoice No</th>
+              <th rowSpan={2}>IMFL Cases</th>
+              <th rowSpan={2}>BEER Cases</th>
+              <th rowSpan={2}>Total Cases</th>
+              <th colSpan={5}>Beer_sale</th>
+              <th colSpan={5}>IMFS sale</th>
+            </tr>
+          </thead>
+          <thead>
+            <tr>
               <th>180</th>
-              <th>Total Bottles</th>
-              <th>Total Invoice Amount</th>
-              <th>650</th>
-              <th>500</th>
-              <th>Total Amount</th>
+              <th>375</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -94,13 +94,7 @@ function Invoice({ Base_url }) {
                 <td>{data.IMFS_case}</td>
                 <td>{data.Beer_Case}</td>
                 <td>{data.Total_Case}</td>
-                {/* <td>{beerSize}</td> */}
-                {/* <td>{Object.values(data.Beer_size[0])}</td> */}
-                {Object.entries(data.Beer_size).map((key, value) => (
-                  <td>{key === "650" ? value : 0}</td>
-                ))}
-                <td>{data.Beer_size[1]}</td>
-                <td>{data["180"]}</td>
+                <td>{Object.values(data.Beer_size)[0]}</td>
                 <td>{data["Total Bottles"]}</td>
                 <td>{data["Total Invoice Amount"]}</td>
                 <td>{data["650"]}</td>
@@ -204,6 +198,26 @@ function Invoice({ Base_url }) {
           </tfoot>
         </table>
       </div> */}
+      <div className="excel-container">
+        <table className="excel-table">
+          <thead>
+            <tr>
+              <th>Field</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody>
+            {Object.entries(formDetails).map(([key, value]) => (
+              <tr key={key}>
+                <td>{key}</td>
+                <td>
+                  {typeof value === "object" ? JSON.stringify(value) : value}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }
