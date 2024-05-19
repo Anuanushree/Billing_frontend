@@ -400,7 +400,7 @@ function ExcelDetails({ Base_url }) {
       const res = await axios.post(`${Base_url}/user/dailyData`, formdetail);
       console.log(res.data);
       toast.success("Successfully submitted");
-      setformdetail([]);
+      get();
     } catch (error) {
       console.log("Error in submitting the form:", error);
       toast.warning("Something went wrong while submitting the form");
@@ -408,30 +408,43 @@ function ExcelDetails({ Base_url }) {
       setFormDisable(true);
     }
   };
-  useEffect(() => {
-    const today = new Date();
-    // Set end of day to 9:48:04 PM
-    today.setHours(23, 59, 58);
-    const timeRemaining = today.getTime() - Date.now();
 
-    if (timeRemaining > 0) {
-      const timer = setTimeout(async () => {
-        try {
-          await handlesave();
-          get();
-          // Auto-submit the form
-        } catch (error) {
-          console.log("Error in auto-submit:", error);
-          toast.warning("Something went wrong while auto-submitting the form");
-        }
-      }, timeRemaining);
+  // useEffect(() => {
+  //   const today = new Date();
+  //   // Set end of day to 9:48:04 PM
+  //   today.setHours(23, 59, 58);
+  //   const timeRemaining = today.getTime() - Date.now();
 
-      // Clear the timer when the component unmounts
-      return () => clearTimeout(timer);
-    } else {
-      console.log("End of day has already passed.");
-    }
-  });
+  //   if (timeRemaining > 0) {
+  //     const timer = setTimeout(async () => {
+  //       try {
+  //         await handlesave();
+  //         get();
+  //         // Auto-submit the form
+  //       } catch (error) {
+  //         console.log("Error in auto-submit:", error);
+  //         toast.warning("Something went wrong while auto-submitting the form");
+  //       }
+  //     }, timeRemaining);
+
+  //     // Clear the timer when the component unmounts
+  //     return () => clearTimeout(timer);
+  //   } else {
+  //     console.log("End of day has already passed.");
+  //   }
+  // });
+
+  const now = new Date();
+
+  // Calculate the time remaining until midnight (end of the day)
+  const remainingMilliseconds =
+    (24 - now.getHours()) * 60 * 60 * 1000 -
+    (now.getMinutes() * 60 * 1000 +
+      now.getSeconds() * 1000 +
+      now.getMilliseconds());
+
+  // Set the timeout to run the function at the end of the day
+  setTimeout(handlesave, remainingMilliseconds);
   useEffect(() => {
     get();
   }, []);
@@ -596,7 +609,19 @@ function ExcelDetails({ Base_url }) {
                 // .filter(
                 //   (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
                 // )
-                .sort((a, b) => a.Product.localeCompare(b.Product))
+                // .sort((a, b) => a.Product.localeCompare(b.Product))
+                // .sort((d, c) => d.Description.localeCompare(c.Description))
+                .sort((a, b) => {
+                  // First, sort by Product
+                  const productComparison = a.Product.localeCompare(b.Product);
+                  if (productComparison !== 0) {
+                    // If Products are different, return the comparison result
+                    return productComparison;
+                  } else {
+                    // If Products are the same, sort by Description
+                    return a.Description.localeCompare(b.Description);
+                  }
+                })
                 .map((d, i) => (
                   <tr key={i}>
                     {/* <td>{i+1}</td> */}

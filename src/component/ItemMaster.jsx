@@ -252,7 +252,17 @@ function ItemMaster({ Base_url }) {
             </thead>
 
             {formDetails
-              .sort((a, b) => a.Product.localeCompare(b.Product))
+              .sort((a, b) => {
+                // First, sort by Product
+                const productComparison = a.Product.localeCompare(b.Product);
+                if (productComparison !== 0) {
+                  // If Products are different, return the comparison result
+                  return productComparison;
+                } else {
+                  // If Products are the same, sort by Description
+                  return a.Description.localeCompare(b.Description);
+                }
+              })
               .map((d, i) => (
                 <tbody key={i}>
                   <tr>

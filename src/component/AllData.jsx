@@ -153,34 +153,46 @@ function AllData({ Base_url }) {
             </tr>
           </thead>
 
-          {formDetails.map((d, i) => (
-            <tbody key={i}>
-              <tr>
-                {/* <td>{i + 1}</td> */}
-                <td>{d.Date}</td>
-                <td>{d.Range}</td>
-                <td>{d.Product}</td>
-                <td>{d.Description}</td>
-                <td>{d.Item_Code}</td>
-                <td>{d.Size}</td>
-                <td>{d.MRP_Value}</td>
-                <td>{d.Opening_bottle}</td>
-                <td>{d.Opening_value}</td>
-                <td>{d.Receipt_bottle}</td>
-                <td>{d.Receipt_value}</td>
-                <td>{d.Total_value}</td>
-                <td>{d.Total_bottle}</td>
-                <td>{d.Case}</td>
-                <td>{d.Loose}</td>
+          {formDetails
+            .sort((a, b) => {
+              // First, sort by Product
+              const productComparison = a.Product.localeCompare(b.Product);
+              if (productComparison !== 0) {
+                // If Products are different, return the comparison result
+                return productComparison;
+              } else {
+                // If Products are the same, sort by Description
+                return a.Description.localeCompare(b.Description);
+              }
+            })
+            .map((d, i) => (
+              <tbody key={i}>
+                <tr>
+                  {/* <td>{i + 1}</td> */}
+                  <td>{d.Date}</td>
+                  <td>{d.Range}</td>
+                  <td>{d.Product}</td>
+                  <td>{d.Description}</td>
+                  <td>{d.Item_Code}</td>
+                  <td>{d.Size}</td>
+                  <td>{d.MRP_Value}</td>
+                  <td>{d.Opening_bottle}</td>
+                  <td>{d.Opening_value}</td>
+                  <td>{d.Receipt_bottle}</td>
+                  <td>{d.Receipt_value}</td>
+                  <td>{d.Total_value}</td>
+                  <td>{d.Total_bottle}</td>
+                  <td>{d.Case}</td>
+                  <td>{d.Loose}</td>
 
-                <td>{d.Closing_bottle}</td>
-                <td>{d.Sales_bottle} </td>
-                <td>{d.Sale_value}</td>
-                <td>{d.Closing_value}</td>
-                <td>{d.Item_type}</td>
-              </tr>
-            </tbody>
-          ))}
+                  <td>{d.Closing_bottle}</td>
+                  <td>{d.Sales_bottle} </td>
+                  <td>{d.Sale_value}</td>
+                  <td>{d.Closing_value}</td>
+                  <td>{d.Item_type}</td>
+                </tr>
+              </tbody>
+            ))}
 
           <tfoot>
             <tr>

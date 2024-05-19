@@ -27,11 +27,11 @@ function Report({ Base_url }) {
 
       <div>
         <Sample valueType="Opening_bottle" formDetails={formDetails} />
-        <Sample valueType="Closing_bottle" formDetails={formDetails} />
-        <Sample valueType="Opening_value" formDetails={formDetails} />
-        <Sample valueType="Closing_value" formDetails={formDetails} />
         <Sample valueType="Receipt_bottle" formDetails={formDetails} />
-        <Sample valueType="Receipt_value" formDetails={formDetails} />
+        <Sample valueType="Total_bottle" formDetails={formDetails} />
+        <Sample valueType="Sales_bottle" formDetails={formDetails} />
+        <Sample valueType="Closing_bottle" formDetails={formDetails} />
+        {/* <Sample valueType="Receipt_value" formDetails={formDetails} /> */}
       </div>
     </>
   );

@@ -4,7 +4,9 @@
   gap: 20px;
   justify-content: center; /* Center cards horizontally */
 }
-
+.card{
+  display: inline;
+}
 .sub-card {
   flex: 1 1 300px; /* Adjust width as needed */
   border: 1px solid #ccc;
