@@ -353,46 +353,26 @@ function ExcelDetails({ Base_url }) {
 
   // const handlesave = async () => {
   //   try {
-  //     get();
   //     console.log("save button clicked");
-  //     const formdetails = formdetail;
-  //     console.log(formdetails);
-  //     // Make sure to await the axios call and store the response
-  //     const res = await axios.post(`${Base_url}/user/dailyData`, formdetails);
+  //     const res = await axios.post(`${Base_url}/user/dailyData`, formdetail);
   //     console.log(res.data);
-  //     toast.success("successfully submitted");
-  //     setformdetail([]);
-
+  //     toast.success("Successfully submitted");
+  //     get();
   //   } catch (error) {
   //     console.log("Error in submitting the form:", error);
   //     toast.warning("Something went wrong while submitting the form");
   //   } finally {
   //     setFormDisable(true);
   //   }
-  //   //     const today = new Date().toLocaleDateString();
-  //   //     localStorage.setItem("lastSubmissionDate", today);
-  //   //     setIsFormVisible(false);
-  //   //     alert("Form submitted successfully!");
   // };
 
-  // useEffect(() => {
-  //   get();
-  //   const today = new Date();
-  //   // Set end of day to 23:59:58
-  //   today.setHours(21, 48, 4);
-  //   const timeRemaining = today.getTime() - Date.now();
-  //   // Ensure timeRemaining is positive
-  //   if (timeRemaining > 0) {
-  //     const timer = setTimeout(() => {
-  //       handlesave(); // Auto-submit the form
-  //     }, timeRemaining);
-  //     // Clear the timer when the component unmounts
-  //     return () => clearTimeout(timer);
-  //   }
-  //   get();
-  //   // If timeRemaining is negative, the end of day has already passed, handle accordingly
-  //   return () => {};
-  // }, []);
+  // const now = new Date();
+  // const remainingMilliseconds =
+  //   (24 - now.getHours()) * 60 * 60 * 1000 -
+  //   (now.getMinutes() * 60 * 1000 +
+  //     now.getSeconds() * 1000 +
+  //     now.getMilliseconds());
+  // setTimeout(handlesave, remainingMilliseconds);
 
   const handlesave = async () => {
     try {
@@ -409,42 +389,23 @@ function ExcelDetails({ Base_url }) {
     }
   };
 
-  // useEffect(() => {
-  //   const today = new Date();
-  //   // Set end of day to 9:48:04 PM
-  //   today.setHours(23, 59, 58);
-  //   const timeRemaining = today.getTime() - Date.now();
+  const scheduleSaveAtEndOfDay = () => {
+    const now = new Date();
+    const remainingMilliseconds =
+      (24 - now.getHours()) * 60 * 60 * 1000 -
+      (now.getMinutes() * 60 * 1000 +
+        now.getSeconds() * 1000 +
+        now.getMilliseconds());
 
-  //   if (timeRemaining > 0) {
-  //     const timer = setTimeout(async () => {
-  //       try {
-  //         await handlesave();
-  //         get();
-  //         // Auto-submit the form
-  //       } catch (error) {
-  //         console.log("Error in auto-submit:", error);
-  //         toast.warning("Something went wrong while auto-submitting the form");
-  //       }
-  //     }, timeRemaining);
+    // Set the timeout to run the function at the end of the day
+    setTimeout(() => {
+      handlesave(); // Execute the function
+      scheduleSaveAtEndOfDay(); // Reschedule for the next day
+    }, remainingMilliseconds);
+  };
 
-  //     // Clear the timer when the component unmounts
-  //     return () => clearTimeout(timer);
-  //   } else {
-  //     console.log("End of day has already passed.");
-  //   }
-  // });
+  scheduleSaveAtEndOfDay(); // Start the scheduling
 
-  const now = new Date();
-
-  // Calculate the time remaining until midnight (end of the day)
-  const remainingMilliseconds =
-    (24 - now.getHours()) * 60 * 60 * 1000 -
-    (now.getMinutes() * 60 * 1000 +
-      now.getSeconds() * 1000 +
-      now.getMilliseconds());
-
-  // Set the timeout to run the function at the end of the day
-  setTimeout(handlesave, remainingMilliseconds);
   useEffect(() => {
     get();
   }, []);
