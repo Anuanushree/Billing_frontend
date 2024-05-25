@@ -392,19 +392,39 @@ function ExcelDetails({ Base_url }) {
   const scheduleSaveAtEndOfDay = () => {
     const now = new Date();
     const remainingMilliseconds =
-      (24 - now.getHours()) * 60 * 60 * 1000 -
+      (14 - now.getHours()) * 60 * 60 * 1000 -
       (now.getMinutes() * 60 * 1000 +
-        now.getSeconds() * 1000 +
+        now.getSeconds() * 2000 +
         now.getMilliseconds());
+    console.log(remainingMilliseconds);
 
-    // Set the timeout to run the function at the end of the day
     setTimeout(() => {
-      handlesave(); // Execute the function
+      // handlesave(); // Execute the function
+      console.log("oi");
       scheduleSaveAtEndOfDay(); // Reschedule for the next day
     }, remainingMilliseconds);
   };
 
-  scheduleSaveAtEndOfDay(); // Start the scheduling
+  // scheduleSaveAtEndOfDay(); // Start the scheduling
+  (function runOnce() {
+    const scheduleSaveAtEndOfDay = () => {
+      const now = new Date();
+      const remainingMilliseconds =
+        (25 - now.getHours()) * 60 * 60 * 1000 -
+        (now.getMinutes() * 60 * 1000 +
+          now.getSeconds() * 1000 +
+          now.getMilliseconds());
+      console.log(remainingMilliseconds);
+
+      setTimeout(() => {
+        handlesave(); // Execute the function
+        console.log("oi");
+        scheduleSaveAtEndOfDay(); // Reschedule for the next day
+      }, remainingMilliseconds + 1000);
+    };
+
+    scheduleSaveAtEndOfDay();
+  })();
 
   useEffect(() => {
     get();

@@ -19,6 +19,25 @@ function DailySalesReport({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
+  useEffect(() => {
+    const dateObj = new Date();
+
+    const year = dateObj.getFullYear();
+    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+    const day = dateObj.getDate().toString().padStart(2, "0");
+
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log(formattedDate);
+    const fil = formDetails.filter(
+      (d) => d.Date.substring(0, 10) == formattedDate
+    );
+    console.log(fil);
+    const totalClosingValue = fil.reduce((total, item) => {
+      return total + item.Closing_value;
+    }, 0);
+    console.log(totalClosingValue);
+    setVal(totalClosingValue);
+  }, []);
 
   useEffect(() => {
     const get = async () => {
@@ -69,6 +88,7 @@ function DailySalesReport({ Base_url }) {
       return total + parseInt(item.Paytm);
     }, 0);
   }, [data]);
+  console.log(val);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {

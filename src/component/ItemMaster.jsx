@@ -223,10 +223,10 @@ function ItemMaster({ Base_url }) {
                   <button onClick={handleInvoice}>Add invoice</button>
                 </th>
 
-                {invoicedata &&
+                {/* {invoicedata &&
                   invoicedata.map((d) => (
                     <th colSpan={3}>Invoice Number :{d.Invoice}</th>
-                  ))}
+                  ))} */}
               </tr>
             </thead>
             <thead className="table-secondary border-danger">
