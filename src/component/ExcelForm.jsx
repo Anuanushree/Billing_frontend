@@ -65,13 +65,13 @@ function ExcelForm({ Base_url }) {
         Loose: 0,
         Receipt_bottle: data.Receipt_bottle,
       };
-
+      console.log(formData);
       const response = await axios.post(`${Base_url}/user/create`, {
         formData,
-        headers,
       });
+      console.log(response.data);
       toast.success("successfully added data in item master");
-      setData(initialState);
+      // setData(initialState);
     } catch (error) {
       console.log("Error in excelForm : ", error);
       toast.warning("Something wrong when added data");

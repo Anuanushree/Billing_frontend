@@ -231,7 +231,7 @@ function ItemMaster({ Base_url }) {
             </thead>
             <thead className="table-secondary border-danger">
               <tr>
-                <th>Date</th>
+                {/* <th>Date/</th> */}
                 {/* <th>S.No</th> */}
                 <th>Range</th>
                 <th>Product</th>
@@ -266,7 +266,7 @@ function ItemMaster({ Base_url }) {
               .map((d, i) => (
                 <tbody key={i}>
                   <tr>
-                    <td>{d.Date}</td>
+                    {/* <td>{d.Date}</td> */}
                     {/* <td>{i + 1}</td> */}
                     <td>{d.Range}</td>
                     <td>{d.Product}</td>

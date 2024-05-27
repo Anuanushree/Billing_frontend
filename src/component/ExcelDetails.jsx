@@ -683,14 +683,14 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalSalesValue > 0 ? totalSalesValue : 0}</td>
                 <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
-              {/* <tr>
+              <tr>
                 <td colSpan={14}>
                   {" "}
                   <button className="custom-button" onClick={handlesave}>
                     Submit
                   </button>
                 </td>
-              </tr> */}
+              </tr>
             </tfoot>
           </table>
         </div>
