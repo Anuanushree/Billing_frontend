@@ -43,7 +43,7 @@ function AllData({ Base_url }) {
 
   const handleSearch = async () => {
     console.log(date);
-    const filt = data.filter((d) => d.updatedAt.substring(0, 10) == date);
+    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
     setFormDetails(filt);
     console.log(filt);
   };

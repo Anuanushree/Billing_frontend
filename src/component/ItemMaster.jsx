@@ -50,8 +50,9 @@ function ItemMaster({ Base_url }) {
   }, [findItem, array]);
 
   const get = async () => {
-    const response = await axios.get(`${Base_url}/user/getdata`, headers);
-    // console.log(response.data);
+    const response = await axios.get(`${Base_url}/user/getData`);
+    // const response = await axios.get(`${Base_url}/user/getdata`);
+    console.log(response.data, "lkjhgx");
     setFormDetails(response.data);
     setDummy(response.data);
   };
