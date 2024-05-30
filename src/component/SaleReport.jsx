@@ -37,7 +37,7 @@ function DailySalesReport({ Base_url }) {
     }, 0);
     console.log(totalClosingValue);
     setVal(totalClosingValue);
-  }, []);
+  });
 
   useEffect(() => {
     const get = async () => {
@@ -131,7 +131,7 @@ function DailySalesReport({ Base_url }) {
       <Dashboard />
       <ToastContainer />
       <div className="container-fluid form-container">
-        <div class="form-group">
+        {/* <div class="form-group">
           <label>Date : </label>
           <span>
             &nbsp;&nbsp;
@@ -142,7 +142,7 @@ function DailySalesReport({ Base_url }) {
             />
           </span>
           <button onClick={handleSearch}>search</button>
-        </div>
+        </div> */}
         <form onSubmit={handleSubmit}>
           <div class="form-group">
             <label>Sale : </label>&nbsp;&nbsp;
@@ -207,11 +207,11 @@ function DailySalesReport({ Base_url }) {
           <thead>
             <tr>
               <th>Date</th>
-              <th>Sale</th>
-              <th>Pos</th>
-              <th>Cash</th>
-              <th>Bank</th>
-              <th>Paytm</th>
+              <th>Sale Details</th>
+              <th>Cash Collection Amount</th>
+              <th>Swiping Card Amount</th>
+              <th>Paytm Amount</th>
+              <th>Bank Deposite amount</th>
             </tr>
           </thead>
           <tbody>
@@ -219,10 +219,10 @@ function DailySalesReport({ Base_url }) {
               <tr key={i}>
                 <td>{d.Date}</td>
                 <td>{d.Sale}</td>
-                <td>{d.Pos}</td>
                 <td>{d.Cash}</td>
-                <td>{d.Bank}</td>
+                <td>{d.Pos}</td>
                 <td>{d.Paytm}</td>
+                <td>{d.Bank}</td>
               </tr>
             ))}
             <tr></tr>

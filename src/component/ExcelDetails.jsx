@@ -389,43 +389,14 @@ function ExcelDetails({ Base_url }) {
     }
   };
 
-  const scheduleSaveAtEndOfDay = () => {
-    const now = new Date();
-    const remainingMilliseconds =
-      (14 - now.getHours()) * 60 * 60 * 1000 -
-      (now.getMinutes() * 60 * 1000 +
-        now.getSeconds() * 2000 +
-        now.getMilliseconds());
-    console.log(remainingMilliseconds);
-
-    setTimeout(() => {
-      // handlesave(); // Execute the function
-      console.log("oi");
-      scheduleSaveAtEndOfDay(); // Reschedule for the next day
-    }, remainingMilliseconds);
-  };
-
-  // scheduleSaveAtEndOfDay(); // Start the scheduling
-  (function runOnce() {
-    const scheduleSaveAtEndOfDay = () => {
-      const now = new Date();
-      const remainingMilliseconds =
-        (25 - now.getHours()) * 60 * 60 * 1000 -
-        (now.getMinutes() * 60 * 1000 +
-          now.getSeconds() * 1000 +
-          now.getMilliseconds());
-      console.log(remainingMilliseconds);
-
-      setTimeout(() => {
-        handlesave(); // Execute the function
-        console.log("oi");
-        scheduleSaveAtEndOfDay(); // Reschedule for the next day
-      }, remainingMilliseconds + 1000);
-    };
-
-    scheduleSaveAtEndOfDay();
-  })();
-
+  // Calculate the time until 24.59.59 from the current time
+  const now = new Date();
+  const targetTime = new Date(now);
+  targetTime.setHours(25, 59, 55, 0);
+  const timeUntilTarget = targetTime.getTime() - now.getTime();
+  console.log(timeUntilTarget, "pppppp");
+  // Set a timeout to execute the function at the specified time
+  setTimeout(handlesave, timeUntilTarget);
   useEffect(() => {
     get();
   }, []);
@@ -684,12 +655,12 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
               <tr>
-                <td colSpan={14}>
+                {/* <td colSpan={14}>
                   {" "}
                   <button className="custom-button" onClick={handlesave}>
                     Submit
                   </button>
-                </td>
+                </td> */}
               </tr>
             </tfoot>
           </table>
