@@ -3,6 +3,7 @@ import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as XLSX from "xlsx";
 
 function DailySalesReport({ Base_url }) {
   const [Pos, setPos] = useState();
@@ -11,6 +12,7 @@ function DailySalesReport({ Base_url }) {
   const [Bank, setBank] = useState();
   const [paytm, setPaytm] = useState();
   const [date, setDate] = useState(new Date());
+  const [dates, setDates] = useState(new Date().toISOString().split("T")[0]);
   const [formDetails, setFormDetails] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -47,6 +49,7 @@ function DailySalesReport({ Base_url }) {
         headers
       );
       // console.log(response.data);
+
       setFormDetails(response.data);
     };
     get();
@@ -55,7 +58,10 @@ function DailySalesReport({ Base_url }) {
     const getData = async () => {
       const response = await axios.get(`${Base_url}/user/bank`, headers);
       console.log(response.data);
-      setData(response.data);
+      const filt = response.data.filter(
+        (d) => d.Date.substring(0, 10) == dates
+      );
+      setData(filt);
     };
     getData();
   }, []);
@@ -144,6 +150,62 @@ function DailySalesReport({ Base_url }) {
     console.log(totalClosingValue);
     setVal(totalClosingValue);
   };
+  // const exportToExcel = () => {
+  //   const workbook = XLSX.utils.book_new();
+  //   const worksheet = XLSX.utils.json_to_sheet(data);
+
+  //   // Append the worksheet to the workbook
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Data");
+
+  //   // Export the workbook to Excel file format
+  //   XLSX.writeFile(workbook, "sales_data.xlsx");
+  // };
+  const exportToExcel = () => {
+    const cleanedData = data.map(({ _id, __v, ...rest }) => ({
+      ...rest,
+      Total:
+        rest["Cash Collection Amount"] +
+        rest["Swiping Card Amount"] +
+        rest["Paytm Amount"] +
+        rest["Bank Deposite amount"],
+    }));
+
+    const headers = [
+      "Date",
+      "Sale Details",
+      "Cash Collection Amount",
+      "Swiping Card Amount",
+      "Paytm Amount",
+      "Bank Deposite amount",
+    ];
+    const sheetData = [
+      headers,
+      ...cleanedData.map((obj) => Object.values(obj)),
+    ];
+
+    // Add total row
+    const totalRow = [
+      "Total",
+      "",
+      ...headers.slice(2).reduce((acc, curr, index) => {
+        if (index === 0)
+          acc.push(cleanedData.reduce((total, obj) => total + obj[curr], 0));
+        else acc.push("");
+        return acc;
+      }, []),
+    ];
+    sheetData.push(totalRow);
+
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Data");
+
+    // Export the workbook to Excel file format
+    XLSX.writeFile(workbook, "sales_data.xlsx");
+  };
 
   return (
     <>
@@ -184,6 +246,7 @@ function DailySalesReport({ Base_url }) {
           </span>
         </div>
         <button onClick={handleSeacrhDate}>Search</button>
+        <button onClick={exportToExcel}>Export to Excel</button>
         <form onSubmit={handleSubmit}>
           <div class="form-group">
             <label>Sale : </label>&nbsp;&nbsp;

@@ -7,42 +7,72 @@ import { toast } from "react-toastify";
 function Data2({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [data, setData] = useState([]);
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [search, setSearch] = useState(true);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   // const [data, setData] = useState([]);
-
   function exportToExcel(data) {
-    const cleanedData = data.map((item) => {
-      const { _id, __v, updatedAt, ...rest } = item;
-      return rest;
-    });
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(cleanedData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    const productWiseSaleValue = calculateProductWiseSaleValue(data);
+    const total = Object.values(productWiseSaleValue).reduce(
+      (acc, value) => acc + value,
+      0
+    );
 
+    const workbook = XLSX.utils.book_new();
+    const sheetData = [
+      ["#", "Product", "Total Sales Value"],
+      ...Object.entries(productWiseSaleValue).map(([product, value], index) => [
+        index + 1,
+        product,
+        value,
+      ]),
+      ["Total", "", total],
+    ];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, "export.xlsx");
   }
 
+  function calculateProductWiseSaleValue(data) {
+    const productWiseSaleValue = {};
+
+    data.forEach((item) => {
+      const { Product, Sale_value } = item;
+      if (Product && Sale_value) {
+        productWiseSaleValue[Product] =
+          (productWiseSaleValue[Product] || 0) + Sale_value;
+      }
+    });
+
+    return productWiseSaleValue;
+  }
+
   const handleClick = () => {
-    exportToExcel(data);
+    exportToExcel(formDetails);
   };
 
   const token = localStorage.getItem("token");
   const headers = {
     headers: { authorization: `${token}` },
   };
-
+  const handleSearch = async () => {
+    console.log(date);
+    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
+    setFormDetails(filt);
+    console.log(formDetails);
+  };
   useEffect(() => {
     const get = async () => {
       const response = await axios.get(
-        `${Base_url}/user/getdailyDateSearch`,
+        `${Base_url}/user/getdailyData`,
         headers
       );
-      // console.log(response.data);
-      setFormDetails(response.data);
+      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
+      setFormDetails(filt);
       setData(response.data);
+      // Move handleSearch here
     };
     get();
   }, []);
@@ -98,16 +128,7 @@ function Data2({ Base_url }) {
     }
   }, 0);
   console.log(totalSale_value);
-  const handleSearch = async () => {
-    console.log(date);
-    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
-    setFormDetails(filt);
-    console.log(formDetails);
-  };
-  const handleAllDate = () => {
-    setFormDetails(data);
-    setDate(Date.now());
-  };
+
   return (
     <>
       <Dashboard />
@@ -143,11 +164,12 @@ function Data2({ Base_url }) {
             <td>
               {" "}
               <button onClick={handleSeacrhDate}>Search</button>
+              <button onClick={handleClick}>Export to Excel</button>
             </td>
           </tr>
         </thead>
 
-        <thead>
+        {/* <thead>
           <tr>
             <th>
               <button onClick={handleAllDate}>All data</button>
@@ -162,9 +184,7 @@ function Data2({ Base_url }) {
               <button onClick={handleSearch}>Search</button>
             </th>
 
-            <th>
-              <button onClick={handleClick}>Export to Excel</button>
-            </th>
+            <th></th>
           </tr>
           <tr>
             <th>S.no</th>
@@ -172,7 +192,7 @@ function Data2({ Base_url }) {
             <th>Product</th>
             <th>Sale Value</th>
           </tr>
-        </thead>
+        </thead> */}
         {Object.entries(productWiseSale_value).map((d, i) => (
           <tbody key={i}>
             <tr>

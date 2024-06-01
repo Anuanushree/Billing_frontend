@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 function AllData({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
-  const [date, setDate] = useState();
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [search, setSearch] = useState(true);
   const [data, setData] = useState([]);
 
@@ -33,8 +33,8 @@ function AllData({ Base_url }) {
         `${Base_url}/user/getdailyData`,
         headers
       );
-      // console.log(response.data);
-      setFormDetails(response.data);
+      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
+      setFormDetails(filt);
       setData(response.data);
       console.log(formDetails);
     };
