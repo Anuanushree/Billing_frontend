@@ -55,38 +55,38 @@ function Data2({ Base_url }) {
   // }, {});
   // console.log(productWiseSales);
 
-  const calculateProductWiseClosingSale = () => {
-    const productWiseClosingSale = {};
+  const calculateProductWiseSale_value = () => {
+    const productWiseSale_value = {};
 
     // Iterate over formDetails array
     formDetails.forEach((item) => {
-      const { Product, Closing_value } = item;
-      if (Product && Closing_value) {
+      const { Product, Sale_value } = item;
+      if (Product && Sale_value) {
         // Check if the product already exists in the productWiseClosingSale object
-        if (productWiseClosingSale[Product]) {
-          productWiseClosingSale[Product] += Closing_value;
+        if (productWiseSale_value[Product]) {
+          productWiseSale_value[Product] += Sale_value;
         } else {
-          productWiseClosingSale[Product] = Closing_value;
+          productWiseSale_value[Product] = Sale_value;
         }
       }
     });
 
-    return productWiseClosingSale;
+    return productWiseSale_value;
   };
 
-  const productWiseClosingSale = calculateProductWiseClosingSale();
-  console.log(productWiseClosingSale);
-  const totalClosingValue = formDetails.reduce((total, item) => {
+  const productWiseSale_value = calculateProductWiseSale_value();
+  console.log(productWiseSale_value);
+  const totalSale_value = formDetails.reduce((total, item) => {
     // Check if Closing_value is a valid number
-    const closingValue = parseFloat(item.Closing_value);
-    if (!isNaN(closingValue)) {
-      return total + closingValue;
+    const Salevalue = parseFloat(item.Sale_value);
+    if (!isNaN(Salevalue)) {
+      return total + Salevalue;
     } else {
       // If Closing_value is not a valid number, return the current total
       return total;
     }
   }, 0);
-  console.log(totalClosingValue);
+  console.log(totalSale_value);
   const handleSearch = async () => {
     console.log(date);
     const filt = data.filter((d) => d.Date.substring(0, 10) == date);
@@ -127,7 +127,7 @@ function Data2({ Base_url }) {
             <th>Sale Value</th>
           </tr>
         </thead>
-        {Object.entries(productWiseClosingSale).map((d, i) => (
+        {Object.entries(productWiseSale_value).map((d, i) => (
           <tbody key={i}>
             <tr>
               <td>{i + 1}</td>
@@ -141,7 +141,7 @@ function Data2({ Base_url }) {
         <tfoot>
           <tr>
             <td colSpan={2}>Total</td>
-            <td>{totalClosingValue}</td>
+            <td>{totalSale_value}</td>
           </tr>
         </tfoot>
       </table>
