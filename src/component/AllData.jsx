@@ -170,7 +170,7 @@ function AllData({ Base_url }) {
               <tbody key={i}>
                 <tr>
                   {/* <td>{i + 1}</td> */}
-                  <td>{d.Date}</td>
+                  <td>{new Date(d.Date).toLocaleDateString("en-GB")}</td>
                   <td>{d.Range}</td>
                   <td>{d.Product}</td>
                   <td>{d.Description}</td>

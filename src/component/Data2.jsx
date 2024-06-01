@@ -65,16 +65,6 @@ function Data2({ Base_url }) {
     };
     getData();
   };
-  // console.log(formDetails);
-  // const productWiseSales = formDetails.reduce((acc, item) => {
-  //   const { Product, Closing_value } = item;
-  //   if (!acc[Product]) {
-  //     acc[Product] = 0;
-  //   }
-  //   acc[Product] += Closing_value;
-  //   return acc;
-  // }, {});
-  // console.log(productWiseSales);
 
   const calculateProductWiseSale_value = () => {
     const productWiseSale_value = {};
