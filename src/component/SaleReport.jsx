@@ -12,7 +12,8 @@ function DailySalesReport({ Base_url }) {
   const [paytm, setPaytm] = useState();
   const [date, setDate] = useState(new Date());
   const [formDetails, setFormDetails] = useState([]);
-
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const [val, setVal] = useState([]);
 
   const token = localStorage.getItem("token");
@@ -113,6 +114,24 @@ function DailySalesReport({ Base_url }) {
     }
   };
 
+  const handleSeacrhDate = async () => {
+    const getData = async () => {
+      let response;
+      if (fromDate && toDate) {
+        const dateSearch = {
+          fromDate,
+          toDate,
+        };
+        response = await axios.post(`${Base_url}/user/getReportSearch`, {
+          dateSearch,
+        });
+        console.log(response.data, "resposme");
+      }
+      setData(response.data);
+    };
+    getData();
+  };
+
   const handleSearch = async () => {
     console.log("search");
     console.log(date);
@@ -143,6 +162,28 @@ function DailySalesReport({ Base_url }) {
           </span>
           <button onClick={handleSearch}>search</button>
         </div> */}
+        <div className="form-group">
+          <label>From Date:</label>
+          <input
+            type="date"
+            value={fromDate}
+            onChange={(e) => setFromDate(e.target.value)}
+            className="form-control"
+          />
+        </div>
+        <div className="form-group">
+          <span>
+            <label>To Date:</label>
+
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="form-control"
+            />
+          </span>
+        </div>
+        <button onClick={handleSeacrhDate}>Search</button>
         <form onSubmit={handleSubmit}>
           <div class="form-group">
             <label>Sale : </label>&nbsp;&nbsp;
@@ -231,10 +272,11 @@ function DailySalesReport({ Base_url }) {
             <tr>
               <td colSpan={1}>Total</td>
               <td>{totalsale}</td>
-              <td>{totalPos}</td>
               <td>{totalcash}</td>
-              <td>{totalbank}</td>
+              <td>{totalPos}</td>
+
               <td>{totalpaytm}</td>
+              <td>{totalbank}</td>
             </tr>
           </tfoot>
         </table>

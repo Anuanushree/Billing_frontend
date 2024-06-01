@@ -9,6 +9,8 @@ function Data2({ Base_url }) {
   const [data, setData] = useState([]);
   const [date, setDate] = useState();
   const [search, setSearch] = useState(true);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   // const [data, setData] = useState([]);
 
   function exportToExcel(data) {
@@ -35,7 +37,7 @@ function Data2({ Base_url }) {
   useEffect(() => {
     const get = async () => {
       const response = await axios.get(
-        `${Base_url}/user/getdailyData`,
+        `${Base_url}/user/getdailyDateSearch`,
         headers
       );
       // console.log(response.data);
@@ -44,6 +46,25 @@ function Data2({ Base_url }) {
     };
     get();
   }, []);
+
+  const handleSeacrhDate = async () => {
+    const getData = async () => {
+      let response;
+      if (fromDate && toDate) {
+        const dateSearch = {
+          fromDate,
+          toDate,
+        };
+        response = await axios.post(`${Base_url}/user/getdailyDateSearch`, {
+          dateSearch,
+        });
+        console.log(response.data, "resposme");
+      }
+      setFormDetails(response.data);
+      setData(response.data);
+    };
+    getData();
+  };
   // console.log(formDetails);
   // const productWiseSales = formDetails.reduce((acc, item) => {
   //   const { Product, Closing_value } = item;
@@ -100,7 +121,42 @@ function Data2({ Base_url }) {
   return (
     <>
       <Dashboard />
+
       <table className="table table-dark table-bordered border border-primary p-2 m-4">
+        <thead>
+          <tr>
+            <td>
+              <div className="form-group">
+                <label>From Date:</label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </td>
+            <td>
+              <div className="form-group">
+                <span>
+                  <label>To Date:</label>
+
+                  <input
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                    className="form-control"
+                  />
+                </span>
+              </div>
+            </td>
+            <td>
+              {" "}
+              <button onClick={handleSeacrhDate}>Search</button>
+            </td>
+          </tr>
+        </thead>
+
         <thead>
           <tr>
             <th>
