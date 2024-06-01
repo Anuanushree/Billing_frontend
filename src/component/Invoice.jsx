@@ -95,65 +95,78 @@ function Invoice({ Base_url }) {
         </div>
       ))} */}
       <div>
-        {formDetails.map((form, i) => (
-          <div key={i} className="table-container">
-            <table
-              key={i}
-              className="table table-dark table-bordered border border-primary p-2 m-4"
-            >
-              <thead>
-                <tr>
-                  <th rowSpan={2}>Invoice Date</th>
-                  <th rowSpan={2}>Invoice No</th>
-                  <th rowSpan={2}>IMFL Cases</th>
-                  <th rowSpan={2}>BEER Cases</th>
-                  <th rowSpan={2}>Total Cases</th>
-                  <th colSpan={Object.keys(form.Beer_size).length + 2}>
-                    Beer Sale
-                  </th>
-                  <th colSpan={Object.keys(form.IMFS_sie).length + 2}>
-                    IMFS Sale
-                  </th>
-                  <th rowSpan={2}>Total bottle</th>
-                  <th rowSpan={2}>Total Amount</th>
-                </tr>
-                <tr>
-                  {Object.keys(form.Beer_size).map((size, index) => (
-                    <th key={index}>{size}</th>
-                  ))}
-                  <th>Total</th>
-                  <th>Amount</th>
-                  {Object.keys(form.IMFS_sie).map((size, index) => (
-                    <th key={index}>{size}</th>
-                  ))}
-                  <th>Total</th>
-                  <th>Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>{form.Date}</td>
-                  <td>{form.Invoice}</td>
-                  <td>{form.IMFS_case}</td>
-                  <td>{form.Beer_Case}</td>
-                  <td>{form.Total_Case}</td>
-                  {Object.values(form.Beer_size).map((size, index) => (
-                    <td key={index}>{size}</td>
-                  ))}
-                  <td>{form.Beer_total_bottle}</td>
-                  <td>{form.Beer_total_value}</td>
-                  {Object.values(form.IMFS_sie).map((size, index) => (
-                    <td key={index}>{size}</td>
-                  ))}
-                  <td>{form.IMFS_total_bottle}</td>
-                  <td>{form.IMFS_total_value}</td>
-                  <td>{form.Total_Bottle}</td>
-                  <td>{form.Total_amount}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        ))}
+        {formDetails.length > 0 &&
+          formDetails.map((form, i) => (
+            <div key={i} className="table-container">
+              <table
+                key={i}
+                className="table table-dark table-bordered border border-primary p-2 m-4"
+              >
+                <thead>
+                  <tr>
+                    <th rowSpan={2}>Invoice Date</th>
+                    <th rowSpan={2}>Invoice No</th>
+                    <th rowSpan={2}>IMFL Cases</th>
+                    <th rowSpan={2}>BEER Cases</th>
+                    <th rowSpan={2}>Total Cases</th>
+                    <th
+                      colSpan={
+                        form.Beer_size && Object.keys(form.Beer_size).length + 2
+                      }
+                    >
+                      Beer Sale
+                    </th>
+                    <th
+                      colSpan={
+                        form.IMFS_sie && Object.keys(form.IMFS_sie).length + 2
+                      }
+                    >
+                      IMFS Sale
+                    </th>
+                    <th rowSpan={2}>Total bottle</th>
+                    <th rowSpan={2}>Total Amount</th>
+                  </tr>
+                  <tr>
+                    {form.Beer_size &&
+                      Object.keys(form.Beer_size).map((size, index) => (
+                        <th key={index}>{size}</th>
+                      ))}
+                    <th>Total</th>
+                    <th>Amount</th>
+                    {form.IMFS_sie &&
+                      Object.keys(form.IMFS_sie).map((size, index) => (
+                        <th key={index}>{size}</th>
+                      ))}
+                    <th>Total</th>
+                    <th>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{form.Date}</td>
+                    <td>{form.Invoice}</td>
+                    <td>{form.IMFS_case}</td>
+                    <td>{form.Beer_Case}</td>
+                    <td>{form.Total_Case}</td>
+                    {form.Beer_size &&
+                      Object.values(form.Beer_size).map((size, index) => (
+                        <td key={index}>{size}</td>
+                      ))}
+                    <td>{form.Beer_total_bottle}</td>
+                    <td>{form.Beer_total_value}</td>
+                    {form.IMFS_sie &&
+                      Object.values(form.IMFS_sie).map((size, index) => (
+                        <td key={index}>{size}</td>
+                      ))}
+                    <td>{form.IMFS_total_bottle}</td>
+                    <td>{form.IMFS_total_value}</td>
+                    <td>{form.Total_Bottle}</td>
+                    <td>{form.Total_amount}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ))}
       </div>
     </>
   );
