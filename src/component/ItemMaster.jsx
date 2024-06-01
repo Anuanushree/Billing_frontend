@@ -382,7 +382,7 @@ function ItemMaster({ Base_url }) {
 
             <tfoot>
               <tr>
-                <td colSpan={8}>Total</td>
+                <td colSpan={7}>Total</td>
                 <td>{openingBottle > 0 ? openingBottle : 0}</td>
                 <td>{OpeningValue > 0 ? OpeningValue : 0}</td>
                 <td>{receiptBottle > 0 ? receiptBottle : 0}</td>

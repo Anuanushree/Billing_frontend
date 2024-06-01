@@ -12,7 +12,7 @@ function DailySalesReport({ Base_url }) {
   const [Bank, setBank] = useState();
   const [paytm, setPaytm] = useState();
   const [date, setDate] = useState(new Date());
-  const [dates, setDates] = useState(new Date().toISOString().split("T")[0]);
+  const [dates, setDates] = useState();
   const [formDetails, setFormDetails] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
@@ -58,9 +58,15 @@ function DailySalesReport({ Base_url }) {
     const getData = async () => {
       const response = await axios.get(`${Base_url}/user/bank`, headers);
       console.log(response.data);
-      const filt = response.data.filter(
-        (d) => d.Date.substring(0, 10) == dates
-      );
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const currentMonth = currentDate.getMonth() + 1; // Month is zero-based, so we add 1
+      const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
+      const lastDayOfMonth = new Date(currentYear, currentMonth, 0);
+      const filt = response.data.filter((d) => {
+        const date = new Date(d.Date);
+        return date >= firstDayOfMonth && date <= lastDayOfMonth;
+      });
       setData(filt);
     };
     getData();

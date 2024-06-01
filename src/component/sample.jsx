@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./sample.css";
 
-
 function Sample({ Base_url, formDetails, valueType }) {
   const [data, setData] = useState([]);
   const val = data;
@@ -36,10 +35,9 @@ function Sample({ Base_url, formDetails, valueType }) {
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
   const itemTypes = [...new Set(formDetails.map((item) => item.Item_type))];
 
-  
   return (
     <>
-      <div className="card-container card">
+      <div className="card-container ">
         <div className="sub-card">
           <h3>{valueType}</h3>
           <table border="1">

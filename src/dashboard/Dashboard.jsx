@@ -80,7 +80,7 @@ function Dashboard() {
           <li className="nav-item ">
             <Link className="nav-link" to="/data">
               <i class="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
-              <span>Daily Updates</span>
+              <span>Daily Statement</span>
             </Link>
           </li>
           <li className="nav-item ">
