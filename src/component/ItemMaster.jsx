@@ -246,7 +246,7 @@ function ItemMaster({ Base_url }) {
                 <th>Receipt Bottle</th>
                 <th></th>
                 <th>Receipt value</th>
-                <th>Total value</th>
+                <th>Sales value</th>
                 <th>Total Bottle</th>
                 <th>invoice number </th>
               </tr>

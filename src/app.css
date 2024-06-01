@@ -308,6 +308,14 @@ body {
   text-align: left;
   border: 1px solid #dddddd;
 }
+@media only screen and (max-width: 768px) {
+  .table-container thead.sticky-heading th {
+    position: sticky;
+    top: 0;
+    background-color: #fff; /* Adjust as per your design */
+    z-index: 999; /* Ensure it stays above other content */
+  }
+}
 
 /* Additional styling as needed */
 
