@@ -33,7 +33,7 @@ function DailySalesReport({ Base_url }) {
     );
     console.log(fil);
     const totalClosingValue = fil.reduce((total, item) => {
-      return total + item.Closing_value;
+      return total + item.Sale_value;
     }, 0);
     console.log(totalClosingValue);
     setVal(totalClosingValue);
@@ -217,7 +217,7 @@ function DailySalesReport({ Base_url }) {
           <tbody>
             {data.map((d, i) => (
               <tr key={i}>
-                <td>{d.Date}</td>
+                <td>{new Date(d.Date).toLocaleDateString("en-GB")}</td>
                 <td>{d.Sale}</td>
                 <td>{d.Cash}</td>
                 <td>{d.Pos}</td>
