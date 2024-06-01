@@ -315,6 +315,14 @@ body {
     background-color: #fff; /* Adjust as per your design */
     z-index: 1; /* Ensure it stays above other content */
   }
+  .table-container table {
+    table-layout: fixed;
+    width: auto;
+    border-collapse: collapse;
+  }
+  .table-container {
+    max-height: 650px;
+  }
 }
 
 /* Additional styling as needed */
