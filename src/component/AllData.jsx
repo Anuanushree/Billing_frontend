@@ -154,6 +154,7 @@ function AllData({ Base_url }) {
           </thead>
 
           {formDetails
+            .sort((a, b) => new Date(a.Date) - new Date(b.Date))
             .sort((a, b) => {
               // First, sort by Product
               const productComparison = a.Product.localeCompare(b.Product);

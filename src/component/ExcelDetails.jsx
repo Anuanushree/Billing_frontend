@@ -366,14 +366,6 @@ function ExcelDetails({ Base_url }) {
   //   }
   // };
 
-  // const now = new Date();
-  // const remainingMilliseconds =
-  //   (24 - now.getHours()) * 60 * 60 * 1000 -
-  //   (now.getMinutes() * 60 * 1000 +
-  //     now.getSeconds() * 1000 +
-  //     now.getMilliseconds());
-  // setTimeout(handlesave, remainingMilliseconds);
-
   const handlesave = async () => {
     try {
       console.log("save button clicked");
@@ -389,14 +381,16 @@ function ExcelDetails({ Base_url }) {
     }
   };
 
-  // Calculate the time until 24.59.59 from the current time
   const now = new Date();
-  const targetTime = new Date(now);
-  targetTime.setHours(25, 59, 55, 0);
-  const timeUntilTarget = targetTime.getTime() - now.getTime();
-  console.log(timeUntilTarget, "pppppp");
-  // Set a timeout to execute the function at the specified time
-  setTimeout(handlesave, timeUntilTarget);
+  const remainingMilliseconds =
+    (24 - now.getHours()) * 60 * 60 * 1000 -
+    (now.getMinutes() * 60 * 1000 +
+      now.getSeconds() * 1000 +
+      now.getMilliseconds());
+  setTimeout(handlesave, remainingMilliseconds);
+
+  // Calculate the time until 24.59.59 from the current time
+
   useEffect(() => {
     get();
   }, []);
@@ -655,12 +649,14 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
               <tr>
-                {/* <td colSpan={14}>
-                  {" "}
-                  <button className="custom-button" onClick={handlesave}>
-                    Submit
-                  </button>
-                </td> */}
+                {
+                  <td colSpan={14}>
+                    {" "}
+                    <button className="custom-button" onClick={handlesave}>
+                      Submit
+                    </button>
+                  </td>
+                }
               </tr>
             </tfoot>
           </table>
