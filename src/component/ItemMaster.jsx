@@ -185,18 +185,18 @@ function ItemMaster({ Base_url }) {
     }
   };
   // Add sticky heading class when scrolling
-  const tableContainer = document.querySelector(".table-container");
+  // const tableContainer = document.querySelector(".table-container");
 
-  tableContainer.addEventListener("scroll", function () {
-    const scrollTop = tableContainer.scrollTop;
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  // tableContainer.addEventListener("scroll", function () {
+  //   const scrollTop = tableContainer.scrollTop;
+  //   const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    if (isMobile && scrollTop > 0) {
-      document.querySelector("thead").classList.add("sticky-heading");
-    } else {
-      document.querySelector("thead").classList.remove("sticky-heading");
-    }
-  });
+  //   if (isMobile && scrollTop > 0) {
+  //     document.querySelector("thead").classList.add("sticky-heading");
+  //   } else {
+  //     document.querySelector("thead").classList.remove("sticky-heading");
+  //   }
+  // });
 
   return (
     <>
