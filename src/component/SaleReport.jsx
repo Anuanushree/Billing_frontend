@@ -157,50 +157,6 @@ function DailySalesReport({ Base_url }) {
     setVal(totalClosingValue);
   };
 
-  // const exportToExcel = () => {
-  //   // Remove _id and __v fields from the data
-  //   const sanitizedData = data.map(({ _id, __v, ...rest }) => ({
-  //     Date: rest.Date,
-  //     "Sale Details": rest.Sale,
-  //     "Cash Collection Amount": rest.Cash,
-  //     "Swiping Card Amount": rest.Pos,
-  //     "Paytm Amount": parseFloat(rest.Paytm || 0),
-  //     "Bank Deposit amount": rest.Bank,
-  //   }));
-
-  //   // Calculate totals
-  //   const total = sanitizedData.reduce(
-  //     (acc, item) => {
-  //       acc["Sale Details"] += item["Sale Details"];
-  //       acc["Cash Collection Amount"] += item["Cash Collection Amount"];
-  //       acc["Swiping Card Amount"] += item["Swiping Card Amount"];
-  //       acc["Paytm Amount"] += item["Paytm Amount"];
-  //       acc["Bank Deposit amount"] += item["Bank Deposit amount"];
-  //       return acc;
-  //     },
-  //     {
-  //       Date: "Total",
-  //       "Sale Details": 0,
-  //       "Cash Collection Amount": 0,
-  //       "Swiping Card Amount": 0,
-  //       "Paytm Amount": 0,
-  //       "Bank Deposit amount": 0,
-  //     }
-  //   );
-
-  //   // Prepare data for Excel sheet
-  //   const dataWithTotal = sanitizedData.concat(total);
-
-  //   // Convert data to worksheet
-  //   const ws = XLSX.utils.json_to_sheet(dataWithTotal);
-
-  //   // Convert worksheet to workbook
-  //   const wb = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(wb, ws, "Report");
-
-  //   // Save Excel file
-  //   XLSX.writeFile(wb, "report.xlsx");
-  // };
 
   const exportToExcel = () => {
     // Remove _id and __v fields from the data and format date
