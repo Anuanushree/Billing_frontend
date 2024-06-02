@@ -107,7 +107,18 @@ function Sample({ Base_url, formDetails, valueType }) {
   const ranges = [...new Set(formDetails.map((item) => item.Range))];
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
   const itemTypes = [...new Set(formDetails.map((item) => item.Item_type))];
+  // console.log(formDetails);
+  const calculateTotalSaleValue = (productType) => {
+    return formDetails
+      .filter((item) => item.Range === productType)
+      .reduce((total, item) => total + (item[valueType] || 0), 0);
+  };
 
+  const grandTotal =
+    calculateTotalSaleValue("Beer") +
+    calculateTotalSaleValue("Premium") +
+    calculateTotalSaleValue("Ordinary") +
+    calculateTotalSaleValue("Medium");
   return (
     <>
       {/* Table for total opening bottles based on size and range */}
@@ -147,6 +158,15 @@ function Sample({ Base_url, formDetails, valueType }) {
                   </td>
                 </tr>
               ))}
+              <tr>
+                <th>Grand Total</th>
+
+                <td>{calculateTotalSaleValue("Beer")}</td>
+                <td>{calculateTotalSaleValue("Premium")}</td>
+                <td>{calculateTotalSaleValue("Ordinary")}</td>
+                <td>{calculateTotalSaleValue("Medium")}</td>
+                <td>{grandTotal}</td>
+              </tr>
             </tbody>
           </table>
         </div>
