@@ -68,7 +68,7 @@ function Dashboard() {
           <li className="nav-item ">
             <Link className="nav-link" to="/Report">
               <i class="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
-              <span>total value </span>
+              <span>Sales value </span>
             </Link>
           </li>
           <li className="nav-item ">

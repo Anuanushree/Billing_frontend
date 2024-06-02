@@ -180,23 +180,11 @@ function ItemMaster({ Base_url }) {
       };
       const response = await axios.post(`${Base_url}/user/invoice`, data);
       console.log(response.data);
+      toast.success("Successfully submitted");
     } catch (error) {
       console.log("error:", error);
     }
   };
-  // Add sticky heading class when scrolling
-  // const tableContainer = document.querySelector(".table-container");
-
-  // tableContainer.addEventListener("scroll", function () {
-  //   const scrollTop = tableContainer.scrollTop;
-  //   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-  //   if (isMobile && scrollTop > 0) {
-  //     document.querySelector("thead").classList.add("sticky-heading");
-  //   } else {
-  //     document.querySelector("thead").classList.remove("sticky-heading");
-  //   }
-  // });
 
   return (
     <>
@@ -260,7 +248,7 @@ function ItemMaster({ Base_url }) {
                 <th>Receipt Bottle</th>
                 <th></th>
                 <th>Receipt value</th>
-                <th>Sales value</th>
+                <th>Total value</th>
                 <th>Total Bottle</th>
                 <th>invoice number </th>
               </tr>
