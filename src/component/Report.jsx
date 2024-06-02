@@ -12,25 +12,68 @@ function Report({ Base_url }) {
 
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getdailyData`);
+      const response = await axios.get(`${Base_url}/user/getData`);
       // console.log(response.data);
-      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
+      const filt = response.data.filter(
+        (d) => d.updatedAt.substring(0, 10) == date
+      );
       setFormDetails(filt);
+
       // setFormDetails(response.data);
       setData(response.data);
     };
     get();
   }, []);
+
+  const itemTypeWiseTotal = {};
+  formDetails.forEach((entry) => {
+    const { Item_type, Size, Total_bottle = 0 } = entry;
+    if (!itemTypeWiseTotal[Item_type]) {
+      itemTypeWiseTotal[Item_type] = {};
+    }
+    if (!itemTypeWiseTotal[Item_type][Size]) {
+      itemTypeWiseTotal[Item_type][Size] = 0;
+    }
+    itemTypeWiseTotal[Item_type][Size] += Total_bottle;
+  });
+  console.log(itemTypeWiseTotal);
+  let totalBeerQuantity = 0;
+  let totalIFSCQuantity = 0;
+  let totalBeerbottle = 0;
+  let totalBeerprice = 0;
+  let totalIMFsbottle = 0;
+  let totalIMFsprice = 0;
+  formDetails.forEach((item) => {
+    const { Item_type, Total_bottle = 0, Total_value = 0 } = item;
+    if (Item_type === "Beer_sale") {
+      totalBeerbottle += Total_bottle;
+      totalBeerprice += Total_value;
+    } else if (Item_type === "IMFS_sale") {
+      totalIMFsbottle += Total_bottle;
+      totalIMFsprice += Total_value;
+    }
+  });
+
+  formDetails.forEach((item) => {
+    const { Item_type, Quantity } = item;
+    if (Item_type === "Beer_sale") {
+      totalBeerQuantity += Quantity;
+    } else if (Item_type === "IMFS_sale") {
+      totalIFSCQuantity += Quantity;
+    }
+  });
+
   useEffect(() => {
     const getData = async () => {
-      const response = await axios.get(`${Base_url}/user/bank`, headers);
+      const response = await axios.get(`${Base_url}/user/bank`);
       console.log(response.data);
       const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
       setDatas(filt);
+      console.log(datas);
     };
     getData();
   }, []);
-
+  
   const totalPos = useMemo(() => {
     return datas.reduce((total, item) => {
       return total + item.Pos;
@@ -55,15 +98,19 @@ function Report({ Base_url }) {
   };
   // console.log(formDetails)
   const totalClosingValue = formDetails.reduce((total, item) => {
-    return total + item.Closing_value;
+    return total + (item.Closing_value || 0);
   }, 0);
-  var imfsSale = 0;
-  var BeerSale = 0;
-  formDetails.map((d) =>
-    d.Item_Code == "IMFS_sale"
-      ? (imfsSale += parseInt(d.Sale_value))
-      : (BeerSale += d.Sale_value)
-  );
+  let imfsSale = 0;
+  let BeerSale = 0;
+
+  formDetails.forEach((d) => {
+    // Ensure Sale_value is a valid number before adding
+    if (d.Item_Code === "IMFS_sale") {
+      imfsSale += d.Sale_value || 0;
+    } else {
+      BeerSale += d.Sale_value || 0;
+    }
+  });
   console.log(totalClosingValue, "wertyui");
   const totalOpeningValue = formDetails.reduce((total, item) => {
     return total + item.Opening_value;
@@ -73,7 +120,7 @@ function Report({ Base_url }) {
   }, 0);
 
   const totalSalesValue = formDetails.reduce((total, item) => {
-    return total + item.Sale_value;
+    return total + (parseInt(item.Sale_value) || 0);
   }, 0);
 
   const totalValue = formDetails.reduce((total, item) => {

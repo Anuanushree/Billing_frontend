@@ -3,6 +3,7 @@ import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import * as XLSX from "xlsx";
 
 function Invoice({ Base_url }) {
   const [date, setDate] = useState(new Date());
@@ -48,10 +49,6 @@ function Invoice({ Base_url }) {
 
   const handleBlur = async () => {
     setIsEditing(false);
-    // Update the content in the database or wherever you need to save it
-    // Here, you can make an API call to update the content
-    // Example:
-    // await axios.put(`${Base_url}/updateContent`, { content: editableContent });
     toast.success("Content updated successfully");
   };
   const handleSeacrhDate = async () => {
@@ -71,6 +68,75 @@ function Invoice({ Base_url }) {
     };
     getData();
   };
+
+  const formatDate = (date) => {
+    const d = new Date(date);
+    const day = d.getDate().toString().padStart(2, "0");
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+  const exportToExcel = () => {
+    const data = formDetails.map((item) => [
+      formatDate(item.Date),
+      item.Invoice,
+      // new Date(item.Date).toLocaleDateString("en-GB"),
+      item.IMFS_case,
+      item.Beer_Case,
+      item.Total_Case,
+      item.IMFS_sie && (item.IMFS_sie["1000"] ? item.IMFS_sie["1000"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["750"] ? item.IMFS_sie["750"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["375"] ? item.IMFS_sie["375"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["180"] ? item.IMFS_sie["180"] : 0),
+      item.IMFS_total_bottle,
+      item.IMFS_total_value,
+      item.Beer_size && (item.Beer_size["650"] ? item.Beer_size["650"] : 0),
+      item.Beer_size && (item.Beer_size["500"] ? item.Beer_size["500"] : 0),
+      item.Beer_size && (item.Beer_size["325"] ? item.Beer_size["325"] : 0),
+      item.Beer_total_bottle,
+      item.Beer_total_value,
+      item.Total_Bottle,
+      item.Total_amount,
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      [
+        { value: "S.no", rowspan: 2 },
+        { value: "Invoice Date", rowspan: 2 },
+        { value: "STOCK TRANSFER IN CASES", colspan: 4 },
+        { value: "STOCK TRANSFER IN BOTTELS IMFL", colspan: 6 },
+        { value: "STOCK TRANSFER IN BOTTLES IN BEAR", colspan: 5 },
+        { value: "Total bottle", rowspan: 2 },
+        { value: "Total Amount", rowspan: 2 },
+      ],
+      [
+        "Invoice Date",
+        "Invoice",
+        "IMFL Cases",
+        "BEER Cases",
+        "Total Cases",
+        "1000",
+        "750",
+        "375",
+        "180",
+        "IMFS Total Bottle",
+        "IMFS Total Value",
+        "Beer 650",
+        "Beer 500",
+        "Beer 325",
+        "Beer Total Bottle",
+        "Beer Total Value",
+        "Total Bottle",
+        "Total Amount",
+      ],
+      ...data,
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Invoice Data");
+
+    XLSX.writeFile(wb, "invoice_data.xlsx");
+  };
+
   return (
     <>
       <Dashboard />
@@ -106,8 +172,12 @@ function Invoice({ Base_url }) {
                     </span>
                   </div>
                 </th>
-                <th colSpan={12}>
+                <th colSpan={11}>
                   <button onClick={handleSeacrhDate}>Search</button>
+                </th>
+                <th>
+                  {" "}
+                  <button onClick={exportToExcel}>Export to Excel</button>
                 </th>
               </tr>
               <tr>

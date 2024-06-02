@@ -23,37 +23,36 @@ function DailySalesReport({ Base_url }) {
     headers: { authorization: `${token}` },
   };
   useEffect(() => {
+    const get = async () => {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      const filteredData = response.data.filter(
+        (data) => data.Total_bottle > 0
+      );
+      setFormDetails(filteredData);
+      console.log(formDetails);
+    };
+    get();
+  }, []);
+  useEffect(() => {
     const dateObj = new Date();
 
-    const year = dateObj.getFullYear();
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
-    const day = dateObj.getDate().toString().padStart(2, "0");
+    // const year = dateObj.getFullYear();
+    // const month = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
+    // const day = dateObj.getDate().toString().padStart(2, "0");
 
-    const formattedDate = `${year}-${month}-${day}`;
-    console.log(formattedDate);
-    const fil = formDetails.filter(
-      (d) => d.Date.substring(0, 10) == formattedDate
-    );
-    console.log(fil);
-    const totalClosingValue = fil.reduce((total, item) => {
+    // const formattedDate = `${year}-${month}-${day}`;
+    // console.log(formattedDate);
+    // const fil = formDetails.filter(
+    //   (d) => d.Date.substring(0, 10) == formattedDate
+    // );
+    // console.log(fil, "sdfghjk");
+    const totalClosingValue = formDetails.reduce((total, item) => {
       return total + item.Sale_value;
     }, 0);
     console.log(totalClosingValue);
     setVal(totalClosingValue);
   });
 
-  useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(
-        `${Base_url}/user/getdailyData`,
-        headers
-      );
-      // console.log(response.data);
-
-      setFormDetails(response.data);
-    };
-    get();
-  }, []);
   useEffect(() => {
     const getData = async () => {
       const response = await axios.get(`${Base_url}/user/bank`, headers);

@@ -69,8 +69,16 @@ function Data2({ Base_url }) {
         `${Base_url}/user/getdailyData`,
         headers
       );
-      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
+      const response1 = await axios.get(`${Base_url}/user/getData`, headers);
+      const filteredData = response1.data.filter(
+        (data) => data.Total_bottle > 0
+      );
+      // setFormDetails(response1.data);
+      const filt = response1.data.filter(
+        (d) => d.updatedAt.substring(0, 10) == date
+      );
       setFormDetails(filt);
+      console.log(formDetails, "dfghjk");
       setData(response.data);
       // Move handleSearch here
     };
@@ -80,11 +88,13 @@ function Data2({ Base_url }) {
   const handleSeacrhDate = async () => {
     const getData = async () => {
       let response;
+
       if (fromDate && toDate) {
         const dateSearch = {
           fromDate,
           toDate,
         };
+        console.log(dateSearch);
         response = await axios.post(`${Base_url}/user/getdailyDateSearch`, {
           dateSearch,
         });
