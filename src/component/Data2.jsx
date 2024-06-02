@@ -12,28 +12,28 @@ function Data2({ Base_url }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   // const [data, setData] = useState([]);
-  function exportToExcel(data) {
-    const productWiseSaleValue = calculateProductWiseSaleValue(data);
-    const total = Object.values(productWiseSaleValue).reduce(
-      (acc, value) => acc + value,
-      0
-    );
+  // function exportToExcel(data) {
+  //   const productWiseSaleValue = calculateProductWiseSaleValue(data);
+  //   const total = Object.values(productWiseSaleValue).reduce(
+  //     (acc, value) => acc + value,
+  //     0
+  //   );
 
-    const workbook = XLSX.utils.book_new();
-    const sheetData = [
-      ["#", "Product", "Total Sales Value"],
-      ...Object.entries(productWiseSaleValue).map(([product, value], index) => [
-        index + 1,
-        product,
-        value,
-      ]),
-      ["Total", "", total],
-    ];
+  //   const workbook = XLSX.utils.book_new();
+  //   const sheetData = [
+  //     ["#", "Product", "Total Sales Value"],
+  //     ...Object.entries(productWiseSaleValue).map(([product, value], index) => [
+  //       index + 1,
+  //       product,
+  //       value,
+  //     ]),
+  //     ["Total", "", total],
+  //   ];
 
-    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-    XLSX.writeFile(workbook, "export.xlsx");
-  }
+  //   const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+  //   XLSX.writeFile(workbook, "export.xlsx");
+  // }
 
   function calculateProductWiseSaleValue(data) {
     const productWiseSaleValue = {};
@@ -117,6 +117,33 @@ function Data2({ Base_url }) {
 
   const productWiseSale_value = calculateProductWiseSale_value();
   console.log(productWiseSale_value);
+
+  function exportToExcel() {
+    const workbook = XLSX.utils.book_new();
+
+    // Create worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ["Product", "Total Sales Value"],
+      ...Object.entries(productWiseSale_value).map(([product, value]) => [
+        product,
+        value,
+      ]),
+      ["Total", totalSale_value],
+    ]);
+
+    // Set column widths
+    worksheet["!cols"] = [
+      { wpx: 150 }, // Width of the "Product" column
+      { wpx: 200 }, // Width of the "Total Sales Value" column
+    ];
+
+    // Append worksheet to workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
+
+    // Save workbook as Excel file
+    XLSX.writeFile(workbook, `Total_Report from ${fromDate} to ${toDate}.xlsx`);
+  }
+
   const totalSale_value = formDetails.reduce((total, item) => {
     // Check if Closing_value is a valid number
     const Salevalue = parseFloat(item.Sale_value);

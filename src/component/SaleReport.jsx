@@ -156,63 +156,106 @@ function DailySalesReport({ Base_url }) {
     console.log(totalClosingValue);
     setVal(totalClosingValue);
   };
+
   // const exportToExcel = () => {
-  //   const workbook = XLSX.utils.book_new();
-  //   const worksheet = XLSX.utils.json_to_sheet(data);
+  //   // Remove _id and __v fields from the data
+  //   const sanitizedData = data.map(({ _id, __v, ...rest }) => ({
+  //     Date: rest.Date,
+  //     "Sale Details": rest.Sale,
+  //     "Cash Collection Amount": rest.Cash,
+  //     "Swiping Card Amount": rest.Pos,
+  //     "Paytm Amount": parseFloat(rest.Paytm || 0),
+  //     "Bank Deposit amount": rest.Bank,
+  //   }));
 
-  //   // Append the worksheet to the workbook
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Data");
+  //   // Calculate totals
+  //   const total = sanitizedData.reduce(
+  //     (acc, item) => {
+  //       acc["Sale Details"] += item["Sale Details"];
+  //       acc["Cash Collection Amount"] += item["Cash Collection Amount"];
+  //       acc["Swiping Card Amount"] += item["Swiping Card Amount"];
+  //       acc["Paytm Amount"] += item["Paytm Amount"];
+  //       acc["Bank Deposit amount"] += item["Bank Deposit amount"];
+  //       return acc;
+  //     },
+  //     {
+  //       Date: "Total",
+  //       "Sale Details": 0,
+  //       "Cash Collection Amount": 0,
+  //       "Swiping Card Amount": 0,
+  //       "Paytm Amount": 0,
+  //       "Bank Deposit amount": 0,
+  //     }
+  //   );
 
-  //   // Export the workbook to Excel file format
-  //   XLSX.writeFile(workbook, "sales_data.xlsx");
+  //   // Prepare data for Excel sheet
+  //   const dataWithTotal = sanitizedData.concat(total);
+
+  //   // Convert data to worksheet
+  //   const ws = XLSX.utils.json_to_sheet(dataWithTotal);
+
+  //   // Convert worksheet to workbook
+  //   const wb = XLSX.utils.book_new();
+  //   XLSX.utils.book_append_sheet(wb, ws, "Report");
+
+  //   // Save Excel file
+  //   XLSX.writeFile(wb, "report.xlsx");
   // };
+
   const exportToExcel = () => {
-    const cleanedData = data.map(({ _id, __v, ...rest }) => ({
-      ...rest,
-      Total:
-        rest["Cash Collection Amount"] +
-        rest["Swiping Card Amount"] +
-        rest["Paytm Amount"] +
-        rest["Bank Deposite amount"],
+    // Remove _id and __v fields from the data and format date
+    const sanitizedData = data.map(({ _id, __v, Date, ...rest }) => ({
+      Date: Date.split("T")[0],
+      "Sale Details": rest.Sale,
+      "Cash Collection Amount": rest.Cash,
+      "Swiping Card Amount": rest.Pos,
+      "Paytm Amount": parseFloat(rest.Paytm || 0),
+      "Bank Deposit amount": rest.Bank,
     }));
 
-    const headers = [
-      "Date",
-      "Sale Details",
-      "Cash Collection Amount",
-      "Swiping Card Amount",
-      "Paytm Amount",
-      "Bank Deposite amount",
-    ];
-    const sheetData = [
-      headers,
-      ...cleanedData.map((obj) => Object.values(obj)),
-    ];
-
-    // Add total row
-    const totalRow = [
-      "Total",
-      "",
-      ...headers.slice(2).reduce((acc, curr, index) => {
-        if (index === 0)
-          acc.push(cleanedData.reduce((total, obj) => total + obj[curr], 0));
-        else acc.push("");
+    // Calculate totals
+    const total = sanitizedData.reduce(
+      (acc, item) => {
+        acc["Sale Details"] += item["Sale Details"];
+        acc["Cash Collection Amount"] += item["Cash Collection Amount"];
+        acc["Swiping Card Amount"] += item["Swiping Card Amount"];
+        acc["Paytm Amount"] += item["Paytm Amount"];
+        acc["Bank Deposit amount"] += item["Bank Deposit amount"];
         return acc;
-      }, []),
+      },
+      {
+        Date: "Total",
+        "Sale Details": 0,
+        "Cash Collection Amount": 0,
+        "Swiping Card Amount": 0,
+        "Paytm Amount": 0,
+        "Bank Deposit amount": 0,
+      }
+    );
+
+    // Prepare data for Excel sheet
+    const dataWithTotal = sanitizedData.concat(total);
+
+    // Convert data to worksheet
+    const ws = XLSX.utils.json_to_sheet(dataWithTotal);
+
+    // Adjust column width
+    ws["!cols"] = [
+      { wch: 12 }, // Date
+      { wch: 15 }, // Sale Details
+      { wch: 22 }, // Cash Collection Amount
+      { wch: 22 }, // Swiping Card Amount
+      { wch: 16 }, // Paytm Amount
+      { wch: 22 }, // Bank Deposit amount
     ];
-    sheetData.push(totalRow);
 
-    // Create a new workbook
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
+    // Convert worksheet to workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Report");
 
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Data");
-
-    // Export the workbook to Excel file format
-    XLSX.writeFile(workbook, "sales_data.xlsx");
+    // Save Excel file
+    XLSX.writeFile(wb, `Sale_Report from ${fromDate} to ${toDate}.xlsx`);
   };
-
   return (
     <>
       <Dashboard />

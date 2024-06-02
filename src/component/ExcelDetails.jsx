@@ -383,7 +383,7 @@ function ExcelDetails({ Base_url }) {
 
   const now = new Date();
   const remainingMilliseconds =
-    (24 - now.getHours()) * 60 * 60 * 1000 -
+    (25 - now.getHours()) * 60 * 60 * 1000 -
     (now.getMinutes() * 60 * 1000 +
       now.getSeconds() * 1000 +
       now.getMilliseconds());

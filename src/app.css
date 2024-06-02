@@ -321,7 +321,7 @@ body {
     border-collapse: collapse;
   }
   .table-container {
-    max-height: 650px;
+    max-height: 250px;
   }
 }
 

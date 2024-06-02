@@ -10,16 +10,8 @@ function AllData({ Base_url }) {
   const [search, setSearch] = useState(true);
   const [data, setData] = useState([]);
 
-  function exportToExcel(data) {
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-    XLSX.writeFile(workbook, "export.xlsx");
-  }
-
   const handleClick = () => {
-    exportToExcel(data);
+    exportToExcel(formDetails);
   };
 
   const token = localStorage.getItem("token");
@@ -33,6 +25,7 @@ function AllData({ Base_url }) {
         `${Base_url}/user/getdailyData`,
         headers
       );
+      console.log(response.data);
       const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
       setFormDetails(filt);
       setData(response.data);
@@ -88,14 +81,56 @@ function AllData({ Base_url }) {
   function exportToExcel(data) {
     const cleanedData = data.map((item) => {
       const { _id, __v, updatedAt, ...rest } = item;
-      return rest;
+      const parsedDate = new Date(rest.Date);
+      const formattedDate = `${parsedDate.getFullYear()}-${String(
+        parsedDate.getMonth() + 1
+      ).padStart(2, "0")}-${String(parsedDate.getDate()).padStart(2, "0")}`;
+      return {
+        Date: formattedDate,
+        Range: rest.Range,
+        Product: rest.Product,
+        "Brand name": rest.Description, // Assuming Description is the brand name
+        "Item code": rest.Item_Code,
+        Size: rest.Size,
+        MRP: rest.MRP_Value,
+        "Opening Bottle": rest.Opening_bottle,
+        "Opening value": rest.Opening_value,
+        "Receipt Bottle": rest.Receipt_bottle,
+        "Receipt value": rest.Receipt_value,
+        "Total value": rest.Total_value,
+        "Total Bottle": rest.Total_bottle,
+        Case: rest.Case,
+        Loose: rest.Loose,
+        "Closing bottle": rest.Closing_bottle,
+        "Sales Bottle": rest.Sales_bottle,
+        "Sales Value": rest.Sale_value,
+        "Closing value": rest.Closing_value,
+        "Item type": rest.Item_type,
+      };
     });
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet(cleanedData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-    XLSX.writeFile(workbook, "export.xlsx");
+    const worksheet = XLSX.utils.json_to_sheet(cleanedData);
+
+    // Set column widths
+    worksheet["!cols"] = [
+      { wch: 10 }, // Width of the "Date" column
+      { wch: 10 }, // Width of the "Range" column
+      { wch: 20 }, // Width of the "Product" column
+      { wch: 30 }, // Width of the "Brand name" column
+      // Add widths for other columns as needed
+    ];
+
+    const boldCellStyle = { font: { bold: true } };
+    ["A1", "B1", "C1", "D1" /* Add other cell addresses as needed */].forEach(
+      (cellAddress) => {
+        worksheet[cellAddress].s = boldCellStyle;
+      }
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, `Daily statement ${date}.xlsx`);
   }
+
   const handleAllDate = () => {
     setFormDetails(data);
     setDate(Date.now());
