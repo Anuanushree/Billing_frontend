@@ -78,13 +78,25 @@ function AllData({ Base_url }) {
     return total + item.Loose;
   }, 0);
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
   function exportToExcel(data) {
     const cleanedData = data.map((item) => {
       const { _id, __v, updatedAt, ...rest } = item;
       const parsedDate = new Date(rest.Date);
-      const formattedDate = `${parsedDate.getFullYear()}-${String(
-        parsedDate.getMonth() + 1
-      ).padStart(2, "0")}-${String(parsedDate.getDate()).padStart(2, "0")}`;
+      const formattedDate = `${String(parsedDate.getDate()).padStart(
+        2,
+        "0"
+      )}/${String(parsedDate.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}/${parsedDate.getFullYear()}`;
       return {
         Date: formattedDate,
         Range: rest.Range,

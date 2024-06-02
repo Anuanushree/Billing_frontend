@@ -156,12 +156,18 @@ function DailySalesReport({ Base_url }) {
     console.log(totalClosingValue);
     setVal(totalClosingValue);
   };
-
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
 
   const exportToExcel = () => {
     // Remove _id and __v fields from the data and format date
     const sanitizedData = data.map(({ _id, __v, Date, ...rest }) => ({
-      Date: Date.split("T")[0],
+      Date: formatDate(Date),
       "Sale Details": rest.Sale,
       "Cash Collection Amount": rest.Cash,
       "Swiping Card Amount": rest.Pos,
