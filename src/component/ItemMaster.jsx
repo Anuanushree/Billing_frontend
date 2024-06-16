@@ -489,7 +489,7 @@ function ItemMaster({ Base_url }) {
       editMRP,
       itemCode,
       desciption,
-      ranageEdit
+      ranageEdit,
     };
 
     try {
@@ -656,7 +656,6 @@ function ItemMaster({ Base_url }) {
                 <tbody key={i}>
                   <tr>
                     <td>
-                     
                       {editIndex === d._id ? (
                         <input
                           type="text"

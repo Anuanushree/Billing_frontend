@@ -251,11 +251,12 @@ function Sample({ Base_url, formDetails, valueType }) {
                           : 0}
                       </td>
                     ))}
+
                   </tr>
                 ))}
             </tbody>
-            <tr>
-            </tr>
+
+            
           </table>
         </div>
       </div>

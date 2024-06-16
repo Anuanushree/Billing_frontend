@@ -296,6 +296,7 @@ import * as XLSX from "xlsx";
 
 function Invoice({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
+  const [data, setdata] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -310,7 +311,16 @@ function Invoice({ Base_url }) {
 
     fetchData();
   }, [Base_url]);
+  useEffect(() => {
+    get();
+  }, []);
 
+  var get = async () => {
+    const response = await axios.get(`${Base_url}/user/getData`);
+    // console.log(response.data);
+    // const fil = response.data.filter((f) => f.Total_bottle > 0);
+    setdata(response.data);
+  };
   const formatDate = (date) => {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, "0");
@@ -319,6 +329,104 @@ function Invoice({ Base_url }) {
     return `${day}/${month}/${year}`;
   };
 
+  const exportToExcelsd = () => {
+    const data = formDetails.map((item) => [
+      formatDate(item.Date),
+      item.Invoice,
+      item.IMFS_case,
+      item.Beer_Case,
+      item.Total_Case,
+      item.IMFS_sie && (item.IMFS_sie["1000"] ? item.IMFS_sie["1000"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["750"] ? item.IMFS_sie["750"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["375"] ? item.IMFS_sie["375"] : 0),
+      item.IMFS_sie && (item.IMFS_sie["180"] ? item.IMFS_sie["180"] : 0),
+      item.IMFS_total_bottle,
+      item.IMFS_total_value,
+      item.Beer_size && (item.Beer_size["650"] ? item.Beer_size["650"] : 0),
+      item.Beer_size && (item.Beer_size["500"] ? item.Beer_size["500"] : 0),
+      item.Beer_size && (item.Beer_size["325"] ? item.Beer_size["325"] : 0),
+      item.Beer_total_bottle,
+      item.Beer_total_value,
+      item.Total_Bottle,
+      item.Total_amount,
+    ]);
+
+    const ws = XLSX.utils.aoa_to_sheet([
+      [
+        { value: "S.no", rowspan: 2 },
+        { value: "Invoice Date", rowspan: 2 },
+        { value: "STOCK TRANSFER IN CASES", colspan: 4 },
+        { value: "STOCK TRANSFER IN BOTTELS IMFL", colspan: 6 },
+        { value: "STOCK TRANSFER IN BOTTLES IN BEAR", colspan: 5 },
+        { value: "Total bottle", rowspan: 2 },
+        { value: "Total Amount", rowspan: 2 },
+      ],
+      [
+        "Invoice Date",
+        "Invoice",
+        "IMFL Cases",
+        "BEER Cases",
+        "Total Cases",
+        "1000",
+        "750",
+        "375",
+        "180",
+        "IMFS Total Bottle",
+        "IMFS Total Value",
+        "Beer 650",
+        "Beer 500",
+        "Beer 325",
+        "Beer Total Bottle",
+        "Beer Total Value",
+        "Total Bottle",
+        "Total Amount",
+      ],
+      ...data,
+    ]);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Invoice Data");
+
+    XLSX.writeFile(wb, "invoice_data.xlsx");
+  };
+  function exportToExcels(data) {
+    const cleanedData = data.map((item) => {
+      const { _id, __v, updatedAt, ...rest } = item;
+      const closingBottle = rest.Closing_bottle ? rest.Closing_bottle : 0;
+      const closingValue = rest.Closing_value ? rest.Closing_value : 0;
+      return {
+        "Brand name": rest.Description,
+        // Assuming Description is the brand name
+        "Item code": rest.Item_Code,
+        Size: rest.Size,
+        MRP: rest.MRP_Value,
+        "Closing bottle": closingBottle,
+
+        "Closing value": closingValue,
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(cleanedData);
+
+    // Set column widths
+    worksheet["!cols"] = [
+      { wch: 40 }, // Width of the "Date" column
+      { wch: 10 }, // Width of the "Range" column
+      { wch: 10 }, // Width of the "Product" column
+      { wch: 10 }, // Width of the "Brand name" column
+      // Add widths for other columns as needed
+    ];
+
+    const boldCellStyle = { font: { bold: true } };
+    ["A1", "B1", "C1", "D1" /* Add other cell addresses as needed */].forEach(
+      (cellAddress) => {
+        worksheet[cellAddress].s = boldCellStyle;
+      }
+    );
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+    XLSX.writeFile(workbook, `Daily statement.xlsx`);
+  }
   const exportToExcel = () => {
     const data = formDetails.map((item) => [
       formatDate(item.Date),
@@ -339,6 +447,31 @@ function Invoice({ Base_url }) {
       item.Beer_total_value,
       item.Total_Bottle,
       item.Total_amount,
+    ]);
+
+    // Calculate grand totals
+    const grandTotals = calculateGrandTotals();
+
+    // Push grand totals as the last row of data
+    data.push([
+      "Grand Total",
+      "",
+      grandTotals.IMFS_case,
+      grandTotals.Beer_Case,
+      grandTotals.Total_Case,
+      grandTotals.IMFS_sie_1000,
+      grandTotals.IMFS_sie_750,
+      grandTotals.IMFS_sie_375,
+      grandTotals.IMFS_sie_180,
+      grandTotals.IMFS_total_bottle,
+      grandTotals.IMFS_total_value,
+      grandTotals.Beer_size_650,
+      grandTotals.Beer_size_500,
+      grandTotals.Beer_size_325,
+      grandTotals.Beer_total_bottle,
+      grandTotals.Beer_total_value,
+      grandTotals.Total_Bottle,
+      grandTotals.Total_amount,
     ]);
 
     const ws = XLSX.utils.aoa_to_sheet([
@@ -434,12 +567,20 @@ function Invoice({ Base_url }) {
 
   // Get grand totals object
   const grandTotals = calculateGrandTotals();
+
+  const handleClick = () => {
+    exportToExcels(data);
+  };
+
+  console.log(data);
   return (
     <>
       <Dashboard />
       <ToastContainer />
       <div>
         <button onClick={exportToExcel}>Export to Excel</button>
+
+        <button onClick={handleClick}>Export Update to excel</button>
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">
             <thead>
@@ -528,54 +669,22 @@ function Invoice({ Base_url }) {
                 <td className="bg-warning" colSpan={3}>
                   {grandTotals.Invoice}
                 </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_case}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_Case}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Total_Case}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_sie_1000}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_sie_750}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_sie_375}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_sie_180}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_total_bottle}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.IMFS_total_value}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_size_650}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_size_500}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_size_325}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_total_bottle}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Beer_total_value}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Total_Bottle}
-                </td>
-                <td className="bg-warning">
-                  {grandTotals.Total_amount}
-                </td>
+                <td className="bg-warning">{grandTotals.IMFS_case}</td>
+                <td className="bg-warning">{grandTotals.Beer_Case}</td>
+                <td className="bg-warning">{grandTotals.Total_Case}</td>
+                <td className="bg-warning">{grandTotals.IMFS_sie_1000}</td>
+                <td className="bg-warning">{grandTotals.IMFS_sie_750}</td>
+                <td className="bg-warning">{grandTotals.IMFS_sie_375}</td>
+                <td className="bg-warning">{grandTotals.IMFS_sie_180}</td>
+                <td className="bg-warning">{grandTotals.IMFS_total_bottle}</td>
+                <td className="bg-warning">{grandTotals.IMFS_total_value}</td>
+                <td className="bg-warning">{grandTotals.Beer_size_650}</td>
+                <td className="bg-warning">{grandTotals.Beer_size_500}</td>
+                <td className="bg-warning">{grandTotals.Beer_size_325}</td>
+                <td className="bg-warning">{grandTotals.Beer_total_bottle}</td>
+                <td className="bg-warning">{grandTotals.Beer_total_value}</td>
+                <td className="bg-warning">{grandTotals.Total_Bottle}</td>
+                <td className="bg-warning">{grandTotals.Total_amount}</td>
               </tr>
             </tbody>
           </table>
