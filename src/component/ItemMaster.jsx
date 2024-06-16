@@ -427,6 +427,7 @@ function ItemMaster({ Base_url }) {
   const [invoicedata, setinvoiceData] = useState([]);
   const [isAddingInvoice, setIsAddingInvoice] = useState(false); // State to track adding invoice loading state
   const [ranageEdit, setRangeEdit] = useState();
+
   const handleEdit = (
     id,
     invoice,
@@ -434,7 +435,8 @@ function ItemMaster({ Base_url }) {
     openingBottle,
     mrp,
     itemCode,
-    description
+    description,
+    range
   ) => {
     setEditIndex(id);
     setInvoice(invoice || 0);
@@ -443,6 +445,7 @@ function ItemMaster({ Base_url }) {
     setEditMRP(mrp);
     setItemCode(itemCode);
     setDescription(description);
+    setRangeEdit(range);
   };
 
   const token = localStorage.getItem("token");
@@ -486,6 +489,7 @@ function ItemMaster({ Base_url }) {
       editMRP,
       itemCode,
       desciption,
+      ranageEdit
     };
 
     try {
@@ -651,7 +655,23 @@ function ItemMaster({ Base_url }) {
               .map((d, i) => (
                 <tbody key={i}>
                   <tr>
-                    <td>{d.Range}</td>
+                    <td>
+                     
+                      {editIndex === d._id ? (
+                        <input
+                          type="text"
+                          value={ranageEdit}
+                          style={{
+                            width: "60px",
+                            padding: "5px",
+                            fontSize: "12px",
+                          }}
+                          onChange={(e) => setRangeEdit(e.target.value)}
+                        />
+                      ) : (
+                        d.Range
+                      )}
+                    </td>
                     <td>{d.Product}</td>
                     <td>
                       {editIndex === d._id ? (
@@ -731,7 +751,8 @@ function ItemMaster({ Base_url }) {
                               d.Opening_bottle,
                               d.MRP_Value,
                               d.Item_Code,
-                              d.Description
+                              d.Description,
+                              d.Range
                             )
                           }
                         >
