@@ -403,7 +403,6 @@
 
 // export default ItemMaster;
 
-
 import React, { useEffect, useState, useMemo } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
@@ -427,7 +426,7 @@ function ItemMaster({ Base_url }) {
   const [dummy, setDummy] = useState([]);
   const [invoicedata, setinvoiceData] = useState([]);
   const [isAddingInvoice, setIsAddingInvoice] = useState(false); // State to track adding invoice loading state
-
+  const [ranageEdit, setRangeEdit] = useState();
   const handleEdit = (
     id,
     invoice,
@@ -777,4 +776,3 @@ function ItemMaster({ Base_url }) {
 }
 
 export default ItemMaster;
-
