@@ -132,8 +132,8 @@ function Report({ Base_url }) {
     "Total_bottle",
     "Sales_bottle",
     "Closing_bottle",
-    "Sales_bottle",
     "Sale_value",
+    "Closing_value"
   ];
   return (
     <>

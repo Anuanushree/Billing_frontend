@@ -393,7 +393,6 @@ function ExcelDetails({ Base_url }) {
 
   useEffect(() => {
     get();
-   
   }, []);
   useEffect(() => {
     filterData();

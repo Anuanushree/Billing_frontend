@@ -136,28 +136,30 @@ function Sample({ Base_url, formDetails, valueType }) {
               </tr>
             </thead>
             <tbody>
-              {sizes.map((size) => (
-                <tr key={size}>
-                  <td>{size}</td>
-                  {ranges.map((range) => (
-                    <td key={`${range}-${size}`}>
-                      {totalOpeningBottles[range] &&
-                      totalOpeningBottles[range][size]
-                        ? totalOpeningBottles[range][size]
-                        : 0}
+              {sizes
+                .sort((a, b) => parseInt(b) - parseInt(a))
+                .map((size) => (
+                  <tr key={size}>
+                    <td>{size}</td>
+                    {ranges.map((range) => (
+                      <td key={`${range}-${size}`}>
+                        {totalOpeningBottles[range] &&
+                        totalOpeningBottles[range][size]
+                          ? totalOpeningBottles[range][size]
+                          : 0}
+                      </td>
+                    ))}
+                    <td>
+                      {ranges.reduce((acc, range) => {
+                        return (
+                          ((totalOpeningBottles[range] &&
+                            totalOpeningBottles[range][size]) ||
+                            0) + acc
+                        );
+                      }, 0)}
                     </td>
-                  ))}
-                  <td>
-                    {ranges.reduce((acc, range) => {
-                      return (
-                        ((totalOpeningBottles[range] &&
-                          totalOpeningBottles[range][size]) ||
-                          0) + acc
-                      );
-                    }, 0)}
-                  </td>
-                </tr>
-              ))}
+                  </tr>
+                ))}
               <tr>
                 <th>Grand Total</th>
 
@@ -185,31 +187,35 @@ function Sample({ Base_url, formDetails, valueType }) {
               </tr>
             </thead>
             <tbody>
-              {sizes.map((size) => (
-                <tr key={size}>
-                  <td>{size}</td>
-                  {ranges.map((range) => (
-                    <td key={`${range}-${size}`}>
-                      {totalOpeningBottles[range] &&
-                      totalOpeningBottles[range][size]
-                        ? ((size == "375" || size == "325" || size == "500") &&
-                            Math.round(
-                              totalOpeningBottles[range][size] / 24
-                            )) ||
-                          ((size == "650" || size == "750") &&
-                            Math.round(
-                              totalOpeningBottles[range][size] / 12
-                            )) ||
-                          (size == "180" &&
-                            Math.round(
-                              totalOpeningBottles[range][size] / 48
-                            )) ||
-                          (size == "1000" &&
-                            Math.round(totalOpeningBottles[range][size] / 9))
-                        : 0}
-                    </td>
-                  ))}
-                  {/* <td>
+              {sizes
+                .sort((a, b) => parseInt(b) - parseInt(a))
+                .map((size) => (
+                  <tr key={size}>
+                    <td>{size}</td>
+                    {ranges.map((range) => (
+                      <td key={`${range}-${size}`}>
+                        {totalOpeningBottles[range] &&
+                        totalOpeningBottles[range][size]
+                          ? ((size == "375" ||
+                              size == "325" ||
+                              size == "500") &&
+                              Math.round(
+                                totalOpeningBottles[range][size] / 24
+                              )) ||
+                            ((size == "650" || size == "750") &&
+                              Math.round(
+                                totalOpeningBottles[range][size] / 12
+                              )) ||
+                            (size == "180" &&
+                              Math.round(
+                                totalOpeningBottles[range][size] / 48
+                              )) ||
+                            (size == "1000" &&
+                              Math.round(totalOpeningBottles[range][size] / 9))
+                          : 0}
+                      </td>
+                    ))}
+                    {/* <td>
                     {ranges.reduce((acc, range) => {
                       return (
                         ((totalOpeningBottles[range] &&
@@ -218,8 +224,8 @@ function Sample({ Base_url, formDetails, valueType }) {
                       );
                     }, 0)}
                   </td> */}
-                </tr>
-              ))}
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>

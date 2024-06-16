@@ -80,26 +80,76 @@ function ExcelForm({ Base_url }) {
   const [file, setFile] = useState(null);
   const [jsonData, setJsonData] = useState("");
 
+  // const handleConvert = () => {
+  //   if (file) {
+  //     const reader = new FileReader();
+  //     reader.onload = (e) => {
+  //       const data = e.target.result;
+  //       const workbook = XLSX.read(data, { type: "binary" });
+  //       const sheetName = workbook.SheetNames[0];
+  //       const worksheet = workbook.Sheets[sheetName];
+  //       // const json = XLSX.utils.sheet_to_json(worksheet);
+  //       const json = XLSX.utils.sheet_to_json(worksheet, { raw: false });
+
+  //       const jsonDataString = JSON.stringify(json, null, 2);
+
+  //       setJsonData(jsonDataString); // Update the state with the JSON data
+
+  //       // Move the data processing logic here
+  //       const getdata = async () => {
+  //         const parsedJsonData = JSON.parse(jsonDataString);
+
+  //         for (const formData of parsedJsonData) {
+  //           try {
+  //             formData.Size = parseInt(formData.Size); // Ensure Size is parsed as an integer
+
+  //             formData.Receipt_bottle = parseInt(formData.Receipt_bottle);
+  //             formData.Opening_bottle = parseInt(formData.Opening_bottle);
+  //             console.log(formData);
+  //             const response = await axios.post(
+  //               `${Base_url}/user/create`,
+  //               formData,
+  //               headers
+  //             );
+  //             console.log(response.data);
+  //             // console.log(itemData);
+  //           } catch (error) {
+  //             console.log("Error in ExcelForm : ", error);
+  //             toast.warning("Something went wrong when adding data");
+  //           }
+  //         }
+
+  //         // Optionally, you can clear the JSON data state after processing
+  //         setJsonData("");
+  //       };
+  //       getdata();
+  //     };
+  //     reader.readAsBinaryString(file);
+  //   }
+  // };
+
   const handleConvert = () => {
     if (file) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const data = e.target.result;
         const workbook = XLSX.read(data, { type: "binary" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet);
-        const jsonDataString = JSON.stringify(json, null, 2);
+        const json = XLSX.utils.sheet_to_json(worksheet, { raw: false }); // Ensure raw: false to convert to appropriate types
 
-        setJsonData(jsonDataString); // Update the state with the JSON data
+        // Logging to check if all columns are read correctly
+        console.log(json);
 
-        // Move the data processing logic here
         const getdata = async () => {
-          const parsedJsonData = JSON.parse(jsonDataString);
-
-          for (const formData of parsedJsonData) {
+          for (const formData of json) {
             try {
               formData.Size = parseInt(formData.Size); // Ensure Size is parsed as an integer
+              formData.Receipt_bottle = parseInt(formData.Receipt_bottle); // Parse Receipt_bottle as an integer
+              formData.Opening_bottle = parseInt(formData.Opening_bottle); // Parse Opening_bottle as an integer
+
+              // Other fields parsing as needed...
+
               console.log(formData);
               const response = await axios.post(
                 `${Base_url}/user/create`,
@@ -107,7 +157,6 @@ function ExcelForm({ Base_url }) {
                 headers
               );
               console.log(response.data);
-              // console.log(itemData);
             } catch (error) {
               console.log("Error in ExcelForm : ", error);
               toast.warning("Something went wrong when adding data");
@@ -117,8 +166,10 @@ function ExcelForm({ Base_url }) {
           // Optionally, you can clear the JSON data state after processing
           setJsonData("");
         };
-        getdata();
+
+        await getdata(); // Call the async function to process data
       };
+
       reader.readAsBinaryString(file);
     }
   };
