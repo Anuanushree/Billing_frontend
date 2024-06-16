@@ -380,6 +380,60 @@ function Invoice({ Base_url }) {
     XLSX.writeFile(wb, "invoice_data.xlsx");
   };
 
+  const calculateGrandTotals = () => {
+    // Initialize totals object
+    const totals = {
+      Invoice: "Grand Total",
+      IMFS_case: 0,
+      Beer_Case: 0,
+      Total_Case: 0,
+      IMFS_sie_1000: 0,
+      IMFS_sie_750: 0,
+      IMFS_sie_375: 0,
+      IMFS_sie_180: 0,
+      IMFS_total_bottle: 0,
+      IMFS_total_value: 0,
+      Beer_size_650: 0,
+      Beer_size_500: 0,
+      Beer_size_325: 0,
+      Beer_total_bottle: 0,
+      Beer_total_value: 0,
+      Total_Bottle: 0,
+      Total_amount: 0,
+    };
+
+    // Loop through formDetails to compute sums
+    formDetails.forEach((item) => {
+      totals.IMFS_case += item.IMFS_case || 0;
+      totals.Beer_Case += item.Beer_Case || 0;
+      totals.Total_Case += item.Total_Case || 0;
+      totals.IMFS_sie_1000 +=
+        item.IMFS_sie && item.IMFS_sie["1000"] ? item.IMFS_sie["1000"] : 0;
+      totals.IMFS_sie_750 +=
+        item.IMFS_sie && item.IMFS_sie["750"] ? item.IMFS_sie["750"] : 0;
+      totals.IMFS_sie_375 +=
+        item.IMFS_sie && item.IMFS_sie["375"] ? item.IMFS_sie["375"] : 0;
+      totals.IMFS_sie_180 +=
+        item.IMFS_sie && item.IMFS_sie["180"] ? item.IMFS_sie["180"] : 0;
+      totals.IMFS_total_bottle += item.IMFS_total_bottle || 0;
+      totals.IMFS_total_value += item.IMFS_total_value || 0;
+      totals.Beer_size_650 +=
+        item.Beer_size && item.Beer_size["650"] ? item.Beer_size["650"] : 0;
+      totals.Beer_size_500 +=
+        item.Beer_size && item.Beer_size["500"] ? item.Beer_size["500"] : 0;
+      totals.Beer_size_325 +=
+        item.Beer_size && item.Beer_size["325"] ? item.Beer_size["325"] : 0;
+      totals.Beer_total_bottle += item.Beer_total_bottle || 0;
+      totals.Beer_total_value += item.Beer_total_value || 0;
+      totals.Total_Bottle += item.Total_Bottle || 0;
+      totals.Total_amount += item.Total_amount || 0;
+    });
+
+    return totals;
+  };
+
+  // Get grand totals object
+  const grandTotals = calculateGrandTotals();
   return (
     <>
       <Dashboard />
@@ -468,6 +522,61 @@ function Invoice({ Base_url }) {
                   <td>{item.Total_amount}</td>
                 </tr>
               ))}
+            </tbody>
+            <tbody className="bg-warning" style={{ backgroundColor: "red" }}>
+              <tr className="bg-warning" style={{ backgroundColor: "red" }}>
+                <td className="bg-warning" colSpan={3}>
+                  {grandTotals.Invoice}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_case}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_Case}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Total_Case}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_sie_1000}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_sie_750}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_sie_375}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_sie_180}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_total_bottle}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.IMFS_total_value}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_size_650}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_size_500}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_size_325}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_total_bottle}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Beer_total_value}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Total_Bottle}
+                </td>
+                <td className="bg-warning">
+                  {grandTotals.Total_amount}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

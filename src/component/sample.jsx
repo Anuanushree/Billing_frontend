@@ -119,6 +119,42 @@ function Sample({ Base_url, formDetails, valueType }) {
     calculateTotalSaleValue("Premium") +
     calculateTotalSaleValue("Ordinary") +
     calculateTotalSaleValue("Medium");
+  const calculateAddt = (range, size) => {
+    if (
+      totalOpeningBottles[range] &&
+      totalOpeningBottles[range][size] !== undefined
+    ) {
+      const value = totalOpeningBottles[range][size];
+      switch (size) {
+        case "375":
+        case "325":
+        case "500":
+          return Math.round(value / 24);
+        case "650":
+        case "750":
+          return Math.round(value / 12);
+        case "180":
+          return Math.round(value / 48);
+        case "1000":
+          return Math.round(value / 9);
+        default:
+          return 0;
+      }
+    }
+    return 0;
+  };
+
+  // Calculate total addt across all sizes and ranges
+  const calculateTotalAddt = () => {
+    let totalAddt = 0;
+    sizes.forEach((size) => {
+      ranges.forEach((range) => {
+        totalAddt += calculateAddt(range, size);
+      });
+    });
+    return totalAddt;
+  };
+
   return (
     <>
       {/* Table for total opening bottles based on size and range */}
@@ -165,8 +201,8 @@ function Sample({ Base_url, formDetails, valueType }) {
 
                 <td>{calculateTotalSaleValue("Beer")}</td>
                 <td>{calculateTotalSaleValue("Premium")}</td>
-                <td>{calculateTotalSaleValue("Ordinary")}</td>
                 <td>{calculateTotalSaleValue("Medium")}</td>
+                <td>{calculateTotalSaleValue("Ordinary")}</td>
                 <td>{grandTotal}</td>
               </tr>
             </tbody>
@@ -215,18 +251,11 @@ function Sample({ Base_url, formDetails, valueType }) {
                           : 0}
                       </td>
                     ))}
-                    {/* <td>
-                    {ranges.reduce((acc, range) => {
-                      return (
-                        ((totalOpeningBottles[range] &&
-                          totalOpeningBottles[range][size]) ||
-                          0) + acc
-                      );
-                    }, 0)}
-                  </td> */}
                   </tr>
                 ))}
             </tbody>
+            <tr>
+            </tr>
           </table>
         </div>
       </div>
