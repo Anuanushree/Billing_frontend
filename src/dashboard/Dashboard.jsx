@@ -13,13 +13,16 @@ function Dashboard() {
   const navigate = useNavigate();
   const hanldleLogout = (event) => {
     event.preventDefault();
-    // localStorage.removeItem(token);
-    // localStorage.removeItem(id);
-    // localStorage.removeItem(totalSaving);
-
+    localStorage.removeItem(token);
+    localStorage.removeItem(id);
     navigate("/");
   };
+  const id = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
 
+  const headers = {
+    headers: { authorization: `${token}` },
+  };
   return (
     <div>
       {/* <h2 className='text-right' id='headingStyle'>admin <span><a href='/userlist'>
@@ -94,6 +97,12 @@ function Dashboard() {
               <i class="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
               <span>Invoice Data</span>
             </Link>
+          </li>
+          <li className="nav-item ">
+            <div className="nav-link">
+              <i style={{ fontSize: "20px" }}></i>
+              <span onClick={hanldleLogout}>Excel</span>
+            </div>
           </li>
           <li className="nav-item ">
             <div className="nav-link">

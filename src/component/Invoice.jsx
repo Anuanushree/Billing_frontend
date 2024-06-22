@@ -8,12 +8,22 @@ import * as XLSX from "xlsx";
 function Invoice({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [data, setdata] = useState([]);
+  const id = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
 
+  const headers = {
+    headers: { authorization: `${token}` },
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${Base_url}/user/getinvoice`);
-        setFormDetails(response.data); // Assuming response.data is an array of objects
+        const response = await axios.get(
+          `${Base_url}/user/getinvoice`,
+          headers
+        );
+        setFormDetails(response.data);
+        console.log(response.data);
+        // Assuming response.data is an array of objects
       } catch (error) {
         console.error("Error fetching data:", error);
         toast.error("Failed to fetch data from server");
@@ -27,11 +37,12 @@ function Invoice({ Base_url }) {
   }, []);
 
   var get = async () => {
-    const response = await axios.get(`${Base_url}/user/getData`);
+    const response = await axios.get(`${Base_url}/user/getData`, headers);
     // console.log(response.data);
     // const fil = response.data.filter((f) => f.Total_bottle > 0);
     setdata(response.data);
   };
+
   const formatDate = (date) => {
     const d = new Date(date);
     const day = d.getDate().toString().padStart(2, "0");
@@ -422,7 +433,6 @@ function Invoice({ Base_url }) {
       Total_Bottle: 0,
       Total_amount: 0,
     };
-
     // Loop through formDetails to compute sums
     formDetails.forEach((item) => {
       totals.IMFS_case += item.IMFS_case || 0;
@@ -462,7 +472,7 @@ function Invoice({ Base_url }) {
 
   console.log(data);
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
       <ToastContainer />
       <div>
@@ -500,57 +510,58 @@ function Invoice({ Base_url }) {
               </tr>
             </thead>
             <tbody>
-              {formDetails.map((item, index) => (
-                <tr key={index}>
-                  <td>{index + 1}</td>
-                  <td>{formatDate(item.Date)}</td>
-                  <td>{item.Invoice}</td>
-                  <td>{item.IMFS_case}</td>
-                  <td>{item.Beer_Case}</td>
-                  <td>{item.Total_Case}</td>
-                  <td>
-                    {item.IMFS_sie && item.IMFS_sie["1000"]
-                      ? item.IMFS_sie["1000"]
-                      : 0}
-                  </td>
-                  <td>
-                    {item.IMFS_sie && item.IMFS_sie["750"]
-                      ? item.IMFS_sie["750"]
-                      : 0}
-                  </td>
-                  <td>
-                    {item.IMFS_sie && item.IMFS_sie["375"]
-                      ? item.IMFS_sie["375"]
-                      : 0}
-                  </td>
-                  <td>
-                    {item.IMFS_sie && item.IMFS_sie["180"]
-                      ? item.IMFS_sie["180"]
-                      : 0}
-                  </td>
-                  <td>{item.IMFS_total_bottle}</td>
-                  <td>{item.IMFS_total_value}</td>
-                  <td>
-                    {item.Beer_size && item.Beer_size["650"]
-                      ? item.Beer_size["650"]
-                      : 0}
-                  </td>
-                  <td>
-                    {item.Beer_size && item.Beer_size["500"]
-                      ? item.Beer_size["500"]
-                      : 0}
-                  </td>
-                  <td>
-                    {item.Beer_size && item.Beer_size["325"]
-                      ? item.Beer_size["325"]
-                      : 0}
-                  </td>
-                  <td>{item.Beer_total_bottle}</td>
-                  <td>{item.Beer_total_value}</td>
-                  <td>{item.Total_Bottle}</td>
-                  <td>{item.Total_amount}</td>
-                </tr>
-              ))}
+              {formDetails &&
+                formDetails.map((item, index) => (
+                  <tr key={index}>
+                    <td>{index + 1}</td>
+                    <td>{formatDate(item.Date)}</td>
+                    <td>{item.Invoice}</td>
+                    <td>{item.IMFS_case}</td>
+                    <td>{item.Beer_Case}</td>
+                    <td>{item.Total_Case}</td>
+                    <td>
+                      {item.IMFS_sie && item.IMFS_sie["1000"]
+                        ? item.IMFS_sie["1000"]
+                        : 0}
+                    </td>
+                    <td>
+                      {item.IMFS_sie && item.IMFS_sie["750"]
+                        ? item.IMFS_sie["750"]
+                        : 0}
+                    </td>
+                    <td>
+                      {item.IMFS_sie && item.IMFS_sie["375"]
+                        ? item.IMFS_sie["375"]
+                        : 0}
+                    </td>
+                    <td>
+                      {item.IMFS_sie && item.IMFS_sie["180"]
+                        ? item.IMFS_sie["180"]
+                        : 0}
+                    </td>
+                    <td>{item.IMFS_total_bottle}</td>
+                    <td>{item.IMFS_total_value}</td>
+                    <td>
+                      {item.Beer_size && item.Beer_size["650"]
+                        ? item.Beer_size["650"]
+                        : 0}
+                    </td>
+                    <td>
+                      {item.Beer_size && item.Beer_size["500"]
+                        ? item.Beer_size["500"]
+                        : 0}
+                    </td>
+                    <td>
+                      {item.Beer_size && item.Beer_size["325"]
+                        ? item.Beer_size["325"]
+                        : 0}
+                    </td>
+                    <td>{item.Beer_total_bottle}</td>
+                    <td>{item.Beer_total_value}</td>
+                    <td>{item.Total_Bottle}</td>
+                    <td>{item.Total_amount}</td>
+                  </tr>
+                ))}
             </tbody>
             <tbody className="bg-warning" style={{ backgroundColor: "red" }}>
               <tr className="bg-warning" style={{ backgroundColor: "red" }}>
@@ -578,7 +589,7 @@ function Invoice({ Base_url }) {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

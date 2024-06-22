@@ -10,9 +10,15 @@ function Report({ Base_url }) {
   const [datas, setDatas] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
+  const id = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
+
+  const headers = {
+    headers: { authorization: `${token}` },
+  };
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`);
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
       // console.log(response.data);
       const filt = response.data.filter(
         (d) => d.updatedAt.substring(0, 10) == date
@@ -73,7 +79,7 @@ function Report({ Base_url }) {
     };
     getData();
   }, []);
-  
+
   const totalPos = useMemo(() => {
     return datas.reduce((total, item) => {
       return total + item.Pos;
@@ -133,10 +139,10 @@ function Report({ Base_url }) {
     "Sales_bottle",
     "Closing_bottle",
     "Sale_value",
-    "Closing_value"
+    "Closing_value",
   ];
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
 
       <div>
@@ -215,7 +221,7 @@ function Report({ Base_url }) {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -14,7 +14,9 @@ function AllData({ Base_url }) {
     exportToExcel(formDetails);
   };
 
+  const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+
   const headers = {
     headers: { authorization: `${token}` },
   };
@@ -148,7 +150,7 @@ function AllData({ Base_url }) {
     setDate(Date.now());
   };
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
       <div className="table-container">
         <table className="table table-dark table-bordered border border-primary p-2 m-4">
@@ -263,7 +265,7 @@ function AllData({ Base_url }) {
           </tfoot>
         </table>
       </div>
-    </>
+    </div>
   );
 }
 

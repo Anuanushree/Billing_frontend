@@ -17,8 +17,9 @@ function DailySalesReport({ Base_url }) {
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [val, setVal] = useState([]);
-
+  const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+
   const headers = {
     headers: { authorization: `${token}` },
   };
@@ -218,7 +219,7 @@ function DailySalesReport({ Base_url }) {
     XLSX.writeFile(wb, `Sale_Report from ${fromDate} to ${toDate}.xlsx`);
   };
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
       <ToastContainer />
       <div className="container-fluid form-container">
@@ -354,7 +355,7 @@ function DailySalesReport({ Base_url }) {
           </tfoot>
         </table>
       </div>
-    </>
+    </div>
   );
 }
 

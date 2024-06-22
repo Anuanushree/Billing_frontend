@@ -53,7 +53,9 @@ function Data2({ Base_url }) {
     exportToExcel(formDetails);
   };
 
+  const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
+
   const headers = {
     headers: { authorization: `${token}` },
   };
@@ -83,7 +85,7 @@ function Data2({ Base_url }) {
       // Move handleSearch here
     };
     get();
-  }, []);
+  }, [formDetails, data]);
 
   const handleSeacrhDate = async () => {
     const getData = async () => {
@@ -95,9 +97,13 @@ function Data2({ Base_url }) {
           toDate,
         };
         console.log(dateSearch);
-        response = await axios.post(`${Base_url}/user/getdailyDateSearch`, {
-          dateSearch,
-        });
+        response = await axios.post(
+          `${Base_url}/user/getdailyDateSearch`,
+          {
+            dateSearch,
+          },
+          headers
+        );
         console.log(response.data, "resposme");
       }
       setFormDetails(response.data);
@@ -167,7 +173,7 @@ function Data2({ Base_url }) {
   console.log(totalSale_value);
 
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
 
       <table className="table table-dark table-bordered border border-primary p-2 m-4">
@@ -248,7 +254,7 @@ function Data2({ Base_url }) {
           </tr>
         </tfoot>
       </table>
-    </>
+    </div>
   );
 }
 

@@ -66,9 +66,13 @@ function ExcelForm({ Base_url }) {
         Receipt_bottle: data.Receipt_bottle,
       };
       console.log(formData);
-      const response = await axios.post(`${Base_url}/user/create`, {
-        formData,
-      });
+      const response = await axios.post(
+        `${Base_url}/user/create`,
+        {
+          formData,
+        },
+        headers
+      );
       console.log(response.data);
       toast.success("successfully added data in item master");
       // setData(initialState);
@@ -175,7 +179,7 @@ function ExcelForm({ Base_url }) {
   };
 
   return (
-    <>
+    <div id="wrapper">
       <Dashboard />
       <ToastContainer />
 
@@ -316,7 +320,7 @@ function ExcelForm({ Base_url }) {
           </button>
         </form>
       </div>
-    </>
+    </div>
   );
 }
 
