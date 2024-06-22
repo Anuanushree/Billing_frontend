@@ -381,12 +381,18 @@ function ExcelDetails({ Base_url }) {
     }
   };
 
+  // const now = new Date();
+  // const remainingMilliseconds =
+  //   (24 - now.getHours()) * 60 * 60 * 1000 -
+  //   (now.getMinutes() * 60 * 1000 +
+  //     now.getSeconds() * 1000 +
+  //     now.getMilliseconds());
   const now = new Date();
-  const remainingMilliseconds =
-    (25 - now.getHours()) * 60 * 60 * 1000 -
-    (now.getMinutes() * 60 * 1000 +
-      now.getSeconds() * 1000 +
-      now.getMilliseconds());
+  const endOfDay = new Date(now);
+  endOfDay.setHours(24, 0, 0, 0); // Set to 24:00:00 of current day (which is midnight of the next day)
+
+  // Calculate remaining milliseconds until end of day
+  const remainingMilliseconds = endOfDay.getTime() - now.getTime();
   setTimeout(handlesave, remainingMilliseconds);
 
   // Calculate the time until 24.59.59 from the current time
