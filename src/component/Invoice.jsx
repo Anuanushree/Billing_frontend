@@ -478,7 +478,7 @@ function Invoice({ Base_url }) {
       <div>
         <button onClick={exportToExcel}>Export to Excel</button>
 
-        <button onClick={handleClick}>Export Update to excel</button>
+       
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">
             <thead>

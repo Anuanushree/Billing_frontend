@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function SignUp({ Base_url }) {
   const [username, setUsername] = useState("");
@@ -7,6 +8,7 @@ function SignUp({ Base_url }) {
   const [password, setPassword] = useState("");
   const [error, seterror] = useState("");
 
+  const navigate = useNavigate();
   const handleSignUp = async (event) => {
     event.preventDefault();
     try {
@@ -15,11 +17,11 @@ function SignUp({ Base_url }) {
         email,
         password,
       };
-      const response = await axios.post(
-        `${Base_url}/user/signup`,
-        user
-      );
+      const response = await axios.post(`${Base_url}/user/signup`, user);
       console.log(response.data);
+      if ((response.data.message = "User added successfully")) {
+        navigate("/");
+      }
       seterror(response.data.error);
     } catch (error) {
       console.log("Error in adding user :", error);

@@ -152,6 +152,7 @@ import Invoice from "./component/Invoice";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./app.css";
+import FinalReport from "./component/finalReport";
 
 // const Base_url = "http://localhost:4000";
 const Base_url = "https://billing-backend-10h6.onrender.com";
@@ -225,6 +226,7 @@ function App() {
               path="/sample"
               element={<MyComponent Base_url={Base_url} />}
             />
+            <Route path="/pv_report" element={<FinalReport Base_url={Base_url} />} />
             <Route path="/invoice" element={<Invoice Base_url={Base_url} />} />
           </>
         ) : (

@@ -50,7 +50,7 @@ function ExcelDetails({ Base_url }) {
   //     now.getMilliseconds());
   const now = new Date();
   const endOfDay = new Date(now);
-  endOfDay.setHours(24, 0, 0, 0); // Set to 24:00:00 of current day (which is midnight of the next day)
+  endOfDay.setHours(23, 59, 59, 999); // Set to 24:00:00 of current day (which is midnight of the next day)
 
   // Calculate remaining milliseconds until end of day
   const remainingMilliseconds = endOfDay.getTime() - now.getTime();
