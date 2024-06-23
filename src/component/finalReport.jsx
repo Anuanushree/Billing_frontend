@@ -156,70 +156,9 @@ function FinalReport({ Base_url }) {
   const handleClick = () => {
     exportToExcels(data);
   };
-  //    <button onClick={handleClick}>Export Update to excel</button>
 
-  //   const renderTableRows = (data) => {
-  //     const groupedData = {};
-
-  //     data.forEach((item) => {
-  //       const productName = item.Product || "Unknown Product";
-
-  //       if (!groupedData[productName]) {
-  //         groupedData[productName] = {
-  //           data: [],
-  //           totalBottles: 0,
-  //           totalValue: 0,
-  //         };
-  //       }
-
-  //       const totalBottle = item.Closing_bottle || 0;
-  //       const totalValue = item.Closing_value || 0;
-
-  //       groupedData[productName].data.push(item);
-  //       groupedData[productName].totalBottles += totalBottle;
-  //       groupedData[productName].totalValue += totalValue;
-  //     });
-
-  //     const rows = [];
-  //     for (const productName in groupedData) {
-  //       rows.push(
-  //         <tr key={productName} style={{ backgroundColor: "#d3d3d3" }}>
-  //           <td colSpan={7}>{`PRODUCT: ${productName.toUpperCase()}`}</td>
-  //         </tr>
-  //       );
-
-  //       groupedData[productName].data.forEach((item, index) => {
-  //         rows.push(
-  //           <tr key={`${productName}-${index}`}>
-  //             <td>{index + 1}</td>
-  //             <td>{item.Description || ""}</td>
-  //             <td>{item.Item_Code}</td>
-  //             <td>{item.Size || ""}</td>
-  //             <td>{item.MRP_Value || ""}</td>
-  //             <td>{item.Closing_bottle || 0}</td>
-  //             <td>{item.Closing_value || 0}</td>
-  //           </tr>
-  //         );
-  //       });
-
-  //       rows.push(
-  //         <tr key={`${productName}-total`} style={{ fontWeight: "bold" }}>
-  //           <td colSpan={5}>{`TOTAL ${productName.toUpperCase()}`}</td>
-  //           <td>{groupedData[productName].totalBottles}</td>
-  //           <td>{groupedData[productName].totalValue}</td>
-  //         </tr>
-  //       );
-
-  //       rows.push(
-  //         <tr key={`${productName}-spacer`}>
-  //           <td colSpan={7}></td>
-  //         </tr>
-  //       );
-  //     }
-
-  //     return rows;
-  //   };
   const renderTableRows = (data) => {
+    // Initialize grouped data object
     const groupedData = {};
 
     // Group data by Product
@@ -264,14 +203,14 @@ function FinalReport({ Base_url }) {
       // Product-wise total row
       rows.push(
         <tr key={`${productName}-total`} style={{ fontWeight: "bold" }}>
-          <td colSpan={4}>{`TOTAL ${productName.toUpperCase()}`}</td>
+          <td colSpan={5}>{`TOTAL ${productName.toUpperCase()}`}</td>
           <td>{groupedData[productName].totalBottles}</td>
           <td>{groupedData[productName].totalValue}</td>
-          <td></td> {/* Empty cell for the last column */}
+         
         </tr>
       );
 
-      // Spacer row
+      // Add a spacer row
       rows.push(
         <tr key={`${productName}-spacer`}>
           <td colSpan={7}></td>
@@ -279,23 +218,42 @@ function FinalReport({ Base_url }) {
       );
     }
 
+    // Add product-wise total rows before grand total
+    for (const productName in groupedData) {
+      rows.push(
+        <tr
+          key={`${productName}-before-grand-total`}
+          style={{ fontWeight: "bold" }}
+        >
+          <td colSpan={5}>{`TOTAL ${productName.toUpperCase()}`}</td>
+          <td>{groupedData[productName].totalBottles}</td>
+          <td>{groupedData[productName].totalValue}</td>
+        </tr>
+      );
+
+      // Add a spacer row
+      //   rows.push(
+      //     <tr key={`${productName}-spacer-before-grand-total`}>
+      //       <td colSpan={7}></td>
+      //     </tr>
+      //   );
+    }
+
     // Grand total row
     rows.push(
       <tr key="grand-total" style={{ fontWeight: "bold" }}>
-        <td colSpan={4}>GRAND TOTAL</td>
+        <td colSpan={5}>GRAND TOTAL</td>
         <td>
           {data.reduce((acc, item) => acc + (item.Closing_bottle || 0), 0)}
         </td>
         <td>
           {data.reduce((acc, item) => acc + (item.Closing_value || 0), 0)}
         </td>
-        <td></td> {/* Empty cell for the last column */}
       </tr>
     );
 
     return rows;
   };
-
   return (
     <div id="wrapper">
       <Dashboard />
@@ -315,24 +273,7 @@ function FinalReport({ Base_url }) {
                 <th>Closing Values</th>
               </tr>
             </thead>
-            <tbody>
-              {renderTableRows(data)}
-              <tr>
-                <td colSpan={5}>GRAND TOTAL</td>
-                <td>
-                  {data.reduce(
-                    (acc, item) => acc + (item.Closing_bottle || 0),
-                    0
-                  )}
-                </td>
-                <td>
-                  {data.reduce(
-                    (acc, item) => acc + (item.Closing_value || 0),
-                    0
-                  )}
-                </td>
-              </tr>
-            </tbody>
+            <tbody>{renderTableRows(data)}</tbody>
           </table>
         </div>
       </div>
