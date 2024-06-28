@@ -41,27 +41,12 @@ function ExcelDetails({ Base_url }) {
       setFormDisable(true);
     }
   };
-
-  // const now = new Date();
-  // const remainingMilliseconds =
-  //   (24 - now.getHours()) * 60 * 60 * 1000 -
-  //   (now.getMinutes() * 60 * 1000 +
-  //     now.getSeconds() * 1000 +
-  //     now.getMilliseconds());
-  const now = new Date();
-  const endOfDay = new Date(now);
-  endOfDay.setHours(23, 59, 59,998); // Set to 24:00:00 of current day (which is midnight of the next day)
-
-  // Calculate remaining milliseconds until end of day
-  const remainingMilliseconds = endOfDay.getTime() - now.getTime();
-  console.log(remainingMilliseconds, "remain");
-  console.log(now.getTime(), endOfDay.getTime());
-  setTimeout("console.log", remainingMilliseconds);
-  setTimeout(() => {
-    // handlesave
-    console.log("lkjhgfcxzsdtyu");
-  }, remainingMilliseconds);
-
+  const remainingMilliseconds =
+    (24 - now.getHours()) * 60 * 60 * 1000 -
+    (now.getMinutes() * 60 * 1000 +
+      now.getSeconds() * 1000 +
+      now.getMilliseconds());
+  setTimeout(handlesave, remainingMilliseconds);
   // Calculate the time until 24.59.59 from the current time
 
   useEffect(() => {
