@@ -50,11 +50,17 @@ function ExcelDetails({ Base_url }) {
   //     now.getMilliseconds());
   const now = new Date();
   const endOfDay = new Date(now);
-  endOfDay.setHours(23, 59, 59, 999); // Set to 24:00:00 of current day (which is midnight of the next day)
+  endOfDay.setHours(23, 59, 59,998); // Set to 24:00:00 of current day (which is midnight of the next day)
 
   // Calculate remaining milliseconds until end of day
   const remainingMilliseconds = endOfDay.getTime() - now.getTime();
-  setTimeout(handlesave, remainingMilliseconds);
+  console.log(remainingMilliseconds, "remain");
+  console.log(now.getTime(), endOfDay.getTime());
+  setTimeout("console.log", remainingMilliseconds);
+  setTimeout(() => {
+    // handlesave
+    console.log("lkjhgfcxzsdtyu");
+  }, remainingMilliseconds);
 
   // Calculate the time until 24.59.59 from the current time
 
@@ -105,7 +111,7 @@ function ExcelDetails({ Base_url }) {
       findItem === "Beer" ||
       findItem === "Whisky" ||
       findItem === "Rum" ||
-      findItem === "vodka" ||
+      findItem === "Vodka" ||
       findItem === "Wine" ||
       findItem === "Gin" ||
       findItem === "Brandy"
