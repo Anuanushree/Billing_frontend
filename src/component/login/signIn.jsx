@@ -11,27 +11,29 @@ function SignIn({ Base_url }) {
 
   const handleSignIn = async (event) => {
     event.preventDefault();
-    try {
-      const user = {
-        email,
-        password,
-      };
-      const response = await axios.post(
-        `${Base_url}/user/signin`,
-        user
-      );
-      seterror(response.data.error);
-      // const error = response.da
-      console.log(response.data);
-      const value = response.data.token;
-      const id = response.data.id;
-      localStorage.setItem("token", value);
-      localStorage.setItem("id", id);
-      if (value) {
-        navigate("/excelForm");
+    if (email == "AdminSathish" && password == "AdminSathish@123") {
+      localStorage.setItem("Adminlogged", true);
+      navigate("/inward");
+    } else {
+      try {
+        const user = {
+          email,
+          password,
+        };
+        const response = await axios.post(`${Base_url}/user/signin`, user);
+        seterror(response.data.error);
+        // const error = response.da
+        console.log(response.data);
+        const value = response.data.token;
+        const id = response.data.id;
+        localStorage.setItem("token", value);
+        localStorage.setItem("id", id);
+        if (value) {
+          navigate("/exceldata");
+        }
+      } catch (error) {
+        console.log("Error in signin user :", error);
       }
-    } catch (error) {
-      console.log("Error in signin user :", error);
     }
   };
 
@@ -106,14 +108,6 @@ function SignIn({ Base_url }) {
                   <p className="error">Message:{error}</p>
                 </div>
               </form>
-            </div>
-            <div className="card-footer">
-              <div className="d-flex justify-content-center links">
-                Don't have an account?<a href="/signup">Sign Up</a>
-              </div>
-              <div className="d-flex justify-content-center">
-                <a href="/forgotpassword">Forgot your password?</a>
-              </div>
             </div>
           </div>
         </div>

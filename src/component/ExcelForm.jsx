@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
+import AdminDashboard from "../Admindashboard/AdminDashboard";
 
 function ExcelForm({ Base_url }) {
   const initialState = {
@@ -180,7 +181,7 @@ function ExcelForm({ Base_url }) {
 
   return (
     <div id="wrapper">
-      <Dashboard />
+      <AdminDashboard />
       <ToastContainer />
 
       <div className="container-fluid form-container">

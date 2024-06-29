@@ -41,15 +41,6 @@ function ExcelDetails({ Base_url }) {
       setFormDisable(true);
     }
   };
-  // const now = new Date();
-  // const remainingMilliseconds =
-  //   (24 - now.getHours()) * 60 * 60 * 1000 -
-  //   (now.getMinutes() * 60 * 1000 +
-  //     now.getSeconds() * 1000 +
-  //     now.getMilliseconds());
-  // setTimeout(handlesave, remainingMilliseconds);
-  // Calculate the time until 24.59.59 from the current time
-
   useEffect(() => {
     get();
   }, []);
@@ -117,8 +108,9 @@ function ExcelDetails({ Base_url }) {
       console.log(res.data);
       const get1 = async () => {
         const response = await axios.get(`${Base_url}/user/getdata`, headers);
-        setDummy(response.data);
-        setArray(response.data);
+        const filt = response.data.filter((f) => f.Total_bottle > 0);
+        setDummy(filt);
+        setArray(filt);
       };
       await get1();
       filterData();
@@ -311,7 +303,7 @@ function ExcelDetails({ Base_url }) {
   
                   </td>
                 } */}
-                {/* <button onClick={handleDelete}>Delete</button> */}
+                {/* <button onClick={handleDelete/}>Delete</button> */}
               </tr>
             </tfoot>
           </table>
