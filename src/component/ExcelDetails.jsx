@@ -41,13 +41,13 @@ function ExcelDetails({ Base_url }) {
       setFormDisable(true);
     }
   };
-  const now = new Date();
-  const remainingMilliseconds =
-    (24 - now.getHours()) * 60 * 60 * 1000 -
-    (now.getMinutes() * 60 * 1000 +
-      now.getSeconds() * 1000 +
-      now.getMilliseconds());
-  setTimeout(handlesave, remainingMilliseconds);
+  // const now = new Date();
+  // const remainingMilliseconds =
+  //   (24 - now.getHours()) * 60 * 60 * 1000 -
+  //   (now.getMinutes() * 60 * 1000 +
+  //     now.getSeconds() * 1000 +
+  //     now.getMilliseconds());
+  // setTimeout(handlesave, remainingMilliseconds);
   // Calculate the time until 24.59.59 from the current time
 
   useEffect(() => {
@@ -90,23 +90,14 @@ function ExcelDetails({ Base_url }) {
       return total + (parseInt(item.Loose) || 0);
     }, 0);
   }, [formdetail]);
+  const filterData = async () => {
+    let a = dummy;
+    const filt =
+      findItem && findItem !== ""
+        ? a.filter((d) => d.Product === findItem || d.Item_Code === findItem)
+        : a;
 
-  const filterData = () => {
-    let filteredData = dummy;
-    if (
-      findItem === "Beer" ||
-      findItem === "Whisky" ||
-      findItem === "Rum" ||
-      findItem === "Vodka" ||
-      findItem === "Wine" ||
-      findItem === "Gin" ||
-      findItem === "Brandy"
-    ) {
-      filteredData = dummy.filter((d) => d.Product === findItem);
-    } else {
-      filteredData = dummy.filter((d) => d.Item_Code === findItem);
-    }
-    setformdetail(filteredData);
+    setformdetail(filt);
   };
 
   const handleSearch = async () => {
@@ -123,17 +114,14 @@ function ExcelDetails({ Base_url }) {
     };
     try {
       const res = await axios.put(`${Base_url}/user/updateData`, Data, headers);
-      // var get1 = async () => {
-      //   const response = await axios.get(`${Base_url}/user/getData`, headers);
-      const fil = res.data.filter((f) => f.Total_bottle > 0);
-      setArray(fil);
-      setDummy(fil);
-      // };
       console.log(res.data);
-      if (res.data) {
-        filterData();
-      }
-      // await get1();
+      const get1 = async () => {
+        const response = await axios.get(`${Base_url}/user/getdata`, headers);
+        setDummy(response.data);
+        setArray(response.data);
+      };
+      await get1();
+      filterData();
     } catch (error) {
       console.log("Error in updating case and loose : ", error);
       toast.warning("error in updating case and loose");
@@ -171,6 +159,9 @@ function ExcelDetails({ Base_url }) {
     }, 0);
   }, [formdetail]);
 
+  const handleDelete = async () => {
+    const res = await axios.delete(`${Base_url}/user/delete`);
+  };
   return (
     <div id="wrapper">
       <Dashboard />
@@ -311,14 +302,16 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
               <tr>
-                {
+                {/* {
                   <td colSpan={14}>
                     {" "}
                     <button className="custom-button" onClick={handlesave}>
                       Submit
                     </button>
+  
                   </td>
-                }
+                } */}
+                {/* <button onClick={handleDelete}>Delete</button> */}
               </tr>
             </tfoot>
           </table>
