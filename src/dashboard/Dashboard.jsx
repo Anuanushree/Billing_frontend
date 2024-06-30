@@ -111,6 +111,13 @@ function Dashboard({ Base_url }) {
               <span>PV Report</span>
             </Link>
           </li>
+          <li className={`nav-item ${isActive("/calc")}`}>
+            <Link className="nav-link" to="/calc">
+              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              <span>Cash Denomination Calculation
+              </span>
+            </Link>
+          </li>
           <li className="nav-item">
             <div className="nav-link" onClick={handleLogout}>
               <i

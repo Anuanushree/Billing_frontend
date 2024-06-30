@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 function AllData({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const [search, setSearch] = useState(true);
   const [data, setData] = useState([]);
 
   const handleClick = () => {
@@ -21,64 +20,84 @@ function AllData({ Base_url }) {
     headers: { authorization: `${token}` },
   };
 
+  const get1 = async () => {
+    try {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      const fil = response.data.filter((f) => f.Total_bottle > 0);
+      setFormDetails(fil);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    get1();
+  }, []);
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(
-        `${Base_url}/user/getdailyData`,
-        headers
-      );
-      console.log(response.data);
-      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
-      setFormDetails(filt);
-      setData(response.data);
-      console.log(formDetails);
+      try {
+        const response = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        const filt = response.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        setFormDetails(filt);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching daily data:", error);
+      }
     };
     get();
-  }, []);
+  }, [date]);
 
   const handleSearch = async () => {
-    console.log(date);
-    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
+    const filt = data.filter((d) => d.Date.substring(0, 10) === date);
     setFormDetails(filt);
-    console.log(filt);
   };
 
-  const totalClosingValue = formDetails.reduce((total, item) => {
-    return total + item.Closing_value;
-  }, 0);
-  const totalOpeningBottle = formDetails.reduce((total, item) => {
-    return total + item.Opening_bottle;
-  }, 0);
-  const totalReciptBottle = formDetails.reduce((total, item) => {
-    return total + item.Receipt_bottle;
-  }, 0);
-  const totalOpeningValue = formDetails.reduce((total, item) => {
-    return total + item.Opening_value;
-  }, 0);
-  const totalReceiptValue = formDetails.reduce((total, item) => {
-    return total + item.Receipt_value;
-  }, 0);
-  const totalSalesBottle = formDetails.reduce((total, item) => {
-    return total + item.Sales_bottle;
-  }, 0);
-  const totalSalesValue = formDetails.reduce((total, item) => {
-    return total + item.Sale_value;
-  }, 0);
-  const totalClosingBottle = formDetails.reduce((total, item) => {
-    return total + item.Closing_bottle;
-  }, 0);
-  const totalValue = formDetails.reduce((total, item) => {
-    return total + item.Total_value;
-  }, 0);
-  const totalBottle = formDetails.reduce((total, item) => {
-    return total + item.Total_bottle;
-  }, 0);
-  const totalCase = formDetails.reduce((total, item) => {
-    return total + item.Case;
-  }, 0);
-  const totalLoose = formDetails.reduce((total, item) => {
-    return total + item.Loose;
-  }, 0);
+  const totalClosingValue = formDetails.reduce(
+    (total, item) => total + item.Closing_value,
+    0
+  );
+  const totalOpeningBottle = formDetails.reduce(
+    (total, item) => total + item.Opening_bottle,
+    0
+  );
+  const totalReciptBottle = formDetails.reduce(
+    (total, item) => total + item.Receipt_bottle,
+    0
+  );
+  const totalOpeningValue = formDetails.reduce(
+    (total, item) => total + item.Opening_value,
+    0
+  );
+  const totalReceiptValue = formDetails.reduce(
+    (total, item) => total + item.Receipt_value,
+    0
+  );
+  const totalSalesBottle = formDetails.reduce(
+    (total, item) => total + item.Sales_bottle,
+    0
+  );
+  const totalSalesValue = formDetails.reduce(
+    (total, item) => total + item.Sale_value,
+    0
+  );
+  const totalClosingBottle = formDetails.reduce(
+    (total, item) => total + item.Closing_bottle,
+    0
+  );
+  const totalValue = formDetails.reduce(
+    (total, item) => total + item.Total_value,
+    0
+  );
+  const totalBottle = formDetails.reduce(
+    (total, item) => total + item.Total_bottle,
+    0
+  );
+  const totalCase = formDetails.reduce((total, item) => total + item.Case, 0);
+  const totalLoose = formDetails.reduce((total, item) => total + item.Loose, 0);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -134,12 +153,14 @@ function AllData({ Base_url }) {
       // Add widths for other columns as needed
     ];
 
+    // Apply bold style to headers if they exist
     const boldCellStyle = { font: { bold: true } };
-    ["A1", "B1", "C1", "D1" /* Add other cell addresses as needed */].forEach(
-      (cellAddress) => {
+    ["A1", "B1", "C1", "D1"].forEach((cellAddress) => {
+      if (worksheet[cellAddress]) {
         worksheet[cellAddress].s = boldCellStyle;
       }
-    );
+    });
+
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
     XLSX.writeFile(workbook, `Daily statement ${date}.xlsx`);
@@ -149,6 +170,7 @@ function AllData({ Base_url }) {
     setFormDetails(data);
     setDate(Date.now());
   };
+
   return (
     <div id="wrapper">
       <Dashboard />
@@ -157,7 +179,6 @@ function AllData({ Base_url }) {
           <thead>
             <tr>
               <th>
-                {" "}
                 <input
                   type="date"
                   value={date}
@@ -192,11 +213,9 @@ function AllData({ Base_url }) {
               <th>Total Bottle</th>
               <th>Case</th>
               <th>Loose</th>
-
               <th>Closing bottle</th>
               <th>Sales Bottle</th>
               <th>Sales Value</th>
-
               <th>Closing value</th>
               <th>Item type</th>
             </tr>
@@ -218,7 +237,6 @@ function AllData({ Base_url }) {
             .map((d, i) => (
               <tbody key={i}>
                 <tr>
-                  {/* <td>{i + 1}</td> */}
                   <td>{new Date(d.Date).toLocaleDateString("en-GB")}</td>
                   <td>{d.Range}</td>
                   <td>{d.Product}</td>
@@ -234,7 +252,6 @@ function AllData({ Base_url }) {
                   <td>{d.Total_bottle}</td>
                   <td>{d.Case}</td>
                   <td>{d.Loose}</td>
-
                   <td>{d.Closing_bottle}</td>
                   <td>{d.Sales_bottle} </td>
                   <td>{d.Sale_value}</td>
@@ -255,13 +272,11 @@ function AllData({ Base_url }) {
               <td>{totalBottle}</td>
               <td>{totalCase}</td>
               <td>{totalLoose}</td>
-
               <td>{totalClosingBottle}</td>
               <td>{totalSalesBottle}</td>
               <td>{totalSalesValue}</td>
               <td>{totalClosingValue}</td>
             </tr>
-            <tr></tr>
           </tfoot>
         </table>
       </div>

@@ -163,6 +163,7 @@ import "./app.css";
 import FinalReport from "./component/finalReport";
 import Admin from "./Admindashboard/Admin";
 import Adminsale from "./Admindashboard/Adminsale";
+import Calc from "./component/Calc";
 
 // const Base_url = "http://localhost:4000";
 //billing-backend-1.onrender.com
@@ -231,6 +232,8 @@ function App() {
               path="/dailyReport"
               element={<DailySalesReport Base_url={Base_url} />}
             />
+            <Route path="/calc" element={<Calc Base_url={Base_url} />} />
+            <Route path="/Report" element={<Data2 Base_url={Base_url} />} />
             <Route
               path="/itemMaster"
               element={<ItemMaster Base_url={Base_url} />}

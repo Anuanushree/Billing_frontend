@@ -23,24 +23,24 @@ function ExcelDetails({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
-  const handlesave = async () => {
-    try {
-      console.log("save button clicked");
-      const res = await axios.post(
-        `${Base_url}/user/dailyData`,
-        formdetail,
-        headers
-      );
-      console.log(res.data);
-      toast.success("Successfully submitted");
-      get();
-    } catch (error) {
-      console.log("Error in submitting the form:", error);
-      toast.warning("Something went wrong while submitting the form");
-    } finally {
-      setFormDisable(true);
-    }
-  };
+  // const handlesave = async () => {
+  //   try {
+  //     console.log("save button clicked");
+  //     const res = await axios.post(
+  //       `${Base_url}/user/dailyData`,
+  //       formdetail,
+  //       headers
+  //     );
+  //     console.log(res.data);
+  //     toast.success("Successfully submitted");
+  //     get();
+  //   } catch (error) {
+  //     console.log("Error in submitting the form:", error);
+  //     toast.warning("Something went wrong while submitting the form");
+  //   } finally {
+  //     setFormDisable(true);
+  //   }
+  // };
   useEffect(() => {
     get();
   }, []);
@@ -104,6 +104,7 @@ function ExcelDetails({ Base_url }) {
       formdetail,
     };
     try {
+      console.log(Data);
       const res = await axios.put(`${Base_url}/user/updateData`, Data, headers);
       console.log(res.data);
       const get1 = async () => {

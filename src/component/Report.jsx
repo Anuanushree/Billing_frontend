@@ -71,7 +71,7 @@ function Report({ Base_url }) {
 
   useEffect(() => {
     const getData = async () => {
-      const response = await axios.get(`${Base_url}/user/bank`);
+      const response = await axios.get(`${Base_url}/user/bank`, headers);
       console.log(response.data);
       const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
       setDatas(filt);
@@ -108,11 +108,12 @@ function Report({ Base_url }) {
   }, 0);
   let imfsSale = 0;
   let BeerSale = 0;
-
+  console.log(formDetails);
   formDetails.forEach((d) => {
     // Ensure Sale_value is a valid number before adding
-    if (d.Item_Code === "IMFS_sale") {
+    if (d.Item_type == "IMFS_sale") {
       imfsSale += d.Sale_value || 0;
+      // console.log(d.Sale_value);
     } else {
       BeerSale += d.Sale_value || 0;
     }
