@@ -165,7 +165,8 @@ import Admin from "./Admindashboard/Admin";
 import Adminsale from "./Admindashboard/Adminsale";
 
 // const Base_url = "http://localhost:4000";
-const Base_url = "https://billing-backend-10h6.onrender.com";
+//billing-backend-1.onrender.com
+const Base_url = "https://billing-backend-1.onrender.com";
 
 function App() {
   const [user, setUser] = useState(null);
