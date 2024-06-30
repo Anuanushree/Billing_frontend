@@ -35,6 +35,12 @@ function Adminsale({ Base_url }) {
     fetchFormDetails();
   }, []);
 
+  useEffect(() => {
+    if (users.length > 0 && formDetails.length > 0) {
+      filterAndSeparateData(formDetails);
+    }
+  }, [users, formDetails]);
+
   const getUser = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/list`, headers);
@@ -49,7 +55,6 @@ function Adminsale({ Base_url }) {
     try {
       const response = await axios.get(`${Base_url}/user/getAllData`, headers);
       setFormDetails(response.data);
-      filterAndSeparateData(response.data);
     } catch (error) {
       console.error("Error fetching sale records:", error);
       showSnackbar("Error fetching sale records", "error");
@@ -95,7 +100,6 @@ function Adminsale({ Base_url }) {
         headers
       );
       setFormDetails(response.data);
-      filterAndSeparateData(response.data);
     } catch (error) {
       console.error("Error fetching daily sale records:", error);
       showSnackbar("Error fetching daily sale records", "error");
@@ -127,7 +131,7 @@ function Adminsale({ Base_url }) {
             <TableHead>
               <TableRow>
                 <TableCell>User Name</TableCell>
-                <TableCell align="right">Total Quantity</TableCell>
+                <TableCell align="right">Total Sale</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
