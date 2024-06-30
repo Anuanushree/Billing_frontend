@@ -128,8 +128,8 @@ function AllData({ Base_url }) {
         MRP: rest.MRP_Value,
         "Opening Bottle": rest.Opening_bottle,
         "Opening value": rest.Opening_value,
-        "Receipt Bottle": rest.Receipt_bottle,
-        "Receipt value": rest.Receipt_value,
+        "Receipt Bottle": rest.Receipt_bottle||0,
+        "Receipt value": rest.Receipt_value||0,
         "Total value": rest.Total_value,
         "Total Bottle": rest.Total_bottle,
         Case: rest.Case,
@@ -246,8 +246,8 @@ function AllData({ Base_url }) {
                   <td>{d.MRP_Value}</td>
                   <td>{d.Opening_bottle}</td>
                   <td>{d.Opening_value}</td>
-                  <td>{d.Receipt_bottle}</td>
-                  <td>{d.Receipt_value}</td>
+                  <td>{d.Receipt_bottle?d.Receipt_bottle :0}</td>
+                  <td>{d.Receipt_value?d.Receipt_value:0}</td>
                   <td>{d.Total_value}</td>
                   <td>{d.Total_bottle}</td>
                   <td>{d.Case}</td>

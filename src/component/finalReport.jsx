@@ -4,7 +4,9 @@ import Dashboard from "../dashboard/Dashboard";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 function FinalReport({ Base_url }) {
-  const [data, setdata] = useState([]);
+  const [data, setData] = useState([]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [formDetails, setFormDetails] = useState([]);
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
@@ -14,11 +16,29 @@ function FinalReport({ Base_url }) {
   useEffect(() => {
     get();
   }, []);
+  useEffect(() => {
+    const get1 = async () => {
+      try {
+        const response = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        const filt = response.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        setFormDetails(filt);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching daily data:", error);
+      }
+    };
+    get1();
+  }, [date]);
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     console.log(response.data);
-    // const fil = response.data.filter((f) => f.Total_bottle > 0);
-    setdata(response.data);
+  
+    setData(response.data);
   };
   const exportToExcels = (data) => {
     const groupedData = {};
@@ -206,7 +226,6 @@ function FinalReport({ Base_url }) {
           <td colSpan={5}>{`TOTAL ${productName.toUpperCase()}`}</td>
           <td>{groupedData[productName].totalBottles}</td>
           <td>{groupedData[productName].totalValue}</td>
-         
         </tr>
       );
 
@@ -254,11 +273,26 @@ function FinalReport({ Base_url }) {
 
     return rows;
   };
+  const handleSearch = async () => {
+    const filt = data.filter((d) => d.Date.substring(0, 10) === date);
+    setFormDetails(filt);
+  };
   return (
     <div id="wrapper">
       <Dashboard />
       <ToastContainer />
+
       <div>
+        <th>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+          />
+        </th>
+        <th>
+          <button onClick={handleSearch}>Search</button>
+        </th>
         <button onClick={() => exportToExcels(data)}>Export to Excel</button>
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">

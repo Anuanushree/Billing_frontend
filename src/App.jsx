@@ -164,6 +164,7 @@ import FinalReport from "./component/finalReport";
 import Admin from "./Admindashboard/Admin";
 import Adminsale from "./Admindashboard/Adminsale";
 import Calc from "./component/Calc";
+import AdminInward from "./Admindashboard/AdminInward";
 
 // const Base_url = "http://localhost:4000";
 //billing-backend-1.onrender.com
@@ -207,7 +208,10 @@ function App() {
         {isAdminLogged && (
           <>
             <Route path="/inward" element={<ExcelForm Base_url={Base_url} />} />
-
+            <Route
+              path="/AdminInward"
+              element={<AdminInward Base_url={Base_url} />}
+            />
             <Route path="/CreateUser" element={<Admin Base_url={Base_url} />} />
             <Route
               path="/AdminSaleView"

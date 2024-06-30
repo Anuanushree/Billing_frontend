@@ -5,8 +5,6 @@ import {
   Snackbar,
   SnackbarContent,
   Button,
-  TextField,
-  Grid,
   Table,
   TableBody,
   TableCell,
@@ -15,19 +13,16 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import DatePicker from "@mui/lab/DatePicker";
-import { LocalizationProvider } from "@mui/lab";
 import AdminDashboard from "./AdminDashboard";
 
 function Adminsale({ Base_url }) {
   const [users, setUsers] = useState([]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [formDetails, setFormDetails] = useState([]);
   const [filteredData, setFilteredData] = useState({});
   const [loading, setLoading] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
@@ -38,7 +33,6 @@ function Adminsale({ Base_url }) {
   useEffect(() => {
     getUser();
     fetchFormDetails();
-    handleSearch();
   }, []);
 
   const getUser = async () => {
@@ -73,7 +67,7 @@ function Adminsale({ Base_url }) {
         .filter(
           (item) => item.user === userId && !isNaN(parseInt(item.Closing_value))
         )
-        .reduce((acc, item) => acc + parseInt(item.Closing_value || 0, 10), 0);
+        .reduce((acc, item) => acc + parseInt(item.Sale_value || 0, 10), 0);
 
       filteredData[userId] = {
         userName: user.username,
@@ -94,96 +88,91 @@ function Adminsale({ Base_url }) {
   };
 
   const handleSearch = async () => {
-    console.log("jhgc");
-    const formattedDate = selectedDate.toISOString().substring(0, 10);
-    const response = await axios.get(`${Base_url}/user/getAllDailyData`);
-    console.log(response.data, "ddfk");
-    const filt = response.data.filter(
-      (d) => d.Date.substring(0, 10) === formattedDate
-    );
-    console.log(filt);
-    setFormDetails(filt);
-    filterAndSeparateData(filt);
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `${Base_url}/user/getAllDailyData?date=${date}`,
+        headers
+      );
+      setFormDetails(response.data);
+      filterAndSeparateData(response.data);
+    } catch (error) {
+      console.error("Error fetching daily sale records:", error);
+      showSnackbar("Error fetching daily sale records", "error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div id="wrapper">
       <AdminDashboard />
 
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <h1>Sales Data</h1>
-        </Grid>
-        <Grid item xs={12}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Select Date"
-              value={selectedDate}
-              onChange={(newDate) => setSelectedDate(newDate)}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
+      <div style={{ margin: "20px" }}>
+        <h1>Sales Data</h1>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{ height: "36px", padding: "0 10px" }}
+          />
           <Button variant="contained" color="primary" onClick={handleSearch}>
             Search
           </Button>
-        </Grid>
-        <Grid item xs={12}>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>User Name</TableCell>
-                  <TableCell align="right">Total Quantity</TableCell>
+        </div>
+
+        <TableContainer component={Paper} style={{ marginTop: "20px" }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>User Name</TableCell>
+                <TableCell align="right">Total Quantity</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {Object.keys(filteredData).map((userId) => (
+                <TableRow key={userId}>
+                  <TableCell component="th" scope="row">
+                    {filteredData[userId]?.userName}
+                  </TableCell>
+                  <TableCell align="right">
+                    {filteredData[userId]?.totalQuantity}
+                  </TableCell>
                 </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.keys(filteredData).map((userId) => (
-                  <TableRow key={userId}>
-                    <TableCell component="th" scope="row">
-                      {filteredData[userId]?.userName}
-                    </TableCell>
-                    <TableCell align="right">
-                      {filteredData[userId]?.totalQuantity}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Grid>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
 
-        {/* Snackbar for user feedback */}
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleCloseSnackbar}
-        >
-          <SnackbarContent
-            style={{
-              backgroundColor: snackbarMessage.includes("success")
-                ? "green"
-                : "red",
-            }}
-            message={snackbarMessage}
-            action={
-              <Button
-                color="inherit"
-                size="small"
-                onClick={handleCloseSnackbar}
-              >
-                CLOSE
-              </Button>
-            }
-          />
-        </Snackbar>
+      {/* Snackbar for user feedback */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <SnackbarContent
+          style={{
+            backgroundColor: snackbarMessage.includes("success")
+              ? "green"
+              : "red",
+          }}
+          message={snackbarMessage}
+          action={
+            <Button color="inherit" size="small" onClick={handleCloseSnackbar}>
+              CLOSE
+            </Button>
+          }
+        />
+      </Snackbar>
 
-        {/* Loading indicator */}
-        {loading && (
-          <Grid item xs={12} style={{ textAlign: "center" }}>
-            <CircularProgress />
-          </Grid>
-        )}
-      </Grid>
+      {/* Loading indicator */}
+      {loading && (
+        <div style={{ textAlign: "center", margin: "20px" }}>
+          <CircularProgress />
+        </div>
+      )}
     </div>
   );
 }

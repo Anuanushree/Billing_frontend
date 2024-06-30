@@ -27,7 +27,7 @@ function AdminDashboard() {
               <a>
                 <i className="fa fa-user icon" aria-hidden="true"></i>
               </a>
-              <p className="dashboard-user">{profile.username}</p>
+              <p className="dashboard-user"></p>
             </div>
             <div className="sidebar-brand-text mx-3"></div>
           </a>
@@ -39,6 +39,7 @@ function AdminDashboard() {
               <span>Inward</span>
             </NavLink>
           </li>
+
           <hr className="sidebar-divider"></hr>
           <li className="nav-item">
             <NavLink
@@ -59,6 +60,17 @@ function AdminDashboard() {
             >
               <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
               <span>Sale details</span>
+            </NavLink>
+          </li>
+          <hr className="sidebar-divider"></hr>
+          <li className="nav-item">
+            <NavLink
+              className="nav-link"
+              activeClassName="active"
+              to="/AdminInward"
+            >
+              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              <span>Item Master</span>
             </NavLink>
           </li>
           <li className="nav-item">
