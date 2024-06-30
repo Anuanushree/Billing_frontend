@@ -38,7 +38,8 @@ function Adminsale({ Base_url }) {
   useEffect(() => {
     getUser();
     fetchFormDetails();
-  }, [formDetails]);
+    handleSearch();
+  }, []);
 
   const getUser = async () => {
     try {
@@ -93,11 +94,14 @@ function Adminsale({ Base_url }) {
   };
 
   const handleSearch = async () => {
+    console.log("jhgc");
     const formattedDate = selectedDate.toISOString().substring(0, 10);
     const response = await axios.get(`${Base_url}/user/getAllDailyData`);
+    console.log(response.data, "ddfk");
     const filt = response.data.filter(
       (d) => d.Date.substring(0, 10) === formattedDate
     );
+    console.log(filt);
     setFormDetails(filt);
     filterAndSeparateData(filt);
   };
