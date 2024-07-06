@@ -35,7 +35,7 @@ function Admin({ Base_url }) {
 
   const getUser = async () => {
     try {
-      const response = await axios.get(`${Base_url}/user/list`, headers);
+      const response = await axios.get(`${Base_url}/user/list`);
       setUsers(response.data);
       console.log(response.data);
     } catch (error) {

@@ -31,7 +31,7 @@ function AdminInward({ Base_url }) {
 
   const getInwardData = async () => {
     try {
-      const response = await axios.get(`${Base_url}/user/getInward`, headers);
+      const response = await axios.get(`${Base_url}/user/getInward`);
       setFormDetails(response.data);
       setDummy(response.data);
     } catch (error) {
@@ -53,7 +53,7 @@ function AdminInward({ Base_url }) {
       const response = await axios.patch(
         `${Base_url}/user/updateAllReceipt`,
         data,
-        headers
+
       );
       await getInwardData();
       toast.success("Successfully updated");

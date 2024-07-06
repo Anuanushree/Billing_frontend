@@ -43,7 +43,7 @@ function Adminsale({ Base_url }) {
 
   const getUser = async () => {
     try {
-      const response = await axios.get(`${Base_url}/user/list`, headers);
+      const response = await axios.get(`${Base_url}/user/list`);
       setUsers(response.data);
     } catch (error) {
       console.log("Error fetching users:", error);
@@ -53,7 +53,7 @@ function Adminsale({ Base_url }) {
   const fetchFormDetails = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${Base_url}/user/getAllData`, headers);
+      const response = await axios.get(`${Base_url}/user/getAllData`);
       setFormDetails(response.data);
     } catch (error) {
       console.error("Error fetching sale records:", error);
