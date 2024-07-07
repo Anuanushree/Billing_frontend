@@ -171,7 +171,7 @@ function Admin({ Base_url }) {
           />
           <TextField
             label="Password"
-            type="password"
+            type="text"
             value={newUserPassword}
             onChange={(e) => setNewUserPassword(e.target.value)}
             variant="outlined"
