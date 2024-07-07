@@ -304,7 +304,7 @@ import Adminsale from "./Admindashboard/Adminsale";
 import Calc from "./component/Calc";
 import AdminInward from "./Admindashboard/AdminInward";
 
-// const Base_url = "http://localhost:4000";
+// const Base/url = "http:`//localhost:4000";
 const Base_url = "https://billing-backend-1.onrender.com";
 
 function App() {
@@ -320,8 +320,10 @@ function App() {
   useEffect(() => {
     if (!token) {
       navigate("/");
-    } else {
+    } else if (token) {
       getUserData();
+    } else {
+      isAdminLogged(true);
     }
   }, [token, navigate]);
 

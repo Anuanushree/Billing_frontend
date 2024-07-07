@@ -38,15 +38,6 @@ function ExcelForm({ Base_url }) {
       return { ...prev, [e.target.name]: e.target.value };
     });
   };
-
-  useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
-      setFormDetails(response.data);
-    };
-    get();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
