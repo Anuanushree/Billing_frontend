@@ -320,10 +320,6 @@ function App() {
   useEffect(() => {
     if (!token) {
       navigate("/");
-    } else if (token) {
-      getUserData();
-    } else {
-      isAdminLogged(true);
     }
   }, [token, navigate]);
 
@@ -333,11 +329,6 @@ function App() {
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user data:", error);
-      if (error.response && error.response.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("Adminlogged");
-        navigate("/"); // Redirect to sign-in page on error or unauthorized access
-      }
     }
   };
 
