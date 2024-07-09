@@ -170,7 +170,11 @@ function ItemMaster({ Base_url }) {
 
     try {
       const data = { formDetails, invoice };
-      const response = await axios.post(`${Base_url}/user/invoice`, data);
+      const response = await axios.post(
+        `${Base_url}/user/invoice`,
+        data,
+        headers
+      );
       toast.success("Successfully submitted");
     } catch (error) {
       console.log("error:", error);

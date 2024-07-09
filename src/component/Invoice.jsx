@@ -38,7 +38,7 @@ function Invoice({ Base_url }) {
 
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
-    // console.log(response.data);
+    console.log(response.data);
     // const fil = response.data.filter((f) => f.Total_bottle > 0);
     setdata(response.data);
   };
@@ -478,7 +478,6 @@ function Invoice({ Base_url }) {
       <div>
         <button onClick={exportToExcel}>Export to Excel</button>
 
-       
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">
             <thead>
