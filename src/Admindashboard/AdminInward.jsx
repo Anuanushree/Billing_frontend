@@ -14,10 +14,10 @@ function AdminInward({ Base_url }) {
   const [editMRP, setEditMRP] = useState("");
   const [desciption, setDescription] = useState("");
   const [rangeEdit, setRangeEdit] = useState("");
-
   const [dummy, setDummy] = useState([]);
   const [invoicedata, setInvoiceData] = useState([]);
   const [isAddingInvoice, setIsAddingInvoice] = useState(false);
+  const [itemCode, setItemCode] = useState();
 
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -45,16 +45,16 @@ function AdminInward({ Base_url }) {
       date,
       editMRP,
       itemCode,
-      description,
+      desciption,
       rangeEdit,
     };
 
     try {
       const response = await axios.patch(
         `${Base_url}/user/updateAllReceipt`,
-        data,
-
+        data
       );
+      console.log(response.data);
       await getInwardData();
       toast.success("Successfully updated");
     } catch (error) {
@@ -151,8 +151,16 @@ function AdminInward({ Base_url }) {
         0
       ),
     [formDetails]
+    // AMSTEL PREMIUM STRONG BEER
   );
-
+  const handleEdit = (id, invoice, mrp, itemCode, description, range) => {
+    setEditIndex(id);
+    setInvoice(invoice || 0);
+    setEditMRP(mrp || 0);
+    setItemCode(itemCode || 0);
+    setDescription(description);
+    setRangeEdit(range);
+  };
   return (
     <div id="wrapper">
       <AdminDashboard />

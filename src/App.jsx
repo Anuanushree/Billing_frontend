@@ -167,37 +167,33 @@ import Calc from "./component/Calc";
 import AdminInward from "./Admindashboard/AdminInward";
 
 // const Base_url = "http://localhost:4000";
-//billing-backend-1.onrender.com
+// billing-backend-1.onrender.com
 const Base_url = "https://billing-backend-1.onrender.com";
 
 function App() {
   const [user, setUser] = useState(null);
-  const isAdminLogged = localStorage.getItem("Adminlogged") === "true";
+  const [isAdmin, setIsAdmin] = useState(false);
   const token = localStorage.getItem("token");
 
-  const navigate = useNavigate();
-  const headers = {
-    headers: { authorization: `${token}` },
-  };
-
   useEffect(() => {
-    if (!token) {
-      navigate("/");
-    } else {
-      getUserData();
-    }
-  }, [token, navigate]);
+    const fetchUserData = async () => {
+      try {
+        const headers = { headers: { authorization: token } };
+        const response = await axios.get(`${Base_url}/user/profile`, headers);
+        setUser(response.data);
+        setIsAdmin(response.data.Admin); // Assuming isAdmin is a property returned from the backend
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        // Handle unauthorized access or other errors
+        localStorage.removeItem("token");
+        setUser(null);
+      }
+    };
 
-  const getUserData = async () => {
-    try {
-      const response = await axios.get(`${Base_url}/user/profile`, headers);
-      console.log(response.data);
-      setUser(response.data);
-    } catch (error) {
-      console.error("Error fetching user data:", error);
-      navigate("/"); // Redirect to sign-in page on error or unauthorized access
+    if (token) {
+      fetchUserData();
     }
-  };
+  }, [token]);
 
   return (
     <div id="page-top">
@@ -206,7 +202,7 @@ function App() {
         {/* <Route path="/forgotpassword" element={<ForgotPassword Base_url={Base_url} />} />
         <Route path="/resetpassword/:id" element={<ResetPassword Base_url={Base_url} />} /> */}
 
-        {isAdminLogged && (
+        {isAdmin && (
           <>
             <Route path="/inward" element={<ExcelForm Base_url={Base_url} />} />
             <Route

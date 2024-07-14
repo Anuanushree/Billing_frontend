@@ -11,29 +11,31 @@ function SignIn({ Base_url }) {
 
   const handleSignIn = async (event) => {
     event.preventDefault();
-    if (email == "AdminSathish" && password == "AdminSathish@123") {
-      localStorage.setItem("Adminlogged", true);
-      navigate("/inward");
-    } else {
-      try {
-        const user = {
-          email,
-          password,
-        };
-        const response = await axios.post(`${Base_url}/user/signin`, user);
-        seterror(response.data.error);
-        // const error = response.da
-        console.log(response.data);
-        const value = response.data.token;
-        const id = response.data.id;
-        localStorage.setItem("token", value);
-        localStorage.setItem("id", id);
-        if (value) {
+
+    try {
+      const user = {
+        email,
+        password,
+      };
+      const response = await axios.post(`${Base_url}/user/signin`, user);
+      seterror(response.data.error);
+      // const error = response.da
+      console.log(response.data);
+      const value = response.data.token;
+      const id = response.data.id;
+      const admin = response.data.Admin;
+      console.log(admin);
+      localStorage.setItem("token", value);
+      localStorage.setItem("id", id);
+      if (value) {
+        if (admin === true) {
+          navigate("/inward");
+        } else {
           navigate("/exceldata");
         }
-      } catch (error) {
-        console.log("Error in signin user :", error);
       }
+    } catch (error) {
+      console.log("Error in signin user :", error);
     }
   };
 

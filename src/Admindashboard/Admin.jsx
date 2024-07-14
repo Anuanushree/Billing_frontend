@@ -36,7 +36,9 @@ function Admin({ Base_url }) {
   const getUser = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/list`);
-      setUsers(response.data);
+
+      const filt = response.data.filter((d) => d.Admin == false);
+      setUsers(filt);
       console.log(response.data);
     } catch (error) {
       console.log("Error fetching users:", error);
