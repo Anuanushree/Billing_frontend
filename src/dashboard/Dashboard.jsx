@@ -104,7 +104,6 @@ function Dashboard({ Base_url }) {
               <span>Invoice Data</span>
             </Link>
           </li>
-
           <li className={`nav-item ${isActive("/pv_report")}`}>
             <Link className="nav-link" to="/pv_report">
               <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
@@ -114,8 +113,14 @@ function Dashboard({ Base_url }) {
           <li className={`nav-item ${isActive("/calc")}`}>
             <Link className="nav-link" to="/calc">
               <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
-              <span>Cash Denomination Calculation
-              </span>
+              <span>Cash Denomination Calculation</span>
+            </Link>
+          </li>
+
+          <li className={`nav-item ${isActive("/calc")}`}>
+            <Link className="nav-link" to="/saleMessage">
+              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              <span>saleMessage</span>
             </Link>
           </li>
           <li className="nav-item">
