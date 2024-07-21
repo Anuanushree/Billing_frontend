@@ -60,14 +60,21 @@ function SalesMessage({ Base_url }) {
 
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      // const response = await axios.get(`${Base_url}/user/getData`, headers);
 
-      const rData = response.data.filter(
-        (item) =>
-          item.updatedAt.split("T")[0] === today && item.Receipt_bottle > 0
+      // const rData = response.data.filter(
+      //   (item) =>
+      //     item.updatedAt.split("T")[0] === today && item.Receipt_bottle > 0
+      // );
+      const response = await axios.get(
+        `${Base_url}/user/getdailyData`,
+        headers
       );
-      setReceipt(rData);
-      receiptCase(rData);
+      const filt = response.data.filter(
+        (d) => d.Date.substring(0, 10) === today
+      );
+      setReceipt(filt);
+      receiptCase(filt);
       const filteredData = response.data.filter((f) => f.Total_bottle > 0);
       // console.log(filteredData);
       setData(filteredData);
@@ -261,7 +268,6 @@ function SalesMessage({ Base_url }) {
     ];
 
     const receiptDataArray = [
-  
       ["Receipt ORDINARY case", receiptData.ordinary || 0],
       ["Receipt CASE MEDIUM", receiptData.medium || 0],
       ["Receipt CASE PREMIUM", receiptData.premium || 0],
@@ -349,11 +355,20 @@ function SalesMessage({ Base_url }) {
     <div id="wrapper">
       <Dashboard />
       <>
-        {!showData && (
-          <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
-        )}
+        <div>
+          {!showData && (
+            <>
+              <p>once you submit the form,you will see the sale messgae</p>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </>
+          )}
+        </div>
         {showData && (
           <TableContainer
             component={Paper}
