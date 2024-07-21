@@ -12,6 +12,8 @@ import {
   Button,
 } from "@mui/material";
 import Dashboard from "../dashboard/Dashboard";
+import { ToastContainer, toast } from "react-toastify";
+import * as XLSX from "xlsx";
 
 function SalesMessage({ Base_url }) {
   const [data, setData] = useState([]);
@@ -31,7 +33,7 @@ function SalesMessage({ Base_url }) {
   const [showData, setShowData] = useState(false);
 
   const token = localStorage.getItem("token");
-
+  const id = localStorage.getItem("id");
   const headers = {
     headers: { authorization: `${token}` },
   };
@@ -45,7 +47,6 @@ function SalesMessage({ Base_url }) {
       );
 
       setFilteredData(filtered);
-      console.log(filtered);
     };
     get1();
   }, []);
@@ -65,8 +66,6 @@ function SalesMessage({ Base_url }) {
         (item) =>
           item.updatedAt.split("T")[0] === today && item.Receipt_bottle > 0
       );
-
-      console.log(rData);
       setReceipt(rData);
       receiptCase(rData);
       const filteredData = response.data.filter((f) => f.Total_bottle > 0);
@@ -75,7 +74,7 @@ function SalesMessage({ Base_url }) {
       processSalesData(filteredData);
     };
     get();
-  }, [Base_url, headers]);
+  }, []);
 
   const receiptCase = (data) => {
     let receiptcase = { ordinary: 0, medium: 0, premium: 0 };
@@ -217,44 +216,135 @@ function SalesMessage({ Base_url }) {
     setClosingValueData(closingValue);
   };
   const handleSubmit = async () => {
-    localStorage.setItem(`submitClicked-${today}`, "true");
+    // localStorage.setItem(`submitClicked-${today}`, "true");
+
     try {
       console.log("save button clicked");
-      const res = await axios.post(
-        `${Base_url}/user/dailyData`,
-        formdetail,
-        headers
-      );
+      console.log(headers);
+      console.log(id);
+      const res = await axios.post(`${Base_url}/user/billingUpdate`, { id });
       console.log(res.data);
       toast.success("Successfully submitted");
-      get();
     } catch (error) {
       console.log("Error in submitting the form:", error);
       toast.warning("Something went wrong while submitting the form");
-    } finally {
-      setFormDisable(true);
     }
     setShowData(true);
   };
 
-  // const handlesave = async () => {
-  //   try {
-  //     console.log("save button clicked");
-  //     const res = await axios.post(
-  //       `${Base_url}/user/dailyData`,
-  //       formdetail,
-  //       headers
-  //     );
-  //     console.log(res.data);
-  //     toast.success("Successfully submitted");
-  //     get();
-  //   } catch (error) {
-  //     console.log("Error in submitting the form:", error);
-  //     toast.warning("Something went wrong while submitting the form");
-  //   } finally {
-  //     setFormDisable(true);
-  //   }
-  // };
+  const exportToExcel = () => {
+    const salesDataArray = [
+      ...Object.keys(salesData)
+        .filter((key) => [1000, 750, 375, 180].includes(parseInt(key)))
+        .map((key) => [`${key} ML`, salesData[key] || 0]),
+
+      ...Object.keys(salesData)
+        .filter((key) => [325, 500, 650].includes(parseInt(key)))
+        .map((key) => [`BEER ${key} ML`, salesData[key] || 0]),
+      ["IMFL VALUE", totalImfsValue],
+      ["BEER VALUE", totalBeerValue],
+      ...filteredData.flatMap((d) => [
+        ["POS CARD", d.Pos],
+        ["BANK", d.Bank],
+      ]),
+      ["sale", totalImfsValue + totalBeerValue],
+    ];
+
+    const closingDataArray = [
+      ...Object.keys(closingData)
+        .filter((key) => [1000, 750, 375, 180].includes(parseInt(key)))
+        .map((key) => [`${key} ML closing`, closingData[key] || 0]),
+      ...Object.keys(closingData)
+        .filter((key) => [325, 500, 650].includes(parseInt(key)))
+        .map((key) => [`BEER ${key} ML closing`, closingData[key] || 0]),
+      ["CLOSING STOCK VALUE", totalClosingValue],
+    ];
+
+    const receiptDataArray = [
+  
+      ["Receipt ORDINARY case", receiptData.ordinary || 0],
+      ["Receipt CASE MEDIUM", receiptData.medium || 0],
+      ["Receipt CASE PREMIUM", receiptData.premium || 0],
+      ["BEER 325 ML SALES CASE", beerreceiptData["325 ML"] || 0],
+      ["BEER 500 ML SALES CASE", beerreceiptData["500 ML"] || 0],
+      ["BEER 650 ML SALES CASE", beerreceiptData["650 ML"] || 0],
+      [
+        "SALES CASE TOTAL",
+        (receiptData.ordinary || 0) +
+          (receiptData.medium || 0) +
+          (receiptData.premium || 0) +
+          (beerreceiptData["325 ML"] || 0) +
+          (beerreceiptData["500 ML"] || 0) +
+          (beerreceiptData["650 ML"] || 0),
+      ],
+      ["SALES CASE ORDINARY", salesCaseData.ordinary || 0],
+      ["SALES CASE MEDIUM", salesCaseData.medium || 0],
+      ["SALES CASE PREMIUM", salesCaseData.premium || 0],
+      ["BEER 325 ML SALES CASE", beerSalesCaseData["325 ML"] || 0],
+      ["BEER 500 ML SALES CASE", beerSalesCaseData["500 ML"] || 0],
+      ["BEER 650 ML SALES CASE", beerSalesCaseData["650 ML"] || 0],
+      [
+        "SALES CASE TOTAL",
+        (salesCaseData.ordinary || 0) +
+          (salesCaseData.medium || 0) +
+          (salesCaseData.premium || 0) +
+          (beerSalesCaseData["325 ML"] || 0) +
+          (beerSalesCaseData["500 ML"] || 0) +
+          (beerSalesCaseData["650 ML"] || 0),
+      ],
+      ["ORDINARY CLOSING VALUE", closingValueData.ordinary || 0],
+      ["MEDIUM CLOSING VALUE", closingValueData.medium || 0],
+      ["PREMIUM CLOSING VALUE", closingValueData.premium || 0],
+      ["BEER CLOSING VALUE", closingValueData.beer || 0],
+      [
+        "TOTAL CLOSING VALUE",
+        (closingValueData.ordinary || 0) +
+          (closingValueData.medium || 0) +
+          (closingValueData.premium || 0) +
+          (closingValueData.beer || 0),
+      ],
+    ];
+
+    // Combine all arrays into one
+    const combinedDataArray = [
+      ...salesDataArray,
+      ...closingDataArray,
+      ...receiptDataArray,
+    ];
+
+    // Create worksheet and apply column widths
+    const ws = XLSX.utils.aoa_to_sheet(combinedDataArray);
+    ws["!cols"] = [
+      { wch: 30 }, // Adjust column widths as needed
+      { wch: 30 },
+    ];
+
+    // Apply styles to all cells
+    const defaultCellStyle = {
+      font: { name: "Arial", sz: 12 },
+      alignment: { vertical: "center", horizontal: "center" },
+    };
+
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+      for (let C = range.s.c; C <= range.e.c; ++C) {
+        const cell_address = { c: C, r: R };
+        const cell_ref = XLSX.utils.encode_cell(cell_address);
+        if (!ws[cell_ref]) ws[cell_ref] = { t: "s", v: "" }; // if cell does not exist, create it
+        ws[cell_ref].s = defaultCellStyle;
+      }
+    }
+
+    // Create workbook and append worksheet
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Combined Data");
+
+    // Write workbook to file
+    XLSX.writeFile(wb, "sale message.xlsx");
+  };
+
+  // Ensure that all referenced data (salesData, closingData, receiptData, etc.) are defined and populated
+
   return (
     <div id="wrapper">
       <Dashboard />
@@ -271,6 +361,13 @@ function SalesMessage({ Base_url }) {
             style={{ width: "500px" }}
           >
             <Table>
+              <Button
+                onClick={exportToExcel}
+                variant="contained"
+                color="secondary"
+              >
+                Export to Excel
+              </Button>
               <TableHead>
                 <TableRow>
                   <TableCell></TableCell>
