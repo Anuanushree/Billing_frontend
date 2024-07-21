@@ -169,7 +169,7 @@ import SalesMessage from "./component/SalesMessage";
 
 // const Base_url = "http://localhost:4000";
 // billing-backend-1.onrender.com
-const Base_url = "https://billing-backend-1.onrender.com";
+const Base_url = "https://billing-backend-2.onrender.com";
 
 function App() {
   const [user, setUser] = useState(null);
