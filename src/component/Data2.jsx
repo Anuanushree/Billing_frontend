@@ -75,41 +75,46 @@ function Data2({ Base_url }) {
       const filteredData = response1.data.filter(
         (data) => data.Total_bottle > 0
       );
-      // setFormDetails(response1.data);
-      const filt = response1.data.filter(
-        (d) => d.updatedAt.substring(0, 10) == date
-      );
-      setFormDetails(filt);
+      // console.log(response1.data);
+
+      setFormDetails(filteredData);
       console.log(formDetails, "dfghjk");
       setData(response.data);
       // Move handleSearch here
     };
     get();
-  }, [formDetails, data]);
+  }, []);
 
   const handleSeacrhDate = async () => {
-    const getData = async () => {
-      let response;
+    if (fromDate && toDate) {
+      const dateSearch = {
+        fromDate,
+        toDate,
+      };
 
-      if (fromDate && toDate) {
-        const dateSearch = {
-          fromDate,
-          toDate,
-        };
-        console.log(dateSearch);
-        response = await axios.post(
+      console.log("Date search:", dateSearch);
+
+      try {
+        const response = await axios.post(
           `${Base_url}/user/getdailyDateSearch`,
-          {
-            dateSearch,
-          },
+          { dateSearch },
           headers
         );
-        console.log(response.data, "resposme");
+
+        console.log("Response data:", response.data);
+
+        if (response.data) {
+          setFormDetails(response.data);
+          setData(response.data);
+        } else {
+          console.error("No data received from the API.");
+        }
+      } catch (error) {
+        console.error("Error fetching date range data:", error);
       }
-      setFormDetails(response.data);
-      setData(response.data);
-    };
-    getData();
+    } else {
+      console.warn("Both fromDate and toDate must be specified.");
+    }
   };
 
   const calculateProductWiseSale_value = () => {

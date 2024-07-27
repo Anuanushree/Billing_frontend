@@ -13,9 +13,7 @@ function FinalReport({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
-  useEffect(() => {
-    get();
-  }, []);
+
   useEffect(() => {
     const get1 = async () => {
       try {
@@ -23,21 +21,19 @@ function FinalReport({ Base_url }) {
           `${Base_url}/user/getdailyData`,
           headers
         );
-        const filt = response.data.filter(
-          (d) => d.Date.substring(0, 10) === date
-        );
-        setFormDetails(filt);
-        setData(response.data);
+        setFormDetails(response.data);
       } catch (error) {
         console.error("Error fetching daily data:", error);
       }
     };
     get1();
-  }, [date]);
+  }, []);
+  useEffect(() => {
+    get();
+  }, []);
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     console.log(response.data);
-  
     setData(response.data);
   };
   const exportToExcels = (data) => {
@@ -274,8 +270,8 @@ function FinalReport({ Base_url }) {
     return rows;
   };
   const handleSearch = async () => {
-    const filt = data.filter((d) => d.Date.substring(0, 10) === date);
-    setFormDetails(filt);
+    const filt = formDetails.filter((d) => d.Date.substring(0, 10) === date);
+    setData(filt);
   };
   return (
     <div id="wrapper">

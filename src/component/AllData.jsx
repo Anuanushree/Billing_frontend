@@ -8,7 +8,7 @@ function AllData({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [data, setData] = useState([]);
-
+  const [initial, setInotial] = useState("");
   const handleClick = () => {
     exportToExcel(formDetails);
   };
@@ -23,16 +23,24 @@ function AllData({ Base_url }) {
   const get1 = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/getData`, headers);
-      const fil = response.data.filter((f) => f.Total_bottle > 0);
+      const fil = response.data
+        .filter((f) => f.Total_bottle > 0)
+        .map((item) => {
+          const newDate = new Date(item.Date);
+          newDate.setDate(newDate.getDate() + 1);
+          return { ...item, Date: newDate.toISOString().split("T")[0] };
+        });
+      console.log(fil);
       setFormDetails(fil);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
   useEffect(() => {
     get1();
-  }, []);
-  useEffect(() => {
+  }, [initial]);
+  const handleSearch = async () => {
     const get = async () => {
       try {
         const response = await axios.get(
@@ -42,6 +50,7 @@ function AllData({ Base_url }) {
         const filt = response.data.filter(
           (d) => d.Date.substring(0, 10) === date
         );
+        console.log(filt);
         setFormDetails(filt);
         setData(response.data);
       } catch (error) {
@@ -49,9 +58,6 @@ function AllData({ Base_url }) {
       }
     };
     get();
-  }, [date]);
-
-  const handleSearch = async () => {
     const filt = data.filter((d) => d.Date.substring(0, 10) === date);
     setFormDetails(filt);
   };
@@ -128,8 +134,8 @@ function AllData({ Base_url }) {
         MRP: rest.MRP_Value,
         "Opening Bottle": rest.Opening_bottle,
         "Opening value": rest.Opening_value,
-        "Receipt Bottle": rest.Receipt_bottle||0,
-        "Receipt value": rest.Receipt_value||0,
+        "Receipt Bottle": rest.Receipt_bottle || 0,
+        "Receipt value": rest.Receipt_value || 0,
         "Total value": rest.Total_value,
         "Total Bottle": rest.Total_bottle,
         Case: rest.Case,
@@ -246,8 +252,8 @@ function AllData({ Base_url }) {
                   <td>{d.MRP_Value}</td>
                   <td>{d.Opening_bottle}</td>
                   <td>{d.Opening_value}</td>
-                  <td>{d.Receipt_bottle?d.Receipt_bottle :0}</td>
-                  <td>{d.Receipt_value?d.Receipt_value:0}</td>
+                  <td>{d.Receipt_bottle ? d.Receipt_bottle : 0}</td>
+                  <td>{d.Receipt_value ? d.Receipt_value : 0}</td>
                   <td>{d.Total_value}</td>
                   <td>{d.Total_bottle}</td>
                   <td>{d.Case}</td>

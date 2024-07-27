@@ -223,7 +223,7 @@ function SalesMessage({ Base_url }) {
     setClosingValueData(closingValue);
   };
   const handleSubmit = async () => {
-    // localStorage.setItem(`submitClicked-${today}`, "true");
+    localStorage.setItem(`submitClicked-${today}`, "true");
 
     try {
       console.log("save button clicked");

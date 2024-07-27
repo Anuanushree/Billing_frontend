@@ -17,17 +17,27 @@ function Report({ Base_url }) {
     headers: { authorization: `${token}` },
   };
   useEffect(() => {
+    const dailyData = async () => {
+      const response1 = await axios.get(
+        `${Base_url}/user/getdailyData`,
+        headers
+      );
+      const filt1 = response1.data.filter(
+        (d) => d.Date.substring(0, 10) === date
+      );
+      console.log(filt1);
+      // setFormDetails(response.data);
+      setData(filt1);
+    };
+    dailyData();
+  }, [date]);
+  useEffect(() => {
     const get = async () => {
       const response = await axios.get(`${Base_url}/user/getData`, headers);
-      // console.log(response.data);
-      const filt = response.data.filter(
-        (d) => d.updatedAt.substring(0, 10) == date
-      );
-      setFormDetails(filt);
-
-      // setFormDetails(response.data);
-      setData(response.data);
+      console.log(response.data);
+      setFormDetails(response.data);
     };
+
     get();
   }, []);
 
@@ -98,6 +108,7 @@ function Report({ Base_url }) {
 
   const handleSearch = async () => {
     console.log(date);
+
     const filt = data.filter((d) => d.Date.substring(0, 10) == date);
     setFormDetails(filt);
     console.log(filt);

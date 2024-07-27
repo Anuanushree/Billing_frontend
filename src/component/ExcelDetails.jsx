@@ -41,13 +41,6 @@ function ExcelDetails({ Base_url }) {
   //     setFormDisable(true);
   //   }
   // };
-  useEffect(() => {
-    get();
-  }, []);
-  useEffect(() => {
-    filterData();
-  }, [array, findItem]);
-
   var get = async () => {
     const response = await axios.get(`${Base_url}/user/getData`, headers);
     console.log(response.data);
@@ -55,6 +48,13 @@ function ExcelDetails({ Base_url }) {
     setformdetail(fil);
     setDummy(fil);
   };
+  useEffect(() => {
+    get();
+  }, []);
+  useEffect(() => {
+    filterData();
+  }, [array, findItem]);
+
   // get();
   const totalValue = useMemo(() => {
     return formdetail.reduce((total, item) => {
