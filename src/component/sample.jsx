@@ -3,7 +3,6 @@ import "./sample.css";
 
 function Sample({ Base_url, formDetails, valueType }) {
   const [data, setData] = useState([]);
-  const val = data;
   const totalOpeningBottles = {};
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
@@ -11,6 +10,7 @@ function Sample({ Base_url, formDetails, valueType }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
+
   // Calculate total opening bottles for each size and range
   formDetails.forEach((item) => {
     const { Range, Size } = item;
@@ -23,11 +23,11 @@ function Sample({ Base_url, formDetails, valueType }) {
     }
     totalOpeningBottles[Range][Size] += value || 0;
   });
-  // console.log(totalOpeningBottles, "totyui");
+
   const ranges = [...new Set(formDetails.map((item) => item.Range))];
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
   const itemTypes = [...new Set(formDetails.map((item) => item.Item_type))];
-  // console.log(formDetails);
+
   const calculateTotalSaleValue = (productType) => {
     return formDetails
       .filter((item) => item.Range === productType)
@@ -39,6 +39,7 @@ function Sample({ Base_url, formDetails, valueType }) {
     calculateTotalSaleValue("Premium") +
     calculateTotalSaleValue("Ordinary") +
     calculateTotalSaleValue("Medium");
+
   const calculateAddt = (range, size) => {
     if (
       totalOpeningBottles[range] &&
@@ -74,9 +75,11 @@ function Sample({ Base_url, formDetails, valueType }) {
     });
     return totalAddt;
   };
-const filteredRanges = ranges.filter(
-  (range) => range !== "Closing_value" && range !== "Sale_value"
-);
+
+  const filteredRanges = ranges.filter(
+    (range) => range !== "Closing_value" && range !== "Sale_value"
+  );
+
   return (
     <div id="wrapper">
       {/* Table for total opening bottles based on size and range */}
@@ -120,7 +123,6 @@ const filteredRanges = ranges.filter(
                 ))}
               <tr>
                 <th>Grand Total</th>
-
                 <td>{calculateTotalSaleValue("Beer")}</td>
                 <td>{calculateTotalSaleValue("Premium")}</td>
                 <td>{calculateTotalSaleValue("Medium")}</td>
@@ -139,7 +141,7 @@ const filteredRanges = ranges.filter(
             <thead>
               <tr>
                 <th>Size</th>
-                {ranges.map((range) => (
+                {filteredRanges.map((range) => (
                   <th key={range}>{range}</th>
                 ))}
               </tr>
@@ -150,26 +152,11 @@ const filteredRanges = ranges.filter(
                 .map((size) => (
                   <tr key={size}>
                     <td>{size}</td>
-                    {ranges.map((range) => (
+                    {filteredRanges.map((range) => (
                       <td key={`${range}-${size}`}>
                         {totalOpeningBottles[range] &&
                         totalOpeningBottles[range][size]
-                          ? ((size == "375" ||
-                              size == "325" ||
-                              size == "500") &&
-                              Math.round(
-                                totalOpeningBottles[range][size] / 24
-                              )) ||
-                            ((size == "650" || size == "750") &&
-                              Math.round(
-                                totalOpeningBottles[range][size] / 12
-                              )) ||
-                            (size == "180" &&
-                              Math.round(
-                                totalOpeningBottles[range][size] / 48
-                              )) ||
-                            (size == "1000" &&
-                              Math.round(totalOpeningBottles[range][size] / 9))
+                          ? calculateAddt(range, size)
                           : 0}
                       </td>
                     ))}

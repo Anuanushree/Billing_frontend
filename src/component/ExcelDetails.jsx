@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function ExcelDetails({ Base_url }) {
-  const [formdetail, setformdetail] = useState([]);
+  const [formDetails, setFormDetails] = useState([]);
   const [date, setDate] = useState("");
   const [array, setArray] = useState([]);
   const [enable, setEnable] = useState(true);
@@ -13,7 +13,7 @@ function ExcelDetails({ Base_url }) {
   const [editedCaseValue, setEditedCaseValue] = useState();
   const [formDisable, setFormDisable] = useState(false);
   const [editedLooseValue, setEditedLooseValue] = useState();
-  const [findItem, setFindItem] = useState();
+  const [findItem, setFindItem] = useState("");
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [dummy, setDummy] = useState([]);
 
@@ -23,145 +23,140 @@ function ExcelDetails({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
-  // const handlesave = async () => {
-  //   try {
-  //     console.log("save button clicked");
-  //     const res = await axios.post(
-  //       `${Base_url}/user/dailyData`,
-  //       formdetail,
-  //       headers
-  //     );
-  //     console.log(res.data);
-  //     toast.success("Successfully submitted");
-  //     get();
-  //   } catch (error) {
-  //     console.log("Error in submitting the form:", error);
-  //     toast.warning("Something went wrong while submitting the form");
-  //   } finally {
-  //     setFormDisable(true);
-  //   }
-  // };
-  var get = async () => {
-    const response = await axios.get(`${Base_url}/user/getData`, headers);
-    console.log(response.data);
-    const fil = response.data.filter((f) => f.Total_bottle > 0);
-    setformdetail(fil);
-    setDummy(fil);
+
+  const getData = async () => {
+    try {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      const filteredData = response.data.filter(
+        (item) => item.Total_bottle > 0
+      );
+      setFormDetails(filteredData);
+      setDummy(filteredData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+
   useEffect(() => {
-    get();
+    getData();
   }, []);
+
   useEffect(() => {
     filterData();
   }, [array, findItem]);
 
-  // get();
   const totalValue = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Total_value) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Total_value) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const overallTotalBottle = useMemo(() => {
-    return formdetail.reduce((total, detail) => {
-      // ParseInt will return NaN for null values, so we handle them with || 0
-      return total + (parseInt(detail.Total_bottle) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Total_bottle) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const totalCase = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Case) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Case) || 0),
+      0
+    );
+  }, [formDetails]);
 
-  console.log(formdetail);
   const totalLoose = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Loose) || 0);
-    }, 0);
-  }, [formdetail]);
-  const filterData = async () => {
-    let a = dummy;
-    const filt =
-      findItem && findItem !== ""
-        ? a.filter((d) => d.Product === findItem || d.Item_Code === findItem)
-        : a;
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Loose) || 0),
+      0
+    );
+  }, [formDetails]);
 
-    setformdetail(filt);
+  const filterData = async () => {
+    const filteredData = findItem
+      ? dummy.filter(
+          (item) => item.Product === findItem || item.Item_Code === findItem
+        )
+      : dummy;
+    setFormDetails(filteredData);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = () => {
     filterData();
   };
 
   const handleSubmit = async (id) => {
-    const Data = {
+    const data = {
       date,
       editedCaseValue: editedCaseValue || 0,
       editedLooseValue: editedLooseValue || 0,
       id,
-      formdetail,
+      formDetails,
     };
+
     try {
-      console.log(Data);
-      const res = await axios.put(`${Base_url}/user/updateData`, Data, headers);
-      console.log(res.data);
-      const get1 = async () => {
-        const response = await axios.get(`${Base_url}/user/getdata`, headers);
-        const filt = response.data.filter((f) => f.Total_bottle > 0);
-        setDummy(filt);
-        setArray(filt);
-      };
-      await get1();
+      await axios.put(`${Base_url}/user/updateData`, data, headers);
+      await getData();
       filterData();
     } catch (error) {
-      console.log("Error in updating case and loose : ", error);
-      toast.warning("error in updating case and loose");
+      console.error("Error updating case and loose:", error);
+      toast.warning("Error updating case and loose");
+    } finally {
+      setEditIndex(null);
     }
-    setEditIndex(null);
   };
 
-  const handleEdit = (id, value, loose, date) => {
+  const handleEdit = (id, caseValue, looseValue, date) => {
     setEditIndex(id);
-    setEditedCaseValue(value);
-    setEditedLooseValue(loose);
+    setEditedCaseValue(caseValue);
+    setEditedLooseValue(looseValue);
     setDate(date);
   };
+
   const totalClosingBottle = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Closing_bottle) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Closing_bottle) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const totalSalesBottle = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Sales_bottle) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Sales_bottle) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const totalSalesValue = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Sale_value) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Sale_value) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const totalClosingValue = useMemo(() => {
-    return formdetail.reduce((total, item) => {
-      return total + (parseInt(item.Closing_value) || 0);
-    }, 0);
-  }, [formdetail]);
+    return formDetails.reduce(
+      (total, item) => total + (parseInt(item.Closing_value) || 0),
+      0
+    );
+  }, [formDetails]);
 
   const handleDelete = async () => {
-    const res = await axios.delete(`${Base_url}/user/delete`);
+    try {
+      await axios.delete(`${Base_url}/user/delete`);
+    } catch (error) {
+      console.error("Error deleting data:", error);
+    }
   };
+
   return (
     <div id="wrapper">
       <Dashboard />
       <ToastContainer />
-      {isFormVisible && formdetail ? (
+      {isFormVisible && formDetails ? (
         <div className="table-container">
-          <table className=" table table-bordered border border-primary p-2 m-4">
+          <table className="table table-bordered border-primary p-2 m-4">
             <thead>
               <tr>
                 <th colSpan={3}>
@@ -173,62 +168,49 @@ function ExcelDetails({ Base_url }) {
                   <button onClick={handleSearch}>Search</button>
                 </th>
                 <th colSpan={6}>
-                  {" "}
-                  you can search using proper Product name (Beer like that) or
-                  item_code
+                  You can search using the product name (e.g., Beer) or item
+                  code.
                 </th>
               </tr>
             </thead>
             <thead className="table-primary">
               <tr>
-                <th>Item code</th>
+                <th>Item Code</th>
                 <th colSpan={2}>Brand Name</th>
                 <th>Size</th>
                 <th>MRP</th>
-                <th>Total value</th>
+                <th>Total Value</th>
                 <th>Total Bottle</th>
                 <th>Case</th>
                 <th>Loose</th>
                 <th></th>
-                <th>Closing bottle</th>
+                <th>Closing Bottle</th>
                 <th>Sales Bottle</th>
                 <th>Sales Value</th>
-                <th>Closing value</th>
+                <th>Closing Value</th>
               </tr>
             </thead>
             <tbody>
-              {formdetail
-                // .filter(
-                //   (fil) => fil.Opening_bottle > 0 || fil.Receipt_bottle > 0
-                // )
-                // .sort((a, b) => a.Product.localeCompare(b.Product))
-                // .sort((d, c) => d.Description.localeCompare(c.Description))
-                .sort((a, b) => {
-                  // First, sort by Product
-                  const productComparison = a.Product.localeCompare(b.Product);
-                  if (productComparison !== 0) {
-                    // If Products are different, return the comparison result
-                    return productComparison;
-                  } else {
-                    // If Products are the same, sort by Description
-                    return a.Description.localeCompare(b.Description);
-                  }
-                })
-                .map((d, i) => (
-                  <tr key={i}>
-                    {/* <td>{i+1}</td> */}
-                    <td>{d.Item_Code}</td>
+              {formDetails
+                .sort(
+                  (a, b) =>
+                    a.Product.localeCompare(b.Product) ||
+                    a.Description.localeCompare(b.Description)
+                )
+                .map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.Item_Code}</td>
                     <td colSpan={2} style={{ width: "900px" }}>
-                      {d.Description}
+                      {item.Description}
                     </td>
-                    <td>{d.Size}</td>
-                    <td>{d.MRP_Value}</td>
-                    <td>{d.Total_value}</td>
-                    <td>{d.Total_bottle}</td>
+                    <td>{item.Size}</td>
+                    <td>{item.MRP_Value}</td>
+                    <td>{item.Total_value}</td>
+                    <td>{item.Total_bottle}</td>
                     <td>
-                      {editIndex === d._id ? (
+                      {editIndex === item._id ? (
                         <input
-                          type="Number"
+                          type="number"
                           style={{
                             width: "70px",
                             padding: "5px",
@@ -238,45 +220,49 @@ function ExcelDetails({ Base_url }) {
                           onChange={(e) => setEditedCaseValue(e.target.value)}
                         />
                       ) : (
-                        d.Case
+                        item.Case
                       )}
                     </td>
                     <td>
-                      {editIndex === d._id ? (
+                      {editIndex === item._id ? (
                         <input
-                          type="Number"
-                          value={editedLooseValue}
+                          type="number"
                           style={{
                             width: "70px",
                             padding: "5px",
                             fontSize: "12px",
                           }}
+                          value={editedLooseValue}
                           onChange={(e) => setEditedLooseValue(e.target.value)}
                         />
                       ) : (
-                        d.Loose
+                        item.Loose
                       )}
                     </td>
                     <td>
-                      {editIndex === d._id ? (
-                        <button onClick={() => handleSubmit(d._id)}>
+                      {editIndex === item._id ? (
+                        <button onClick={() => handleSubmit(item._id)}>
                           Save
                         </button>
                       ) : (
                         <button
-                          value={enable}
                           onClick={() =>
-                            handleEdit(d._id, d.Case, d.Loose, d.Date)
+                            handleEdit(
+                              item._id,
+                              item.Case,
+                              item.Loose,
+                              item.Date
+                            )
                           }
                         >
                           Edit
                         </button>
                       )}
                     </td>
-                    <td>{d.Closing_bottle}</td>
-                    <td>{d.Sales_bottle} </td>
-                    <td>{d.Sale_value}</td>
-                    <td>{d.Closing_value}</td>
+                    <td>{item.Closing_bottle}</td>
+                    <td>{item.Sales_bottle}</td>
+                    <td>{item.Sale_value}</td>
+                    <td>{item.Closing_value}</td>
                   </tr>
                 ))}
             </tbody>
@@ -286,25 +272,20 @@ function ExcelDetails({ Base_url }) {
                 <td>{totalValue}</td>
                 <td>{overallTotalBottle > 0 ? overallTotalBottle : 0}</td>
                 <td>{totalCase}</td>
-                {totalLoose > 0 ? <td>{totalLoose}</td> : <td>0</td>}
+                <td>{totalLoose > 0 ? totalLoose : 0}</td>
                 <td></td>
-                {/* <td>{totalClosingValue}</td> */}
                 <td>{totalClosingBottle > 0 ? totalClosingBottle : 0}</td>
                 <td>{totalSalesBottle > 0 ? totalSalesBottle : 0}</td>
                 <td>{totalSalesValue > 0 ? totalSalesValue : 0}</td>
                 <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
               </tr>
               <tr>
-                {/* {
-                  <td colSpan={14}>
-                    {" "}
-                    <button className="custom-button" onClick={handlesave}>
-                      Submit
-                    </button>
-  
-                  </td>
-                } */}
-                {/* <button onClick={handleDelete/}>Delete</button> */}
+                {/* <td colSpan={14}>
+                  <button className="custom-button" onClick={handlesave}>
+                    Submit
+                  </button>
+                </td> */}
+                {/* <button onClick={handleDelete}>Delete</button> */}
               </tr>
             </tfoot>
           </table>

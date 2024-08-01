@@ -59,12 +59,12 @@ function Data2({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
-  const handleSearch = async () => {
-    console.log(date);
-    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
-    setFormDetails(filt);
-    console.log(formDetails);
-  };
+  // const handleSearch = async () => {
+  //   console.log(date);
+  //   const filt = data.filter((d) => d.Date.substring(0, 10) == date);
+  //   setFormDetails(filt);
+  //   console.log(formDetails);
+  // };
   useEffect(() => {
     const get = async () => {
       const response = await axios.get(

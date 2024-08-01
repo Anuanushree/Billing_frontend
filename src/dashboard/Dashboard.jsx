@@ -113,7 +113,7 @@ function Dashboard({ Base_url }) {
           <li className={`nav-item ${isActive("/calc")}`}>
             <Link className="nav-link" to="/calc">
               <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
-              <span>Cash Denomination Calculation</span>
+              <span>Denomination </span>
             </Link>
           </li>
 
