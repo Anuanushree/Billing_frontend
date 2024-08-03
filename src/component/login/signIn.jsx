@@ -68,12 +68,10 @@ function SignIn({ Base_url }) {
                     </span>
                   </div>
                   <input
-                    type="email"
                     className="form-control login-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
-                    required
                   />
                 </div>
                 <div className="input-group form-group">

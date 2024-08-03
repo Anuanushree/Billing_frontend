@@ -7,7 +7,19 @@ import {
   SnackbarContent,
   Button,
   TextField,
+  Grid,
+  Paper,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 function Admin({ Base_url }) {
   const [users, setUsers] = useState([]);
@@ -36,8 +48,7 @@ function Admin({ Base_url }) {
   const getUser = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/list`);
-
-      const filt = response.data.filter((d) => d.Admin == false);
+      const filt = response.data.filter((d) => d.Admin === false);
       setUsers(filt);
       console.log(response.data);
     } catch (error) {
@@ -114,7 +125,6 @@ function Admin({ Base_url }) {
         {
           username: newUserName,
           email: newUserEmail,
-
           password: newUserPassword,
           storeName: newUserId,
         },
@@ -148,99 +158,137 @@ function Admin({ Base_url }) {
   return (
     <div id="wrapper">
       <AdminDashboard />
-      <div>
-        <div className="user-creation-form">
-          <TextField
-            label="Store Name"
-            value={newUserId}
-            onChange={(e) => setNewUserId(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Username"
-            value={newUserName}
-            onChange={(e) => setNewUserName(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Email or id"
-            value={newUserEmail}
-            onChange={(e) => setNewUserEmail(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
-          <TextField
-            label="Password"
-            type="text"
-            value={newUserPassword}
-            onChange={(e) => setNewUserPassword(e.target.value)}
-            variant="outlined"
-            margin="normal"
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateUser}
-            disabled={
-              !newUserName ||
-              !newUserEmail ||
-              !newUserId ||
-              !newUserPassword ||
-              loading
-            }
-          >
-            {loading ? <CircularProgress size={24} /> : "Create User"}
-          </Button>
-        </div>
+      <Grid container spacing={3} style={{ padding: 24 }}>
+        <Grid item xs={12}>
+          <Paper style={{ padding: 24 }}>
+            <Typography variant="h6" gutterBottom>
+              Create New User
+            </Typography>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Store Name"
+                  value={newUserId}
+                  onChange={(e) => setNewUserId(e.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Username"
+                  value={newUserName}
+                  onChange={(e) => setNewUserName(e.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Email or ID"
+                  value={newUserEmail}
+                  onChange={(e) => setNewUserEmail(e.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  fullWidth
+                  label="Password"
+                  type="password"
+                  value={newUserPassword}
+                  onChange={(e) => setNewUserPassword(e.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={handleCreateUser}
+                  disabled={
+                    !newUserName ||
+                    !newUserEmail ||
+                    !newUserId ||
+                    !newUserPassword ||
+                    loading
+                  }
+                >
+                  {loading ? <CircularProgress size={24} /> : "Create User"}
+                </Button>
+              </Grid>
+            </Grid>
+          </Paper>
+        </Grid>
 
-        <div className="table">
-          <table>
-            <thead>
-              <tr>
-                <th>UserName</th>
-                <th>Store</th>
-                <th>User Email</th>
-                <th>Created At</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.username}</td>
-                  <td>{user.storeName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.createdAt}</td>
-                  <td>
-                    {userId === user.id ? (
-                      <div>
-                        <input
-                          type="text"
-                          value={password}
-                          onChange={handleChange}
-                          placeholder="Enter new password"
-                        />
-                        <button onClick={handleSave}>Save</button>
-                      </div>
-                    ) : (
-                      <>
-                        <button onClick={() => handleReset(user.id)}>
-                          Reset password
-                        </button>
-                        <button onClick={() => handleDelete(user.id)}>
-                          Delete
-                        </button>
-                      </>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+        <Grid item xs={12}>
+          <Paper style={{ padding: 24 }}>
+            <Typography variant="h6" gutterBottom>
+              User List
+            </Typography>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>UserName</TableCell>
+                    <TableCell>Store</TableCell>
+                    <TableCell>User Email</TableCell>
+                    <TableCell>Created At</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.username}</TableCell>
+                      <TableCell>{user.storeName}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>{user.createdAt}</TableCell>
+                      <TableCell>
+                        {userId === user.id ? (
+                          <div>
+                            <TextField
+                              type="password"
+                              value={password}
+                              onChange={handleChange}
+                              placeholder="Enter new password"
+                            />
+                            <Button
+                              onClick={handleSave}
+                              variant="contained"
+                              color="primary"
+                              size="small"
+                            >
+                              Save
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <IconButton
+                              onClick={() => handleReset(user.id)}
+                              color="primary"
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleDelete(user.id)}
+                              color="secondary"
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </Grid>
+      </Grid>
 
       {/* Snackbar for user feedback */}
       <Snackbar
@@ -262,13 +310,6 @@ function Admin({ Base_url }) {
           }
         />
       </Snackbar>
-
-      {/* Loading indicator */}
-      {loading && (
-        <div className="loading-indicator">
-          <CircularProgress />
-        </div>
-      )}
     </div>
   );
 }
