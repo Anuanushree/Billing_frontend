@@ -16,134 +16,182 @@ function Report({ Base_url }) {
   const headers = {
     headers: { authorization: `${token}` },
   };
-  useEffect(() => {
-    const dailyData = async () => {
-      const response1 = await axios.get(
-        `${Base_url}/user/getdailyData`,
-        headers
-      );
-      const filt1 = response1.data.filter(
-        (d) => d.Date.substring(0, 10) === date
-      );
-      console.log(filt1);
-      // setFormDetails(response.data);
-      setData(filt1);
-    };
-    dailyData();
-  }, [date]);
-  useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
-      console.log(response.data);
-      setFormDetails(response.data);
-    };
-
-    get();
-  }, []);
-
-  const itemTypeWiseTotal = {};
-  formDetails.forEach((entry) => {
-    const { Item_type, Size, Total_bottle = 0 } = entry;
-    if (!itemTypeWiseTotal[Item_type]) {
-      itemTypeWiseTotal[Item_type] = {};
-    }
-    if (!itemTypeWiseTotal[Item_type][Size]) {
-      itemTypeWiseTotal[Item_type][Size] = 0;
-    }
-    itemTypeWiseTotal[Item_type][Size] += Total_bottle;
-  });
-  console.log(itemTypeWiseTotal);
-  let totalBeerQuantity = 0;
-  let totalIFSCQuantity = 0;
-  let totalBeerbottle = 0;
-  let totalBeerprice = 0;
-  let totalIMFsbottle = 0;
-  let totalIMFsprice = 0;
-  formDetails.forEach((item) => {
-    const { Item_type, Total_bottle = 0, Total_value = 0 } = item;
-    if (Item_type === "Beer_sale") {
-      totalBeerbottle += Total_bottle;
-      totalBeerprice += Total_value;
-    } else if (Item_type === "IMFS_sale") {
-      totalIMFsbottle += Total_bottle;
-      totalIMFsprice += Total_value;
-    }
-  });
-
-  formDetails.forEach((item) => {
-    const { Item_type, Quantity } = item;
-    if (Item_type === "Beer_sale") {
-      totalBeerQuantity += Quantity;
-    } else if (Item_type === "IMFS_sale") {
-      totalIFSCQuantity += Quantity;
-    }
-  });
 
   useEffect(() => {
-    const getData = async () => {
-      const response = await axios.get(`${Base_url}/user/bank`, headers);
-      console.log(response.data);
-      const filt = response.data.filter((d) => d.Date.substring(0, 10) == date);
-      setDatas(filt);
-      console.log(datas);
+    const fetchDailyData = async () => {
+      try {
+        const response1 = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        const filteredData = response1.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        setData(filteredData);
+      } catch (error) {
+        console.error("Error fetching daily data", error);
+      }
     };
-    getData();
-  }, []);
+    fetchDailyData();
+  }, [date, Base_url, headers]);
+
+  useEffect(() => {
+    const fetchFormDetails = async () => {
+      try {
+        const response = await axios.get(`${Base_url}/user/getData`, headers);
+        setFormDetails(response.data);
+      } catch (error) {
+        console.error("Error fetching form details", error);
+      }
+    };
+    fetchFormDetails();
+  }, [Base_url, headers]);
+
+  useEffect(() => {
+    const fetchBankData = async () => {
+      try {
+        const response = await axios.get(`${Base_url}/user/bank`, headers);
+        const filteredData = response.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        setDatas(filteredData);
+      } catch (error) {
+        console.error("Error fetching bank data", error);
+      }
+    };
+    fetchBankData();
+  }, [date, Base_url, headers]);
+
+  const itemTypeWiseTotal = useMemo(() => {
+    const totals = {};
+    formDetails.forEach(({ Item_type, Size, Total_bottle = 0 }) => {
+      if (!totals[Item_type]) {
+        totals[Item_type] = {};
+      }
+      if (!totals[Item_type][Size]) {
+        totals[Item_type][Size] = 0;
+      }
+      totals[Item_type][Size] += Total_bottle;
+    });
+    return totals;
+  }, [formDetails]);
+
+  const totalBeerQuantity = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Quantity = 0 }) =>
+        Item_type === "Beer_sale" ? total + Quantity : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalIMFSQuantity = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Quantity = 0 }) =>
+        Item_type === "IMFS_sale" ? total + Quantity : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalBeerbottle = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Total_bottle = 0 }) =>
+        Item_type === "Beer_sale" ? total + Total_bottle : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalBeerprice = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Total_value = 0 }) =>
+        Item_type === "Beer_sale" ? total + Total_value : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalIMFsbottle = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Total_bottle = 0 }) =>
+        Item_type === "IMFS_sale" ? total + Total_bottle : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalIMFsprice = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Total_value = 0 }) =>
+        Item_type === "IMFS_sale" ? total + Total_value : total,
+      0
+    );
+  }, [formDetails]);
 
   const totalPos = useMemo(() => {
-    return datas.reduce((total, item) => {
-      return total + item.Pos;
-    }, 0);
-  }, [datas]);
-  const totalcash = useMemo(() => {
-    return datas.reduce((total, item) => {
-      return total + item.Cash;
-    }, 0);
-  }, [datas]);
-  const totalbank = useMemo(() => {
-    return datas.reduce((total, item) => {
-      return total + item.Bank;
-    }, 0);
+    return datas.reduce((total, { Pos = 0 }) => total + Pos, 0);
   }, [datas]);
 
-  const handleSearch = async () => {
-    console.log(date);
+  const totalCash = useMemo(() => {
+    return datas.reduce((total, { Cash = 0 }) => total + Cash, 0);
+  }, [datas]);
 
-    const filt = data.filter((d) => d.Date.substring(0, 10) == date);
-    setFormDetails(filt);
-    console.log(filt);
+  const totalBank = useMemo(() => {
+    return datas.reduce((total, { Bank = 0 }) => total + Bank, 0);
+  }, [datas]);
+
+  const handleSearch = () => {
+    const filteredData = data.filter((d) => d.Date.substring(0, 10) === date);
+    setFormDetails(filteredData);
   };
-  // console.log(formDetails)
-  const totalClosingValue = formDetails.reduce((total, item) => {
-    return total + (item.Closing_value || 0);
-  }, 0);
-  let imfsSale = 0;
-  let BeerSale = 0;
-  console.log(formDetails);
-  formDetails.forEach((d) => {
-    // Ensure Sale_value is a valid number before adding
-    if (d.Item_type == "IMFS_sale") {
-      imfsSale += d.Sale_value || 0;
-      // console.log(d.Sale_value);
-    } else {
-      BeerSale += d.Sale_value || 0;
-    }
-  });
-  console.log(totalClosingValue, "wertyui");
-  const totalOpeningValue = formDetails.reduce((total, item) => {
-    return total + item.Opening_value;
-  }, 0);
-  const totalReceiptValue = formDetails.reduce((total, item) => {
-    return total + item.Receipt_value;
-  }, 0);
 
-  const totalSalesValue = formDetails.reduce((total, item) => {
-    return total + (parseInt(item.Sale_value) || 0);
-  }, 0);
+  const totalClosingValue = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Closing_value = 0 }) => total + Closing_value,
+      0
+    );
+  }, [formDetails]);
 
-  const totalValue = formDetails.reduce((total, item) => {
-    return total + item.Total_value;
-  }, 0);
+  const imfsSale = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Sale_value = 0 }) =>
+        Item_type === "IMFS_sale" ? total + Sale_value : total,
+      0
+    );
+  }, [formDetails]);
+
+  const beerSale = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Item_type, Sale_value = 0 }) =>
+        Item_type === "Beer_sale" ? total + Sale_value : total,
+      0
+    );
+  }, [formDetails]);
+
+  const totalOpeningValue = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Opening_value = 0 }) => total + Opening_value,
+      0
+    );
+  }, [formDetails]);
+
+  const totalReceiptValue = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Receipt_value = 0 }) => total + Receipt_value,
+      0
+    );
+  }, [formDetails]);
+
+  const totalSalesValue = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Sale_value = 0 }) => total + parseInt(Sale_value, 10),
+      0
+    );
+  }, [formDetails]);
+
+  const totalValue = useMemo(() => {
+    return formDetails.reduce(
+      (total, { Total_value = 0 }) => total + Total_value,
+      0
+    );
+  }, [formDetails]);
+
   const mapdata = [
     "Opening_bottle",
     "Receipt_bottle",
@@ -153,6 +201,7 @@ function Report({ Base_url }) {
     "Sale_value",
     "Closing_value",
   ];
+
   return (
     <div id="wrapper">
       <Dashboard />
@@ -163,39 +212,40 @@ function Report({ Base_url }) {
           value={date}
           onChange={(e) => setDate(e.target.value)}
         />
-        {/* row-cols-1 row-cols-md-1 row-cols-lg-2 */}
         <button onClick={handleSearch}>Search</button>
-        <div className="row ">
+        <div className="row">
           {mapdata.map((d) => (
-            <div className="col">
+            <div className="col" key={d}>
               <div className="card-body">
                 <Sample valueType={d} formDetails={formDetails} />
               </div>
             </div>
           ))}
           <div className="col">
-            <div className="card-body ">
+            <div className="card-body">
               <div className="sub-card">
                 <table>
                   <thead>
-                    <td colSpan="5" style={{ fontWeight: "bold" }}>
-                      Abstract
-                    </td>
                     <tr>
-                      <td>Sum of opening value</td>
-                      <td>Sum of rec</td>
-                      <td>Sum of total value</td>
-                      <td>sum of Sale value</td>
-                      <td>Sum of closing</td>
+                      <th colSpan="5" style={{ fontWeight: "bold" }}>
+                        Abstract
+                      </th>
+                    </tr>
+                    <tr>
+                      <th>Sum of opening value</th>
+                      <th>Sum of rec</th>
+                      <th>Sum of total value</th>
+                      <th>Sum of Sale value</th>
+                      <th>Sum of closing</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <th>{totalOpeningValue}</th>
-                      <th>{totalReceiptValue}</th>
-                      <th>{totalValue}</th>
-                      <th>{totalSalesValue}</th>
-                      <th>{totalClosingValue}</th>
+                      <td>{totalOpeningValue}</td>
+                      <td>{totalReceiptValue}</td>
+                      <td>{totalValue}</td>
+                      <td>{totalSalesValue}</td>
+                      <td>{totalClosingValue}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -206,26 +256,28 @@ function Report({ Base_url }) {
             <div className="card">
               <table>
                 <thead>
-                  <td colSpan="6" style={{ fontWeight: "bold" }}>
-                    Daily Sales Abstract
-                  </td>
                   <tr>
-                    <td>Sum of IMFS sale value</td>
-                    <td>Sum of Beer sale value</td>
-                    <td>Total</td>
-                    <td>sum of Pos</td>
-                    <td>Sum of NET Sale Cash</td>
-                    <td>Sum of Bank</td>
+                    <th colSpan="6" style={{ fontWeight: "bold" }}>
+                      Daily Sales Abstract
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>Sum of IMFS sale value</th>
+                    <th>Sum of Beer sale value</th>
+                    <th>Total</th>
+                    <th>Sum of Pos</th>
+                    <th>Sum of NET Sale Cash</th>
+                    <th>Sum of Bank</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <th>{imfsSale}</th>
-                    <th>{BeerSale}</th>
-                    <th>{totalSalesValue}</th>
-                    <th>{totalPos}</th>
-                    <th>{totalcash}</th>
-                    <th>{totalbank}</th>
+                    <td>{imfsSale}</td>
+                    <td>{beerSale}</td>
+                    <td>{totalSalesValue}</td>
+                    <td>{totalPos}</td>
+                    <td>{totalCash}</td>
+                    <td>{totalBank}</td>
                   </tr>
                 </tbody>
               </table>
