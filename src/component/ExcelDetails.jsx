@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import Dashboard from "../dashboard/Dashboard";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 function ExcelDetails({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
