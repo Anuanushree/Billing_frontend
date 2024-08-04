@@ -66,7 +66,7 @@ function ExcelDetails({ Base_url }) {
 
       if (response.data.message === "case updated successfully") {
         getData();
-        toast.success("Data updated successfully");
+        // toast.success("Data updated successfully");
       }
     } catch (error) {
       console.error("Error updating data:", error);
@@ -89,6 +89,7 @@ function ExcelDetails({ Base_url }) {
 
   const handleCellEdit = (id, field) => {
     setEditCell({ id, field });
+    console.log(id);
   };
 
   const totalValue = useMemo(() => {
@@ -248,6 +249,9 @@ function ExcelDetails({ Base_url }) {
               <td>{totalSalesBottle > 0 ? totalSalesBottle : 0}</td>
               <td>{totalSalesValue > 0 ? totalSalesValue : 0}</td>
               <td>{totalClosingValue > 0 ? totalClosingValue : 0}</td>
+            </tr>
+            <tr>
+              <button>Submit</button>
             </tr>
           </tfoot>
         </table>
