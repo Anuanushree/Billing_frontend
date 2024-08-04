@@ -163,7 +163,7 @@ function ExcelDetails({ Base_url }) {
   return (
     <div id="wrapper">
       <Dashboard />
-      <ToastContainer />
+
       <div className="table-container">
         <table className="table table-bordered border-primary p-2 m-4">
           <thead>
