@@ -20,7 +20,7 @@ function SignIn({ Base_url }) {
       console.log("Sending request to server");
 
       const response = await axios.post(`${Base_url}/user/signin`, user);
-
+      console.log(response.data);
       const endTime = performance.now();
       console.log(`Received response in ${endTime - startTime} ms`);
 
