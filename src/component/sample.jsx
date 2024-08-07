@@ -1,15 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./sample.css";
 
 function Sample({ Base_url, formDetails, valueType }) {
   const [data, setData] = useState([]);
   const totalOpeningBottles = {};
-  const id = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
-
-  const headers = {
-    headers: { authorization: `${token}` },
-  };
 
   // Calculate total opening bottles for each size and range
   formDetails.forEach((item) => {
@@ -25,8 +19,10 @@ function Sample({ Base_url, formDetails, valueType }) {
   });
 
   const ranges = [...new Set(formDetails.map((item) => item.Range))];
+  const filteredRanges = ranges.filter(
+    (range) => range !== "Closing_value" && range !== "Sale_value"
+  );
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
-  const itemTypes = [...new Set(formDetails.map((item) => item.Item_type))];
 
   const calculateTotalSaleValue = (productType) => {
     return formDetails
@@ -64,21 +60,6 @@ function Sample({ Base_url, formDetails, valueType }) {
     }
     return 0;
   };
-
-  // Calculate total addt across all sizes and ranges
-  const calculateTotalAddt = () => {
-    let totalAddt = 0;
-    sizes.forEach((size) => {
-      ranges.forEach((range) => {
-        totalAddt += calculateAddt(range, size);
-      });
-    });
-    return totalAddt;
-  };
-
-  const filteredRanges = ranges.filter(
-    (range) => range !== "Closing_value" && range !== "Sale_value"
-  );
 
   return (
     <div id="wrapper">
@@ -123,10 +104,11 @@ function Sample({ Base_url, formDetails, valueType }) {
                 ))}
               <tr>
                 <th>Grand Total</th>
-                <td>{calculateTotalSaleValue("Beer")}</td>
-                <td>{calculateTotalSaleValue("Premium")}</td>
-                <td>{calculateTotalSaleValue("Medium")}</td>
-                <td>{calculateTotalSaleValue("Ordinary")}</td>
+                {ranges.map((range) => (
+                  <td key={`grand-${range}`}>
+                    {calculateTotalSaleValue(range)}
+                  </td>
+                ))}
                 <td>{grandTotal}</td>
               </tr>
             </tbody>
@@ -134,7 +116,7 @@ function Sample({ Base_url, formDetails, valueType }) {
         </div>
       </div>
 
-      {/* Table for total bottle divided by size quantity */}
+      {/* Table for total bottles divided by size quantity */}
       <div className="card-container">
         <div className="sub-card">
           <table border="1">
@@ -144,6 +126,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                 {filteredRanges.map((range) => (
                   <th key={range}>{range}</th>
                 ))}
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -167,6 +150,25 @@ function Sample({ Base_url, formDetails, valueType }) {
                     </td>
                   </tr>
                 ))}
+              <tr>
+                <th>Grand Total</th>
+                {filteredRanges.map((range) => (
+                  <td key={`grand-${range}-addt`}>
+                    {sizes.reduce((acc, size) => {
+                      return calculateAddt(range, size) + acc;
+                    }, 0)}
+                  </td>
+                ))}
+                <td>
+                  {sizes.reduce((acc, size) => {
+                    return (
+                      filteredRanges.reduce((rangeAcc, range) => {
+                        return calculateAddt(range, size) + rangeAcc;
+                      }, 0) + acc
+                    );
+                  }, 0)}
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>

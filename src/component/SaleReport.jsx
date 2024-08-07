@@ -6,111 +6,99 @@ import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
 
 function DailySalesReport({ Base_url }) {
-  const [Pos, setPos] = useState();
+  const [Pos, setPos] = useState(0);
+  const [Cash, setCash] = useState(0);
+  const [Bank, setBank] = useState(0);
+  const [paytm, setPaytm] = useState(0);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]); // Default to today's date
   const [data, setData] = useState([]);
-  const [Cash, setCash] = useState();
-  const [Bank, setBank] = useState();
-  const [paytm, setPaytm] = useState();
-  const [date, setDate] = useState(new Date());
-  const [dates, setDates] = useState();
   const [formDetails, setFormDetails] = useState([]);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  const [val, setVal] = useState([]);
-  const id = localStorage.getItem("id");
+  const [val, setVal] = useState(0);
   const token = localStorage.getItem("token");
 
   const headers = {
     headers: { authorization: `${token}` },
   };
+
   useEffect(() => {
-    const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
-      const filteredData = response.data.filter(
-        (data) => data.Total_bottle > 0
-      );
-      setFormDetails(filteredData);
-      console.log(formDetails);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${Base_url}/user/getData`, headers);
+        console.log(response.data);
+
+        // Ensure proper date comparison
+        const today = new Date().toISOString().split("T")[0];
+        const dateBySort = response.data.filter(
+          (d) => new Date(d.updatedAt).toISOString().split("T")[0] === today
+        );
+        console.log(dateBySort);
+
+        setFormDetails(dateBySort);
+
+        // Calculate total closing value
+        const totalClosingValue = dateBySort.reduce(
+          (total, item) => total + (item.Closing_value || 0),
+          0
+        );
+        setVal(totalClosingValue);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
-    get();
-  }, []);
-  useEffect(() => {
-    const dateObj = new Date();
-
-    // const year = dateObj.getFullYear();
-    // const month = (dateObj.getMonth() + 1).toString().padStart(2, "0"); // Month is zero-based
-    // const day = dateObj.getDate().toString().padStart(2, "0");
-
-    // const formattedDate = `${year}-${month}-${day}`;
-    // console.log(formattedDate);
-    // const fil = formDetails.filter(
-    //   (d) => d.Date.substring(0, 10) == formattedDate
-    // );
-    // console.log(fil, "sdfghjk");
-    const totalClosingValue = formDetails.reduce((total, item) => {
-      return total + item.Sale_value;
-    }, 0);
-    console.log(totalClosingValue);
-    setVal(totalClosingValue);
-  });
-
-  useEffect(() => {
-    const getData = async () => {
-      const response = await axios.get(`${Base_url}/user/bank`, headers);
-      console.log(response.data);
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth() + 1; // Month is zero-based, so we add 1
-      const firstDayOfMonth = new Date(currentYear, currentMonth - 1, 1);
-      const lastDayOfMonth = new Date(currentYear, currentMonth, 31);
-      const filt = response.data.filter((d) => {
-        const date = new Date(d.Date);
-        return date >= firstDayOfMonth && date <= lastDayOfMonth;
-      });
-      setData(filt);
-    };
-    getData();
+    fetchData();
   }, []);
 
-  // console.log(formDetails);
-  // console.log(formDetails.data.Date);
+  useEffect(() => {
+    const fetchBankData = async () => {
+      try {
+        const response = await axios.get(`${Base_url}/user/bank`, headers);
+        console.log(response.data);
 
-  const totalPos = useMemo(() => {
-    return data.reduce((total, item) => {
-      return total + item.Pos;
-    }, 0);
-  }, [data]);
-  const totalcash = useMemo(() => {
-    return data.reduce((total, item) => {
-      return total + item.Cash;
-    }, 0);
-  }, [data]);
-  const totalsale = useMemo(() => {
-    return data.reduce((total, item) => {
-      return total + item.Sale;
-    }, 0);
-  }, [data]);
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const currentMonth = currentDate.getMonth(); // Month is zero-based
+        const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+        const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0);
 
-  const totalbank = useMemo(() => {
-    return data.reduce((total, item) => {
-      return total + item.Bank;
-    }, 0);
-  }, [data]);
-  const totalpaytm = useMemo(() => {
-    return data.reduce((total, item) => {
-      return total + parseInt(item.Paytm);
-    }, 0);
-  }, [data]);
-  console.log(val);
+        const filteredData = response.data.filter((d) => {
+          const date = new Date(d.Date);
+          return date >= firstDayOfMonth && date <= lastDayOfMonth;
+        });
+        setData(filteredData);
+      } catch (error) {
+        console.error("Error fetching bank data:", error);
+      }
+    };
+    fetchBankData();
+  }, []);
+
+  const totalPos = useMemo(
+    () => data.reduce((total, item) => total + (item.Pos || 0), 0),
+    [data]
+  );
+  const totalCash = useMemo(
+    () => data.reduce((total, item) => total + (item.Cash || 0), 0),
+    [data]
+  );
+  const totalSale = useMemo(
+    () => data.reduce((total, item) => total + (item.Sale || 0), 0),
+    [data]
+  );
+  const totalBank = useMemo(
+    () => data.reduce((total, item) => total + (item.Bank || 0), 0),
+    [data]
+  );
+  const totalPaytm = useMemo(
+    () =>
+      data.reduce((total, item) => total + (parseFloat(item.Paytm) || 0), 0),
+    [data]
+  );
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = {
-      Pos: Pos,
-      Cash: Cash,
-      Bank: Bank,
-      Sale: val,
-      Paytm: paytm,
-    };
+    const data = { Pos, Cash, Bank, Sale: val, Paytm: paytm };
 
     try {
       const response = await axios.post(
@@ -119,43 +107,27 @@ function DailySalesReport({ Base_url }) {
         headers
       );
       console.log(response.data);
-      toast.success("successfully added");
+      toast.success("Successfully added");
     } catch (error) {
-      console.log("Error in dailyreport : ", error);
+      console.error("Error in daily report:", error);
       toast.warning(error.message);
     }
   };
 
-  const handleSeacrhDate = async () => {
-    const getData = async () => {
-      let response;
-      if (fromDate && toDate) {
-        const dateSearch = {
-          fromDate,
-          toDate,
-        };
-        response = await axios.post(`${Base_url}/user/getReportSearch`, {
-          dateSearch,
+  const handleSearchDate = async () => {
+    if (fromDate && toDate) {
+      try {
+        const response = await axios.post(`${Base_url}/user/getReportSearch`, {
+          dateSearch: { fromDate, toDate },
         });
-        console.log(response.data, "resposme");
+        console.log(response.data);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error searching dates:", error);
       }
-      setData(response.data);
-    };
-    getData();
+    }
   };
 
-  const handleSearch = async () => {
-    console.log("search");
-    console.log(date);
-    const fil = formDetails.filter((d) => d.Date.substring(0, 10) == date);
-    // setFormDetails(fil);
-    console.log(fil);
-    const totalClosingValue = fil.reduce((total, item) => {
-      return total + item.Closing_value;
-    }, 0);
-    console.log(totalClosingValue);
-    setVal(totalClosingValue);
-  };
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
@@ -165,7 +137,6 @@ function DailySalesReport({ Base_url }) {
   };
 
   const exportToExcel = () => {
-    // Remove _id and __v fields from the data and format date
     const sanitizedData = data.map(({ _id, __v, Date, ...rest }) => ({
       Date: formatDate(Date),
       "Sale Details": rest.Sale,
@@ -175,7 +146,6 @@ function DailySalesReport({ Base_url }) {
       "Bank Deposit amount": rest.Bank,
     }));
 
-    // Calculate totals
     const total = sanitizedData.reduce(
       (acc, item) => {
         acc["Sale Details"] += item["Sale Details"];
@@ -195,13 +165,9 @@ function DailySalesReport({ Base_url }) {
       }
     );
 
-    // Prepare data for Excel sheet
     const dataWithTotal = sanitizedData.concat(total);
 
-    // Convert data to worksheet
     const ws = XLSX.utils.json_to_sheet(dataWithTotal);
-
-    // Adjust column width
     ws["!cols"] = [
       { wch: 12 }, // Date
       { wch: 15 }, // Sale Details
@@ -211,108 +177,84 @@ function DailySalesReport({ Base_url }) {
       { wch: 22 }, // Bank Deposit amount
     ];
 
-    // Convert worksheet to workbook
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Report");
-
-    // Save Excel file
     XLSX.writeFile(wb, `Sale_Report from ${fromDate} to ${toDate}.xlsx`);
   };
+
   return (
     <div id="wrapper">
       <Dashboard />
       <ToastContainer />
       <div className="container-fluid form-container">
-        {/* <div class="form-group">
-          <label>Date : </label>
-          <span>
-            &nbsp;&nbsp;
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </span>
-          <button onClick={handleSearch}>search</button>
-        </div> */}
         <div className="form-group">
           <label>From Date:</label>
           <input
             type="date"
-            value={fromDate}
+            value={fromDate || ""}
             onChange={(e) => setFromDate(e.target.value)}
             className="form-control"
           />
         </div>
         <div className="form-group">
-          <span>
-            <label>To Date:</label>
-
-            <input
-              type="date"
-              value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              className="form-control"
-            />
-          </span>
+          <label>To Date:</label>
+          <input
+            type="date"
+            value={toDate || ""}
+            onChange={(e) => setToDate(e.target.value)}
+            className="form-control"
+          />
         </div>
-        <button onClick={handleSeacrhDate}>Search</button>
+        <button onClick={handleSearchDate}>Search</button>
         <button onClick={exportToExcel}>Export to Excel</button>
         <form onSubmit={handleSubmit}>
-          <div class="form-group">
-            <label>Sale : </label>&nbsp;&nbsp;
+          <div className="form-group">
+            <label>Sale: </label>&nbsp;&nbsp;
             <label>{val}</label>
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label>Pos</label>
             <input
-              type="Number"
-              // type="text"
-              name="Description"
+              type="number"
               value={Pos}
               onChange={(e) => setPos(e.target.value)}
-              class="form-control"
+              className="form-control"
               required
             />
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label>Cash</label>
             <input
-              type="Number"
-              // type="text"
-              // name="Description"
+              type="number"
               value={Cash}
               onChange={(e) => setCash(e.target.value)}
-              class="form-control"
+              className="form-control"
               required
             />
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label>Bank</label>
             <input
-              type="Number"
-              // type="text"
+              type="number"
               value={Bank}
               onChange={(e) => setBank(e.target.value)}
-              class="form-control"
+              className="form-control"
               required
             />
           </div>
-          <div class="form-group">
+          <div className="form-group">
             <label>Paytm</label>
             <input
-              type="Number"
-              // type="text"
-              // name="Description"
+              type="number"
               value={paytm}
               onChange={(e) => setPaytm(e.target.value)}
-              class="form-control"
+              className="form-control"
               required
             />
           </div>
           <button
             type="submit"
-            class="btn btn-default form-control bg-primary mt-4"
+            className="btn btn-default form-control bg-primary mt-4"
           >
             Submit
           </button>
@@ -326,7 +268,7 @@ function DailySalesReport({ Base_url }) {
               <th>Cash Collection Amount</th>
               <th>Swiping Card Amount</th>
               <th>Paytm Amount</th>
-              <th>Bank Deposite amount</th>
+              <th>Bank Deposit amount</th>
             </tr>
           </thead>
           <tbody>
@@ -345,12 +287,11 @@ function DailySalesReport({ Base_url }) {
           <tfoot>
             <tr>
               <td colSpan={1}>Total</td>
-              <td>{totalsale}</td>
-              <td>{totalcash}</td>
+              <td>{totalSale}</td>
+              <td>{totalCash}</td>
               <td>{totalPos}</td>
-
-              <td>{totalpaytm}</td>
-              <td>{totalbank}</td>
+              <td>{totalPaytm}</td>
+              <td>{totalBank}</td>
             </tr>
           </tfoot>
         </table>

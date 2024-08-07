@@ -11,28 +11,19 @@ function SignIn({ Base_url }) {
 
   const handleSignIn = async (event) => {
     event.preventDefault();
-    setLoading(true);
-    console.log("Starting sign-in process");
-
     try {
       const user = { email, password };
-      const startTime = performance.now();
-      console.log("Sending request to server");
 
       const response = await axios.post(`${Base_url}/user/signin`, user);
       console.log(response.data);
-      const endTime = performance.now();
-      console.log(`Received response in ${endTime - startTime} ms`);
-
       if (response.data.error) {
         setError(response.data.error);
         console.log(`Error received from server: ${response.data.error}`);
       } else {
         const { token, id, Admin } = response.data;
-
         localStorage.setItem("token", token);
         localStorage.setItem("id", id);
-
+        console.log("Navigating to the next page");
         if (token) {
           navigate(Admin ? "/inward" : "/exceldata");
         }
@@ -68,10 +59,12 @@ function SignIn({ Base_url }) {
                     </span>
                   </div>
                   <input
+                  
                     className="form-control login-input"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email"
+                    required
                   />
                 </div>
                 <div className="input-group form-group">

@@ -11,29 +11,7 @@ function Data2({ Base_url }) {
   const [search, setSearch] = useState(true);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  // const [data, setData] = useState([]);
-  // function exportToExcel(data) {
-  //   const productWiseSaleValue = calculateProductWiseSaleValue(data);
-  //   const total = Object.values(productWiseSaleValue).reduce(
-  //     (acc, value) => acc + value,
-  //     0
-  //   );
-
-  //   const workbook = XLSX.utils.book_new();
-  //   const sheetData = [
-  //     ["#", "Product", "Total Sales Value"],
-  //     ...Object.entries(productWiseSaleValue).map(([product, value], index) => [
-  //       index + 1,
-  //       product,
-  //       value,
-  //     ]),
-  //     ["Total", "", total],
-  //   ];
-
-  //   const worksheet = XLSX.utils.aoa_to_sheet(sheetData);
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-  //   XLSX.writeFile(workbook, "export.xlsx");
-  // }
+  
 
   function calculateProductWiseSaleValue(data) {
     const productWiseSaleValue = {};

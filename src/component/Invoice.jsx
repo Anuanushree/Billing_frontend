@@ -7,7 +7,10 @@ import * as XLSX from "xlsx";
 
 function Invoice({ Base_url }) {
   const [formDetails, setFormDetails] = useState([]);
+  const [backData, setBackData] = useState([]);
   const [data, setdata] = useState([]);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
 
@@ -23,6 +26,7 @@ function Invoice({ Base_url }) {
         );
         setFormDetails(response.data);
         console.log(response.data);
+        setBackData(response.data);
         // Assuming response.data is an array of objects
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -325,6 +329,36 @@ function Invoice({ Base_url }) {
     // Save workbook as Excel file
     XLSX.writeFile(workbook, "Daily_Stock_Details.xlsx");
   };
+  const handleSeacrhDate = async () => {
+    if (fromDate && toDate) {
+      const dateSearch = {
+        fromDate,
+        toDate,
+      };
+
+      console.log("Date search:", dateSearch);
+
+      try {
+        const response = await axios.post(
+          `${Base_url}/user/getinvoiceSearch`,
+          { dateSearch },
+          headers
+        );
+
+        console.log("Response data:", response.data);
+        console.log(response.data);
+        if (response.data) {
+          setFormDetails(response.data);
+        } else {
+          console.error("No data received from the API.");
+        }
+      } catch (error) {
+        console.error("Error fetching date range data:", error);
+      }
+    } else {
+      console.warn("Both fromDate and toDate must be specified.");
+    }
+  };
 
   const exportToExcel = () => {
     const data = formDetails.map((item) => [
@@ -475,8 +509,45 @@ function Invoice({ Base_url }) {
     <div id="wrapper">
       <Dashboard />
       <ToastContainer />
+
       <div>
-        <button onClick={exportToExcel}>Export to Excel</button>
+        <table>
+          <tr>
+            <td>
+              <div className="form-group">
+                <label>From Date:</label>
+                <input
+                  type="date"
+                  value={fromDate}
+                  onChange={(e) => setFromDate(e.target.value)}
+                  className="form-control"
+                />
+              </div>
+            </td>
+            <td>
+              <div className="form-group">
+                <span>
+                  <label>To Date:</label>
+
+                  <input
+                    type="date"
+                    value={toDate}
+                    onChange={(e) => setToDate(e.target.value)}
+                    className="form-control"
+                  />
+                </span>
+              </div>
+            </td>
+            <td>
+              {" "}
+              <button onClick={handleSeacrhDate}>Search</button>
+            </td>
+            <td>
+              {" "}
+              <button onClick={exportToExcel}>Export to Excel</button>
+            </td>
+          </tr>
+        </table>
 
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">

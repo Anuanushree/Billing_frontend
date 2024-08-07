@@ -321,7 +321,7 @@ function ExcelDetails({ Base_url }) {
                       border: "2px solid red",
                     }}
                   >
-                    {item.Loose}
+                    {item.Loose !== 0 && item.Loose}
                   </td>
                   <td>{item.Closing_bottle}</td>
                   <td>{item.Sales_bottle}</td>

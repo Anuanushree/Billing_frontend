@@ -60,7 +60,7 @@ function Report({ Base_url }) {
       }
     };
     fetchBankData();
-  }, [date, Base_url, headers]);
+  }, [date]);
 
   const itemTypeWiseTotal = useMemo(() => {
     const totals = {};
