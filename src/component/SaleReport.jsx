@@ -27,22 +27,42 @@ function DailySalesReport({ Base_url }) {
       try {
         const response = await axios.get(`${Base_url}/user/getData`, headers);
         console.log(response.data);
+        console.log(date);
+        const submit = response.data.filter(
+          (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
+        );
+        if (submit.length > 10) {
+          const response = await axios.get(
+            `${Base_url}/user/getdailyData`,
+            headers
+          );
+          const filt = response.data.filter(
+            (d) => d.Date.substring(0, 10) === date
+          );
+          setFormDetails(filt);
 
+          const totalClosingValue = filt.reduce(
+            (total, item) => total + (item.Sale_value || 0),
+            0
+          );
+          setVal(totalClosingValue);
+        } else {
+          const today = new Date().toISOString().split("T")[0];
+          const dateBySort = response.data.filter(
+            (d) => new Date(d.updatedAt).toISOString().split("T")[0] === today
+          );
+          console.log(dateBySort);
+
+          setFormDetails(dateBySort);
+
+          // Calculate total closing value
+          const totalClosingValue = dateBySort.reduce(
+            (total, item) => total + (item.Sale_value || 0),
+            0
+          );
+          setVal(totalClosingValue);
+        }
         // Ensure proper date comparison
-        const today = new Date().toISOString().split("T")[0];
-        const dateBySort = response.data.filter(
-          (d) => new Date(d.updatedAt).toISOString().split("T")[0] === today
-        );
-        console.log(dateBySort);
-
-        setFormDetails(dateBySort);
-
-        // Calculate total closing value
-        const totalClosingValue = dateBySort.reduce(
-          (total, item) => total + (item.Closing_value || 0),
-          0
-        );
-        setVal(totalClosingValue);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -11,7 +11,6 @@ function Data2({ Base_url }) {
   const [search, setSearch] = useState(true);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
-  
 
   function calculateProductWiseSaleValue(data) {
     const productWiseSaleValue = {};
@@ -53,11 +52,24 @@ function Data2({ Base_url }) {
       const filteredData = response1.data.filter(
         (data) => data.Total_bottle > 0
       );
+
+      const submit = filteredData.filter(
+        (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
+      );
+      if (submit.length > 10) {
+        const filteredData = response.data.filter(
+          (data) => data.Total_bottle > 0
+        );
+        setFormDetails(filteredData);
+        console.log(formDetails, "dfghjk");
+        setData(response.data);
+      } else {
+        setFormDetails(filteredData);
+        console.log(formDetails, "dfghjk");
+        setData(response.data);
+      }
       // console.log(response1.data);
 
-      setFormDetails(filteredData);
-      console.log(formDetails, "dfghjk");
-      setData(response.data);
       // Move handleSearch here
     };
     get();

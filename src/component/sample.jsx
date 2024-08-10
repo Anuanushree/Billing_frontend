@@ -5,6 +5,7 @@ function Sample({ Base_url, formDetails, valueType }) {
   const [data, setData] = useState([]);
   const totalOpeningBottles = {};
 
+  console.log(formDetails);
   // Calculate total opening bottles for each size and range
   formDetails.forEach((item) => {
     const { Range, Size } = item;
@@ -19,9 +20,11 @@ function Sample({ Base_url, formDetails, valueType }) {
   });
 
   const ranges = [...new Set(formDetails.map((item) => item.Range))];
+
   const filteredRanges = ranges.filter(
     (range) => range !== "Closing_value" && range !== "Sale_value"
   );
+  // console.log(valueType, "ssd");
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
 
   const calculateTotalSaleValue = (productType) => {
@@ -37,25 +40,25 @@ function Sample({ Base_url, formDetails, valueType }) {
     calculateTotalSaleValue("Medium");
 
   const calculateAddt = (range, size) => {
+    // console.log(range, size);
+    // console.log(totalOpeningBottles[range][size]);
     if (
       totalOpeningBottles[range] &&
       totalOpeningBottles[range][size] !== undefined
     ) {
       const value = totalOpeningBottles[range][size];
-      switch (size) {
-        case "375":
-        case "325":
-        case "500":
-          return Math.round(value / 24);
-        case "650":
-        case "750":
-          return Math.round(value / 12);
-        case "180":
-          return Math.round(value / 48);
-        case "1000":
-          return Math.round(value / 9);
-        default:
-          return 0;
+
+      if (size == "375" || "325" || "500") {
+        // console.log(Math.round(value / 24), "cal value");
+        return Math.round(value / 24);
+      } else if (size == "650" || "750") {
+        return Math.round(value / 12);
+      } else if (size == "180") {
+        return Math.round(value / 48);
+      } else if (size == "1000") {
+        return Math.round(value / 9);
+      } else {
+        return 0;
       }
     }
     return 0;
@@ -117,62 +120,65 @@ function Sample({ Base_url, formDetails, valueType }) {
       </div>
 
       {/* Table for total bottles divided by size quantity */}
-      <div className="card-container">
-        <div className="sub-card">
-          <table border="1">
-            <thead>
-              <tr>
-                <th>Size</th>
-                {filteredRanges.map((range) => (
-                  <th key={range}>{range}</th>
-                ))}
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sizes
-                .sort((a, b) => parseInt(b) - parseInt(a))
-                .map((size) => (
-                  <tr key={size}>
-                    <td>{size}</td>
-                    {filteredRanges.map((range) => (
-                      <td key={`${range}-${size}`}>
-                        {totalOpeningBottles[range] &&
-                        totalOpeningBottles[range][size]
-                          ? calculateAddt(range, size)
-                          : 0}
+
+      {valueType !== "Closing_value" && valueType !== "Sale_value" && (
+        <div className="card-container">
+          <div className="sub-card">
+            <table border="1">
+              <thead>
+                <tr>
+                  <th>Size</th>
+                  {filteredRanges.map((range) => (
+                    <th key={range}>{range}</th>
+                  ))}
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sizes
+                  .sort((a, b) => parseInt(b) - parseInt(a))
+                  .map((size) => (
+                    <tr key={size}>
+                      <td>{size}</td>
+                      {filteredRanges.map((range) => (
+                        <td key={`${range}-${size}`}>
+                          {totalOpeningBottles[range] &&
+                          totalOpeningBottles[range][size]
+                            ? calculateAddt(range, size)
+                            : 0}
+                        </td>
+                      ))}
+                      <td>
+                        {filteredRanges.reduce((acc, range) => {
+                          return calculateAddt(range, size) + acc;
+                        }, 0)}
                       </td>
-                    ))}
-                    <td>
-                      {filteredRanges.reduce((acc, range) => {
+                    </tr>
+                  ))}
+                <tr>
+                  <th>Grand Total</th>
+                  {filteredRanges.map((range) => (
+                    <td key={`grand-${range}-addt`}>
+                      {sizes.reduce((acc, size) => {
                         return calculateAddt(range, size) + acc;
                       }, 0)}
                     </td>
-                  </tr>
-                ))}
-              <tr>
-                <th>Grand Total</th>
-                {filteredRanges.map((range) => (
-                  <td key={`grand-${range}-addt`}>
+                  ))}
+                  <td>
                     {sizes.reduce((acc, size) => {
-                      return calculateAddt(range, size) + acc;
+                      return (
+                        filteredRanges.reduce((rangeAcc, range) => {
+                          return calculateAddt(range, size) + rangeAcc;
+                        }, 0) + acc
+                      );
                     }, 0)}
                   </td>
-                ))}
-                <td>
-                  {sizes.reduce((acc, size) => {
-                    return (
-                      filteredRanges.reduce((rangeAcc, range) => {
-                        return calculateAddt(range, size) + rangeAcc;
-                      }, 0) + acc
-                    );
-                  }, 0)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

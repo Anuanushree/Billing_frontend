@@ -39,7 +39,24 @@ function Report({ Base_url }) {
     const fetchFormDetails = async () => {
       try {
         const response = await axios.get(`${Base_url}/user/getData`, headers);
-        setFormDetails(response.data);
+
+        const submit = response.data.filter(
+          (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
+        );
+
+        if (submit > 10) {
+          const response1 = await axios.get(
+            `${Base_url}/user/getdailyData`,
+            headers
+          );
+          const filteredData = response1.data.filter(
+            (d) => d.Date.substring(0, 10) === date
+          );
+          setFormDetails(filteredData);
+          console.log(formDetails);
+        } else {
+          setFormDetails(response.data);
+        }
       } catch (error) {
         console.error("Error fetching form details", error);
       }

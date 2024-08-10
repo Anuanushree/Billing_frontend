@@ -16,6 +16,7 @@ function Dashboard({ Base_url }) {
     event.preventDefault();
     localStorage.removeItem("token");
     localStorage.removeItem("id");
+    localStorage.clear();
     navigate("/");
   };
 

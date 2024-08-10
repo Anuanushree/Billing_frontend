@@ -9,28 +9,41 @@ function ExcelDetails({ Base_url }) {
   const [dummy, setDummy] = useState([]);
   const [findItem, setFindItem] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-
   const cellRefs = useRef({});
 
   const token = localStorage.getItem("token");
-
   const id = localStorage.getItem("id");
 
   const headers = {
     headers: { authorization: `${token}` },
   };
 
+  // Fetch data
   const getData = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/getData`, headers);
-      const filteredData = response.data.filter(
-        (item) => item.Total_bottle > 0
-      );
-      setFormDetails(filteredData);
-      setDummy(filteredData);
+      const f = response.data.filter((item) => item.Total_bottle > 0);
+      setDummy(f);
+      filterData(findItem, f); // Filter initial data if needed
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+  };
+
+  const filterData = (searchTerm = "", data = dummy) => {
+    let filteredData = data;
+
+    if (searchTerm) {
+      filteredData = filteredData.filter(
+        (item) => item.Product === searchTerm || item.Item_Code === searchTerm
+      );
+    }
+
+    if (searchTerm && filteredData.length > 0) {
+      filteredData = filteredData.filter((item) => item.Total_bottle > 0);
+    }
+
+    setFormDetails(filteredData);
   };
 
   useEffect(() => {
@@ -59,38 +72,29 @@ function ExcelDetails({ Base_url }) {
       editedLooseValue: updatedItem.Loose || 0,
     };
 
-    console.log(`Sending to backend:`, data);
-
     try {
-      const response = await axios.put(
-        `${Base_url}/user/updateData`,
-        data,
-        headers
-      );
-      console.log(response.data);
-
-      if (response.data.message === "case updated successfully") {
-        getData();
-      }
+      await axios.put(`${Base_url}/user/updateData`, data, headers);
+      getData();
+      // Fetch and update data after successful update
+      // const response = await axios.get(`${Base_url}/user/getData`, headers);
+      // setDummy(response.data);
+      // filterData(findItem, response.data);
     } catch (error) {
       console.error("Error updating data:", error);
       toast.warning("Error updating data");
     }
   };
+
   const handleKeyDown = async (e, id, field) => {
     if (e.key === "Enter" || e.key === "Tab") {
       e.preventDefault();
       if (!editCell) return;
 
       const value = e.target.innerText.trim();
-
-      // If the cell is empty, default to 0
       const finalValue = value === "" ? "0" : value;
 
-      // Update the cell value
       await handleCellChange(id, field, finalValue);
 
-      // Move to the next cell or stay
       setEditCell(null);
 
       if (e.key === "Tab" || e.key === "Enter") {
@@ -98,10 +102,9 @@ function ExcelDetails({ Base_url }) {
         if (nextCell) {
           setEditCell(nextCell);
 
-          // Move focus to the next cell and ensure cursor position is at the end
-          const { id: nextId, field: nextField } = nextCell;
           setTimeout(() => {
-            const cellElement = cellRefs.current[`${nextId}-${nextField}`];
+            const cellElement =
+              cellRefs.current[`${nextCell.id}-${nextCell.field}`];
             if (cellElement) {
               cellElement.focus();
               const range = document.createRange();
@@ -137,6 +140,33 @@ function ExcelDetails({ Base_url }) {
     setEditCell({ id, field });
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    filterData(findItem);
+  };
+
+  const handleClearSearch = () => {
+    setFindItem("");
+    filterData("", dummy);
+  };
+
+  const handleSubmit = async () => {
+    if (window.confirm("Are you sure you want to submit?")) {
+      try {
+        await axios.post(`${Base_url}/user/billingUpdate`, { id }, headers);
+        toast.success("Successfully submitted");
+
+        // Fetch and update data after successful submit
+        const response = await axios.get(`${Base_url}/user/getData`, headers);
+        getData();
+        // filterData(findItem, response.data);
+      } catch (error) {
+        console.error("Error in submitting the form:", error);
+        toast.warning("Something went wrong while submitting the form");
+      }
+    }
+  };
+
   const totalValue = useMemo(() => {
     return formDetails.reduce(
       (total, item) => total + (parseInt(item.Total_value, 10) || 0),
@@ -151,43 +181,6 @@ function ExcelDetails({ Base_url }) {
     );
   }, [formDetails]);
 
-  const filterData = async () => {
-    const filteredData = findItem
-      ? dummy.filter(
-          (item) => item.Product === findItem || item.Item_Code === findItem
-        )
-      : dummy;
-    setFormDetails(filteredData);
-  };
-
-  const handleSearch = () => {
-    filterData();
-  };
-
-  const handleClearSearch = () => {
-    setFindItem("");
-    setFormDetails(dummy);
-  };
-  const handleSubmit = async () => {
-    if (window.confirm("Are you sure you want to submit?")) {
-      console.log("Submitting data...");
-      // Implement your submit logic here
-      try {
-        console.log("save button clicked");
-        console.log(headers);
-        console.log(id);
-        const res = await axios.post(`${Base_url}/user/billingUpdate`, {
-          id,
-        });
-        console.log(res.data);
-        toast.success("Successfully submitted");
-      } catch (error) {
-        console.log("Error in submitting the form:", error);
-        toast.warning("Something went wrong while submitting the form");
-      }
-    }
-  };
-
   const totalCase = useMemo(() => {
     return formDetails.reduce(
       (total, item) => total + (parseInt(item.Case, 10) || 0),
@@ -201,20 +194,6 @@ function ExcelDetails({ Base_url }) {
       0
     );
   }, [formDetails]);
-
-  const handlePreview = async () => {
-    try {
-      const response = await axios.post(`${Base_url}/user/preview`, id);
-      // const filt = response.data.filter(
-      //   (d) => d.Date.substring(0, 10) === date
-      // );
-      console.log(response.data);
-      setFormDetails(response.data);
-      // setDummy(filt);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
 
   const totalClosingBottle = useMemo(() => {
     return formDetails.reduce(
@@ -247,7 +226,6 @@ function ExcelDetails({ Base_url }) {
   return (
     <div id="wrapper">
       <Dashboard />
-
       <div className="table-container">
         <table className="table table-bordered border-primary p-2 m-4">
           <thead>
@@ -305,9 +283,7 @@ function ExcelDetails({ Base_url }) {
                     ref={(el) => (cellRefs.current[`${item._id}-Case`] = el)}
                     onKeyDown={(e) => handleKeyDown(e, item._id, "Case")}
                     onClick={() => handleCellEdit(item._id, "Case")}
-                    style={{
-                      border: "2px solid red",
-                    }}
+                    style={{ border: "2px solid red" }}
                   >
                     {item.Case}
                   </td>
@@ -317,9 +293,7 @@ function ExcelDetails({ Base_url }) {
                     ref={(el) => (cellRefs.current[`${item._id}-Loose`] = el)}
                     onKeyDown={(e) => handleKeyDown(e, item._id, "Loose")}
                     onClick={() => handleCellEdit(item._id, "Loose")}
-                    style={{
-                      border: "2px solid red",
-                    }}
+                    style={{ border: "2px solid red" }}
                   >
                     {item.Loose !== 0 && item.Loose}
                   </td>

@@ -55,280 +55,6 @@ function Invoice({ Base_url }) {
     return `${day}/${month}/${year}`;
   };
 
-  // const exportToExcels = (data) => {
-  //   // Step 1: Group data by 'Product'
-  //   const groupedData = data.reduce((acc, item) => {
-  //     const { _id, __v, updatedAt, ...rest } = item;
-  //     const productName = rest.Product;
-
-  //     if (!acc[productName]) {
-  //       acc[productName] = {
-  //         data: [],
-  //         totalBottles: 0,
-  //         totalValue: 0,
-  //         totalClosingBottles: 0,
-  //       };
-  //     }
-
-  //     // Ensure default values of 0 where data is missing
-  //     const totalBottle = rest.Closing_bottle || 0;
-  //     const totalValue = rest.Closing_value || 0;
-  //     // const closingBottle = rest.Closing_bottle || 0;
-
-  //     acc[productName].data.push({
-  //       "Brand name": rest.Description || "", // If Description is missing
-  //       "Item code": rest.Item_Code || "", // If Item_Code is missing
-  //       Size: rest.Size || "", // If Size is missing
-  //       MRP: rest.MRP_Value || 0, // If MRP_Value is missing
-  //       "Total bottle": totalBottle,
-  //       "Total value": totalValue,
-  //     });
-
-  //     // Accumulate totals
-  //     acc[productName].totalBottles += totalBottle;
-  //     acc[productName].totalValue += totalValue;
-  //     // Accumulate closing bottles
-  //     // acc[productName].totalClosingBottles += closingBottle;
-
-  //     return acc;
-  //   }, {});
-
-  //   // Step 2: Prepare data for Excel with grouped data and totals
-  //   const dataForExcel = [];
-
-  //   for (const productName in groupedData) {
-  //     // Add rows for each item in the product
-  //     groupedData[productName].data.forEach((item) => {
-  //       dataForExcel.push(item);
-  //     });
-
-  //     // Add totals row for the product at the end of each product section
-  //     dataForExcel.push({
-  //       "Brand name": "TOTAL " + productName.toUpperCase(),
-  //       "Item code": "", // Leave blank for totals row
-  //       Size: "",
-  //       MRP: "",
-  //       "Total bottle": groupedData[productName].totalBottles,
-  //       "Total value": groupedData[productName].totalValue,
-  //       // "Total closing bottle": groupedData[productName].totalClosingBottles,
-  //     });
-
-  //     // Add blank row for spacing (optional)
-  //     dataForExcel.push({});
-  //   }
-
-  //   // Step 3: Calculate grand totals for specific products
-  //   const grandTotalBrandy = groupedData["Brandy"]
-  //     ? groupedData["Brandy"].totalBottles
-  //     : 0;
-  //   const grandTotalBeer = groupedData["Beer"]
-  //     ? groupedData["Beer"].totalBottles
-  //     : 0;
-  //   const grandTotalWine = groupedData["Wine"]
-  //     ? groupedData["Wine"].totalBottles
-  //     : 0;
-  //   const grandTotal = grandTotalBrandy + grandTotalBeer + grandTotalWine;
-
-  //   // Step 4: Create Excel workbook and save the file
-  //   const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
-
-  //   // Set column widths
-  //   worksheet["!cols"] = [
-  //     { wch: 40 }, // Width of the "Brand name" column
-  //     { wch: 15 }, // Width of the "Item code" column
-  //     { wch: 10 }, // Width of the "Size" column
-  //     { wch: 10 }, // Width of the "MRP" column
-  //     { wch: 15 }, // Width of the "Total bottle" column
-  //     { wch: 15 }, // Width of the "Total value" column
-  //     { wch: 20 }, // Width of the "Total closing bottle" column
-  //   ];
-
-  //   const workbook = XLSX.utils.book_new();
-  //   XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-
-  //   // Step 5: Add the grand total as a separate sheet
-  //   const grandTotalSheet = XLSX.utils.json_to_sheet([
-  //     { Product: "BRANDY", "Total bottle": grandTotalBrandy },
-  //     { Product: "BEER", "Total bottle": grandTotalBeer },
-  //     { Product: "WINE", "Total bottle": grandTotalWine },
-  //     { Product: "GRAND TOTAL", "Total bottle": grandTotal },
-  //   ]);
-
-  //   XLSX.utils.book_append_sheet(workbook, grandTotalSheet, "Grand Total");
-
-  //   // Step 6: Add the closing bottles summary at the end of the main sheet
-  //   const closingBottlesSummary = calculateClosingBottles(data);
-
-  //   const closingBottlesData = [
-  //     { "Brand name": "Closing Bottles Summary" },
-  //     {
-  //       "Brand name": "Beer",
-  //       "Total closing bottle": closingBottlesSummary.Beer,
-  //     },
-  //     {
-  //       "Brand name": "Wine",
-  //       "Total closing bottle": closingBottlesSummary.Wine,
-  //     },
-  //     {
-  //       "Brand name": "Whisky",
-  //       "Total closing bottle": closingBottlesSummary.Whisky,
-  //     },
-  //     {
-  //       "Brand name": "Brandy",
-  //       "Total closing bottle": closingBottlesSummary.Brandy,
-  //     },
-  //     {
-  //       "Brand name": "Rum",
-  //       "Total closing bottle": closingBottlesSummary.Rum,
-  //     },
-  //     {
-  //       "Brand name": "Gin",
-  //       "Total closing bottle": closingBottlesSummary.Gin,
-  //     },
-  //   ];
-
-  //   XLSX.utils.sheet_add_json(worksheet, closingBottlesData, {
-  //     origin: -1,
-  //     skipHeader: true,
-  //   });
-
-  //   // Write the workbook to file
-  //   XLSX.writeFile(workbook, `Daily_statement.xlsx`);
-  // };
-
-  const exportToExcels = (data) => {
-    const groupedData = {};
-
-    // Group data by 'Product'
-    data.forEach((item) => {
-      const productName = item.Product || "Unknown Product";
-
-      if (!groupedData[productName]) {
-        groupedData[productName] = {
-          data: [],
-          totalBottles: 0,
-          totalValue: 0,
-        };
-      }
-
-      const totalBottle = item.Closing_bottle || 0;
-      const totalValue = item.Closing_value || 0;
-
-      groupedData[productName].data.push({
-        "Brand Name": item.Description || "",
-        "Item Code": item.Item_Code,
-        Size: item.Size || "",
-        "New Rate": item.MRP_Value || "",
-        "Closing Bottles": totalBottle,
-        "Closing Values": totalValue,
-      });
-
-      groupedData[productName].totalBottles += totalBottle;
-      groupedData[productName].totalValue += totalValue;
-    });
-
-    const dataForExcel = [];
-
-    // Add header content
-    dataForExcel.push(["TAMIL NADU STATE MARKETING CORPORATION LIMITED"]);
-    dataForExcel.push([
-      "B-4, Ambattur Industrial Estate, Chennai (South) District, Chennai - 58.",
-    ]);
-    dataForExcel.push(["CLOSING STOCK DETAILS AS ON 30 JUNE 2021 SHOP NO 928"]);
-    dataForExcel.push([
-      "Brand Name",
-      "Item Code",
-      "Size",
-      "New Rate",
-      "Closing Bottles",
-      "Closing Values",
-    ]);
-
-    let grandTotalBottles = 0;
-    let grandTotalValue = 0;
-
-    // Add data for each product
-    for (const productName in groupedData) {
-      groupedData[productName].data.forEach((item) => {
-        dataForExcel.push([
-          item["Brand Name"],
-          item["Item Code"],
-          item.Size,
-          item["New Rate"],
-          item["Closing Bottles"],
-          item["Closing Values"],
-        ]);
-      });
-
-      // Add product-wise total
-      dataForExcel.push([
-        `TOTAL ${productName.toUpperCase()}`,
-        "",
-        "",
-        "",
-        groupedData[productName].totalBottles,
-        groupedData[productName].totalValue,
-      ]);
-
-      // Update grand totals
-      grandTotalBottles += groupedData[productName].totalBottles;
-      grandTotalValue += groupedData[productName].totalValue;
-
-      // Add an empty row for separation
-      dataForExcel.push([]);
-    }
-
-    // Add product-wise totals
-    dataForExcel.push(["PRODUCT-WISE TOTALS"]);
-    for (const productName in groupedData) {
-      dataForExcel.push([
-        productName.toUpperCase(),
-        "",
-        "",
-        "",
-        groupedData[productName].totalBottles,
-        groupedData[productName].totalValue,
-      ]);
-    }
-    dataForExcel.push([]);
-
-    // Add grand total at the end
-    dataForExcel.push([
-      "GRAND TOTAL",
-      "",
-      "",
-      "",
-      grandTotalBottles,
-      grandTotalValue,
-    ]);
-
-    // Add footer
-    dataForExcel.push(["", "", "", "", ""]);
-    dataForExcel.push([
-      "Verification Supervisor Signature",
-      "",
-      "",
-      "",
-      "Shop Supervisor Signature",
-    ]);
-
-    // Create a new workbook and sheet
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(dataForExcel);
-    worksheet["!cols"] = [
-      { wch: 50 }, // Width of the "Brand name" column
-      { wch: 15 }, // Width of the "Item code" column
-      { wch: 10 }, // Width of the "Size" column
-      { wch: 10 }, // Width of the "MRP" column
-      { wch: 15 }, // Width of the "Total bottle" column
-      { wch: 15 }, // Width of the "Total value" column
-    ];
-    // Append sheet to workbook
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Stock Details");
-
-    // Save workbook as Excel file
-    XLSX.writeFile(workbook, "Daily_Stock_Details.xlsx");
-  };
   const handleSeacrhDate = async () => {
     if (fromDate && toDate) {
       const dateSearch = {
@@ -361,7 +87,20 @@ function Invoice({ Base_url }) {
   };
 
   const exportToExcel = () => {
-    const data = formDetails.map((item) => [
+    // Define border style
+    const borderStyle = {
+      border: {
+        top: { style: "thick" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      },
+    };
+
+    console.log(formDetails);
+    // Data mapping
+    const data = formDetails.map((item, i) => [
+      i + 1,
       formatDate(item.Date),
       item.Invoice,
       item.IMFS_case,
@@ -389,6 +128,7 @@ function Invoice({ Base_url }) {
     data.push([
       "Grand Total",
       "",
+      "",
       grandTotals.IMFS_case,
       grandTotals.Beer_Case,
       grandTotals.Total_Case,
@@ -407,19 +147,82 @@ function Invoice({ Base_url }) {
       grandTotals.Total_amount,
     ]);
 
+    // Create worksheet
     const ws = XLSX.utils.aoa_to_sheet([
       [
-        { value: "S.no", rowspan: 2 },
-        { value: "Invoice Date", rowspan: 2 },
-        { value: "STOCK TRANSFER IN CASES", colspan: 4 },
-        { value: "STOCK TRANSFER IN BOTTELS IMFL", colspan: 6 },
-        { value: "STOCK TRANSFER IN BOTTLES IN BEAR", colspan: 5 },
-        { value: "Total bottle", rowspan: 2 },
-        { value: "Total Amount", rowspan: 2 },
+        {
+          v: "S.no",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        {
+          v: "Invoice Date",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        {
+          v: "STOCK TRANSFER IN CASES",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        "",
+        "",
+        "",
+        {
+          v: "STOCK TRANSFER IN BOTTLES (IMFL)",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        "",
+        "",
+        "",
+        "",
+        "",
+        {
+          v: "STOCK TRANSFER IN BOTTLES (BEER)",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        "",
+        "",
+        "",
+        "",
+        {
+          v: "Total Bottles",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
+        {
+          v: "Total Amount",
+          s: {
+            font: { bold: true },
+            fill: { fgColor: { rgb: "FFFF00" } },
+            border: borderStyle,
+          },
+        },
       ],
       [
-        "Invoice Date",
-        "Invoice",
+        "",
+        "",
+        "Invoice No",
         "IMFL Cases",
         "BEER Cases",
         "Total Cases",
@@ -427,22 +230,42 @@ function Invoice({ Base_url }) {
         "750",
         "375",
         "180",
-        "IMFS Total Bottle",
-        "IMFS Total Value",
-        "Beer 650",
-        "Beer 500",
-        "Beer 325",
-        "Beer Total Bottle",
-        "Beer Total Value",
-        "Total Bottle",
-        "Total Amount",
+        "Total",
+        "Amount",
+        "650",
+        "500",
+        "325",
+        "Total",
+        "Amount",
+        // Placeholder for any additional columns  // Placeholder for any additional columns
       ],
       ...data,
     ]);
 
+    // Merge header cells
+    ws["!merges"] = [
+      { s: { r: 0, c: 2 }, e: { r: 0, c: 5 } }, // Merge "STOCK TRANSFER IN CASES"
+      { s: { r: 0, c: 6 }, e: { r: 0, c: 11 } }, // Merge "STOCK TRANSFER IN BOTTLES (IMFL)"
+      { s: { r: 0, c: 12 }, e: { r: 0, c: 16 } }, // Merge "STOCK TRANSFER IN BOTTLES (BEER)"
+      { s: { r: 0, c: 17 }, e: { r: 0, c: 17 } }, // Merge "Total Bottles"
+      { s: { r: 0, c: 18 }, e: { r: 0, c: 18 } }, // Merge "Total Amount"
+    ];
+
+    // Apply borders to all cells
+    const range = XLSX.utils.decode_range(ws["!ref"]);
+    for (let row = range.s.r; row <= range.e.r; row++) {
+      for (let col = range.s.c; col <= range.e.c; col++) {
+        const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+        if (!ws[cellAddress]) ws[cellAddress] = {};
+        ws[cellAddress].s = { ...borderStyle };
+      }
+    }
+
+    // Create workbook and append worksheet
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Invoice Data");
 
+    // Write file
     XLSX.writeFile(wb, "invoice_data.xlsx");
   };
 
@@ -499,10 +322,6 @@ function Invoice({ Base_url }) {
 
   // Get grand totals object
   const grandTotals = calculateGrandTotals();
-
-  const handleClick = () => {
-    exportToExcels(data);
-  };
 
   console.log(data);
   return (

@@ -32,46 +32,46 @@ import Adminsale from "./Admindashboard/Adminsale";
 import Calc from "./component/Calc";
 import AdminInward from "./Admindashboard/AdminInward";
 import SalesMessage from "./component/SalesMessage";
+import Signup from "./component/login/Signup";
 
-// const Base_url = "http://localhost:4000";cd
+// const Base_url = "http://localhost:4000";
 const Base_url = "https://billing-backend-2.onrender.com";
 
 function App() {
   const [user, setUser] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  // const [isAdmin, setIsAdmin] = useState(false);
   const token = localStorage.getItem("token");
+  const isAdmin = localStorage.getItem("Admin");
+  const [issubmit, SetIssubmit] = useState(false);
+  const expiresIn = localStorage.getItem("expiresIn");
 
+  const navigate = useNavigate();
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const headers = { headers: { authorization: token } };
-        const response = await axios.get(`${Base_url}/user/profile`, headers);
-        setUser(response.data);
-        setIsAdmin(response.data.Admin); // Assuming isAdmin is a property returned from the backend
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        // Handle unauthorized access or other errors
-        localStorage.removeItem("token");
-        setUser(null);
+    if (expiresIn) {
+      if (Date.now() > expiresIn) {
+        console.log(Date.now(), expiresIn);
+        localStorage.clear();
+        window.location.href = "/";
       }
-    };
-
-    if (token) {
-      fetchUserData();
     }
-  }, [token]);
+    if (!token) {
+      // window.location.href = "/";
+      localStorage.clear();
+      navigate("/");
+    }
+  }, [token, expiresIn]);
 
   return (
     <div id="page-top">
       <Routes>
-        <Route path="/" element={<SignIn Base_url={Base_url} />} />
-        <Route path="/signup" element={<SignUp Base_url={Base_url} />} />
+        <Route path="/" element={<Signup Base_url={Base_url} />} />
+        {/* Uncomment these lines if needed */}
         {/* <Route path="/forgotpassword" element={<ForgotPassword Base_url={Base_url} />} />
         <Route path="/resetpassword/:id" element={<ResetPassword Base_url={Base_url} />} /> */}
 
+        <Route path="/inward" element={<ExcelForm Base_url={Base_url} />} />
         {isAdmin && (
           <>
-            <Route path="/inward" element={<ExcelForm Base_url={Base_url} />} />
             <Route
               path="/AdminInward"
               element={<AdminInward Base_url={Base_url} />}
@@ -83,41 +83,54 @@ function App() {
             />
           </>
         )}
+        <Route
+          path="/exceldata"
+          element={
+            <ExcelDetails Base_url={Base_url} SetIssubmit={SetIssubmit} />
+          }
+        />
 
-        {user ? (
+        {token ? (
           <>
-            <Route
-              path="/exceldata"
-              element={<ExcelDetails Base_url={Base_url} />}
-            />
             <Route path="/invoice" element={<Invoice Base_url={Base_url} />} />
             <Route
               path="/SaleReport"
-              element={<Report Base_url={Base_url} />}
+              element={<Report Base_url={Base_url} issubmit={issubmit} />}
             />
-            <Route path="/excelForm2" element={<Data2 Base_url={Base_url} />} />
+            <Route
+              path="/excelForm2"
+              element={<Data2 Base_url={Base_url} issubmit={issubmit} />}
+            />
             <Route
               path="/dailyReport"
-              element={<DailySalesReport Base_url={Base_url} />}
+              element={
+                <DailySalesReport Base_url={Base_url} issubmit={issubmit} />
+              }
             />
             <Route path="/calc" element={<Calc Base_url={Base_url} />} />
-            <Route path="/Report" element={<Data2 Base_url={Base_url} />} />
+            <Route
+              path="/Report"
+              element={<Data2 Base_url={Base_url} issubmit={issubmit} />}
+            />
             <Route
               path="/saleMessage"
-              element={<SalesMessage Base_url={Base_url} />}
+              element={<SalesMessage Base_url={Base_url} issubmit={issubmit} />}
             />
             <Route
               path="/itemMaster"
               element={<ItemMaster Base_url={Base_url} />}
             />
-            <Route path="/data" element={<AllData Base_url={Base_url} />} />
+            <Route
+              path="/data"
+              element={<AllData Base_url={Base_url} issubmit={issubmit} />}
+            />
             <Route
               path="/sample"
-              element={<MyComponent Base_url={Base_url} />}
+              element={<MyComponent Base_url={Base_url} issubmit={issubmit} />}
             />
             <Route
               path="/pv_report"
-              element={<FinalReport Base_url={Base_url} />}
+              element={<FinalReport Base_url={Base_url} issubmit={issubmit} />}
             />
           </>
         ) : (
