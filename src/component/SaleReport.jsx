@@ -31,8 +31,8 @@ function DailySalesReport({ Base_url }) {
         const submit = response.data.filter(
           (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
         );
-        console.log(submit);
-        if (submit.length > 10) {
+        console.log(submit, "submit");
+        if (submit.length > 4) {
           const response = await axios.get(
             `${Base_url}/user/getdailyData`,
             headers

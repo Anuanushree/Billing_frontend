@@ -5,7 +5,7 @@ function Sample({ Base_url, formDetails, valueType }) {
   const [data, setData] = useState([]);
   const totalOpeningBottles = {};
 
-  console.log(formDetails);
+  // console.log(formDetails);
   // Calculate total opening bottles for each size and range
   formDetails.forEach((item) => {
     const { Range, Size } = item;
@@ -47,11 +47,12 @@ function Sample({ Base_url, formDetails, valueType }) {
       totalOpeningBottles[range][size] !== undefined
     ) {
       const value = totalOpeningBottles[range][size];
-
-      if (size == "375" || "325" || "500") {
+      // console.log(size);
+      if (size == 375 || size == 325 || size == 500) {
         // console.log(Math.round(value / 24), "cal value");
         return Math.round(value / 24);
-      } else if (size == "650" || "750") {
+      } else if (size == "650" || size == "750") {
+        // console.log(size, value);
         return Math.round(value / 12);
       } else if (size == "180") {
         return Math.round(value / 48);

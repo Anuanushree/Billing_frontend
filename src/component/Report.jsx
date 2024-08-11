@@ -33,7 +33,7 @@ function Report({ Base_url }) {
       }
     };
     fetchDailyData();
-  }, [date, Base_url, headers]);
+  }, [date]);
 
   useEffect(() => {
     const fetchFormDetails = async () => {
@@ -62,7 +62,7 @@ function Report({ Base_url }) {
       }
     };
     fetchFormDetails();
-  }, [Base_url, headers]);
+  }, []);
 
   useEffect(() => {
     const fetchBankData = async () => {
@@ -72,6 +72,7 @@ function Report({ Base_url }) {
           (d) => d.Date.substring(0, 10) === date
         );
         setDatas(filteredData);
+        console.log(filteredData);
       } catch (error) {
         console.error("Error fetching bank data", error);
       }

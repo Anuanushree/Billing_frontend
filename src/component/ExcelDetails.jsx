@@ -176,9 +176,13 @@ function ExcelDetails({ Base_url }) {
     if (window.confirm("Are you sure you want to submit?")) {
       setLoading(true);
       try {
-        await axios.post(`${Base_url}/user/billingUpdate`, { id }, headers);
+        const res = await axios.post(
+          `${Base_url}/user/billingUpdate`,
+          { id },
+          headers
+        );
         toast.success("Successfully submitted");
-
+        console.log(res);
         // Fetch and update data after successful submit
         const response = await axios.get(`${Base_url}/user/getData`, headers);
         getData();
