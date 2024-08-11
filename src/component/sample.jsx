@@ -19,12 +19,8 @@ function Sample({ Base_url, formDetails, valueType }) {
     totalOpeningBottles[Range][Size] += value || 0;
   });
 
-  const ranges = [...new Set(formDetails.map((item) => item.Range))];
+  const ranges = [...new Set(formDetails.map((item) => item.Range.trim()))];
 
-  const filteredRanges = ranges.filter(
-    (range) => range !== "Closing_value" && range !== "Sale_value"
-  );
-  // console.log(valueType, "ssd");
   const sizes = [...new Set(formDetails.map((item) => item.Size))];
 
   const calculateTotalSaleValue = (productType) => {
@@ -64,7 +60,7 @@ function Sample({ Base_url, formDetails, valueType }) {
     }
     return 0;
   };
-
+  console.log(ranges, "ranges");
   return (
     <div id="wrapper">
       {/* Table for total opening bottles based on size and range */}
@@ -129,7 +125,7 @@ function Sample({ Base_url, formDetails, valueType }) {
               <thead>
                 <tr>
                   <th>Size</th>
-                  {filteredRanges.map((range) => (
+                  {ranges.map((range) => (
                     <th key={range}>{range}</th>
                   ))}
                   <th>Total</th>
@@ -141,7 +137,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                   .map((size) => (
                     <tr key={size}>
                       <td>{size}</td>
-                      {filteredRanges.map((range) => (
+                      {ranges.map((range) => (
                         <td key={`${range}-${size}`}>
                           {totalOpeningBottles[range] &&
                           totalOpeningBottles[range][size]
@@ -150,7 +146,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                         </td>
                       ))}
                       <td>
-                        {filteredRanges.reduce((acc, range) => {
+                        {ranges.reduce((acc, range) => {
                           return calculateAddt(range, size) + acc;
                         }, 0)}
                       </td>
@@ -158,7 +154,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                   ))}
                 <tr>
                   <th>Grand Total</th>
-                  {filteredRanges.map((range) => (
+                  {ranges.map((range) => (
                     <td key={`grand-${range}-addt`}>
                       {sizes.reduce((acc, size) => {
                         return calculateAddt(range, size) + acc;
@@ -168,7 +164,7 @@ function Sample({ Base_url, formDetails, valueType }) {
                   <td>
                     {sizes.reduce((acc, size) => {
                       return (
-                        filteredRanges.reduce((rangeAcc, range) => {
+                        ranges.reduce((rangeAcc, range) => {
                           return calculateAddt(range, size) + rangeAcc;
                         }, 0) + acc
                       );

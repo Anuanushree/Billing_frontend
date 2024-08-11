@@ -46,17 +46,31 @@ function ExcelDetails({ Base_url }) {
       }
     }
   };
+  useEffect(() => {
+    filterData();
+  }, [findItem, dummy]);
 
-  const filterData = (searchTerm = "", data = dummy) => {
-    let filteredData = data;
+  const filterData = () => {
+    let filteredData = dummy;
+    console.log(`Search Term: ${findItem}`);
 
-    if (searchTerm) {
-      filteredData = filteredData.filter(
-        (item) => item.Product === searchTerm || item.Item_Code === searchTerm
-      );
+    if (findItem) {
+      filteredData = filteredData.filter((item) => {
+        const searchTermLower = findItem.toLowerCase();
+        const productMatch = item.Product
+          ? item.Product.toLowerCase().includes(searchTermLower)
+          : false;
+        const itemCodeMatch = item.Item_Code
+          ? item.Item_Code.toString().includes(findItem)
+          : false;
+        const mrpMatch = item.MRP_Value
+          ? item.MRP_Value.toString().includes(findItem)
+          : false;
+        return productMatch || itemCodeMatch || mrpMatch;
+      });
     }
 
-    if (searchTerm && filteredData.length > 0) {
+    if (findItem && filteredData.length > 0) {
       filteredData = filteredData.filter((item) => item.Total_bottle > 0);
     }
 
@@ -164,7 +178,7 @@ function ExcelDetails({ Base_url }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    filterData(findItem);
+    filterData();
   };
 
   const handleClearSearch = () => {

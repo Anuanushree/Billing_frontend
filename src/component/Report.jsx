@@ -195,12 +195,11 @@ function Report({ Base_url }) {
       0
     );
   }, [formDetails]);
-
   const totalSalesValue = useMemo(() => {
-    return formDetails.reduce(
-      (total, { Sale_value = 0 }) => total + parseInt(Sale_value, 10),
-      0
-    );
+    return formDetails.reduce((total, { Sale_value = "0" }) => {
+      const value = Number(Sale_value);
+      return !isNaN(value) ? total + value : total;
+    }, 0);
   }, [formDetails]);
 
   const totalValue = useMemo(() => {

@@ -132,10 +132,25 @@ function ItemMaster({ Base_url }) {
 
   const filterdata = async () => {
     let a = dummy;
-    const filt =
-      findItem && findItem !== ""
-        ? a.filter((d) => d.Product === findItem || d.Item_Code === findItem)
-        : a;
+
+    // Convert search term to lowercase for case-insensitive comparison
+    const searchTermLower = findItem ? findItem.toLowerCase() : "";
+
+    // Filter data based on search term
+    const filt = searchTermLower
+      ? a.filter((d) => {
+          const productMatch = d.Product
+            ? d.Product.toLowerCase().includes(searchTermLower)
+            : false;
+          const itemCodeMatch = d.Item_Code
+            ? d.Item_Code.toString().includes(searchTermLower)
+            : false;
+          const mrpMatch = d.MRP_Value
+            ? d.MRP_Value.toString().includes(searchTermLower)
+            : false;
+          return productMatch || itemCodeMatch || mrpMatch;
+        })
+      : a;
 
     setFormDetails(filt);
   };
