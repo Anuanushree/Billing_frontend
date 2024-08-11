@@ -31,6 +31,7 @@ function DailySalesReport({ Base_url }) {
         const submit = response.data.filter(
           (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
         );
+        console.log(submit);
         if (submit.length > 10) {
           const response = await axios.get(
             `${Base_url}/user/getdailyData`,
@@ -49,14 +50,14 @@ function DailySalesReport({ Base_url }) {
         } else {
           const today = new Date().toISOString().split("T")[0];
           const dateBySort = response.data.filter(
-            (d) => new Date(d.updatedAt).toISOString().split("T")[0] === today
+            (d) => new Date(d.Date).toISOString().split("T")[0] === today
           );
           console.log(dateBySort);
 
-          setFormDetails(dateBySort);
+          setFormDetails(response.data);
 
           // Calculate total closing value
-          const totalClosingValue = dateBySort.reduce(
+          const totalClosingValue = response.data.reduce(
             (total, item) => total + (item.Sale_value || 0),
             0
           );
@@ -64,7 +65,12 @@ function DailySalesReport({ Base_url }) {
         }
         // Ensure proper date comparison
       } catch (error) {
-        console.error("Error fetching data:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+          console.error("Error fetching data:", error);
+        }
       }
     };
     fetchData();

@@ -42,31 +42,41 @@ function Data2({ Base_url }) {
   //   setFormDetails(filt);
   //   console.log(formDetails);
   // };
+
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(
-        `${Base_url}/user/getdailyData`,
-        headers
-      );
-      const response1 = await axios.get(`${Base_url}/user/getData`, headers);
-      const filteredData = response1.data.filter(
-        (data) => data.Total_bottle > 0
-      );
-
-      const submit = filteredData.filter(
-        (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
-      );
-      if (submit.length > 10) {
-        const filteredData = response.data.filter(
+      try {
+        const response = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        const response1 = await axios.get(`${Base_url}/user/getData`, headers);
+        const filteredData = response1.data.filter(
           (data) => data.Total_bottle > 0
         );
-        setFormDetails(filteredData);
-        console.log(formDetails, "dfghjk");
-        setData(response.data);
-      } else {
-        setFormDetails(filteredData);
-        console.log(formDetails, "dfghjk");
-        setData(response.data);
+
+        const submit = filteredData.filter(
+          (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
+        );
+        if (submit.length > 10) {
+          const filteredData = response.data.filter(
+            (data) => data.Total_bottle > 0
+          );
+          setFormDetails(filteredData);
+          console.log(formDetails, "dfghjk");
+          setData(response.data);
+        } else {
+          setFormDetails(filteredData);
+          console.log(formDetails, "dfghjk");
+          setData(response.data);
+        }
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+          console.error("Error fetching data:", error);
+        }
       }
       // console.log(response1.data);
 
@@ -100,7 +110,12 @@ function Data2({ Base_url }) {
           console.error("No data received from the API.");
         }
       } catch (error) {
-        console.error("Error fetching date range data:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+          console.error("Error fetching data:", error);
+        }
       }
     } else {
       console.warn("Both fromDate and toDate must be specified.");

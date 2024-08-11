@@ -35,7 +35,7 @@ import SalesMessage from "./component/SalesMessage";
 import Signup from "./component/login/Signup";
 
 // const Base_url = "http://localhost:4000";
-const Base_url = "https://billing-backend-2.onrender.com";
+const Base_url = "https://billing-backend-1.onrender.com";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -48,10 +48,11 @@ function App() {
   const navigate = useNavigate();
   useEffect(() => {
     if (expiresIn) {
-      if (Date.now() > expiresIn) {
+      if (!expiresIn || Date.now() > parseInt(expiresIn, 10)) {
         console.log(Date.now(), expiresIn);
         localStorage.clear();
-        window.location.href = "/";
+        navigate("/");
+        // window.location.href = "/";
       }
     }
     if (!token) {

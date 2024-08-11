@@ -55,9 +55,18 @@ function ItemMaster({ Base_url }) {
   }, [findItem, array]);
 
   const get = async () => {
-    const response = await axios.get(`${Base_url}/user/getData`, headers);
-    setFormDetails(response.data);
-    setDummy(response.data);
+    try {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      setFormDetails(response.data);
+      setDummy(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+        console.error("Error fetching data:", error);
+      }
+    }
   };
 
   useEffect(() => {
@@ -105,8 +114,12 @@ function ItemMaster({ Base_url }) {
       filterdata();
       toast.success("Successfully updated");
     } catch (error) {
-      console.log("Error in updating case and loose : ", error);
-      toast.warning("Something went wrong");
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+        console.error("Error fetching data:", error);
+      }
     }
 
     setEditIndex(null);

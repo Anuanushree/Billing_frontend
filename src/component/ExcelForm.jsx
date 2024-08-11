@@ -41,8 +41,18 @@ function ExcelForm({ Base_url }) {
 
   useEffect(() => {
     const get = async () => {
-      const response = await axios.get(`${Base_url}/user/getData`, headers);
-      setFormDetails(response.data);
+      try {
+        const response = await axios.get(`${Base_url}/user/getData`, headers);
+        setFormDetails(response.data);
+      } catch (error) {
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+
+          console.error("Error fetching data:", error);
+        }
+      }
     };
     get();
   }, []);
@@ -78,8 +88,14 @@ function ExcelForm({ Base_url }) {
       toast.success("successfully added data in item master");
       // setData(initialState);
     } catch (error) {
-      console.log("Error in excelForm : ", error);
-      toast.warning("Something wrong when added data");
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+
+        toast.warning("Something wrong when added data");
+        console.error("Error fetching data:", error);
+      }
     }
   };
   const [file, setFile] = useState(null);
@@ -163,8 +179,14 @@ function ExcelForm({ Base_url }) {
               );
               console.log(response.data);
             } catch (error) {
-              console.log("Error in ExcelForm : ", error);
-              toast.warning("Something went wrong when adding data");
+              if (error.response && error.response.status === 401) {
+                navigate("/"); // Replace '/login' with the path to your login page
+              } else {
+                // Handle other errors
+
+                toast.warning("Something wrong when added data");
+                console.error("Error fetching data:", error);
+              }
             }
           }
 

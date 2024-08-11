@@ -23,7 +23,13 @@ function FinalReport({ Base_url }) {
         );
         setFormDetails(response.data);
       } catch (error) {
-        console.error("Error fetching daily data:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+
+          console.error("Error fetching data:", error);
+        }
       }
     };
     get1();
@@ -32,9 +38,19 @@ function FinalReport({ Base_url }) {
     get();
   }, []);
   var get = async () => {
-    const response = await axios.get(`${Base_url}/user/getData`, headers);
-    console.log(response.data);
-    setData(response.data);
+    try {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      console.log(response.data);
+      setData(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+
+        console.error("Error fetching data:", error);
+      }
+    }
   };
   const exportToExcels = (data) => {
     const groupedData = {};

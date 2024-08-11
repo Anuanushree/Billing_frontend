@@ -29,8 +29,14 @@ function Invoice({ Base_url }) {
         setBackData(response.data);
         // Assuming response.data is an array of objects
       } catch (error) {
-        console.error("Error fetching data:", error);
-        toast.error("Failed to fetch data from server");
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+
+          toast.error("Failed to fetch data from server");
+          console.error("Error fetching data:", error);
+        }
       }
     };
 
@@ -41,10 +47,19 @@ function Invoice({ Base_url }) {
   }, []);
 
   var get = async () => {
-    const response = await axios.get(`${Base_url}/user/getData`, headers);
-    console.log(response.data);
-    // const fil = response.data.filter((f) => f.Total_bottle > 0);
-    setdata(response.data);
+    try {
+      const response = await axios.get(`${Base_url}/user/getData`, headers);
+      console.log(response.data);
+      // const fil = response.data.filter((f) => f.Total_bottle > 0);
+      setdata(response.data);
+    } catch (error) {
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+        console.error("Error fetching data:", error);
+      }
+    }
   };
 
   const formatDate = (date) => {
@@ -79,7 +94,12 @@ function Invoice({ Base_url }) {
           console.error("No data received from the API.");
         }
       } catch (error) {
-        console.error("Error fetching date range data:", error);
+        if (error.response && error.response.status === 401) {
+          navigate("/"); // Replace '/login' with the path to your login page
+        } else {
+          // Handle other errors
+          console.error("Error fetching data:", error);
+        }
       }
     } else {
       console.warn("Both fromDate and toDate must be specified.");

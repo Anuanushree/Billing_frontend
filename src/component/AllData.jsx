@@ -33,7 +33,12 @@ function AllData({ Base_url }) {
       console.log(fil);
       setFormDetails(fil);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      if (error.response && error.response.status === 401) {
+        navigate("/"); // Replace '/login' with the path to your login page
+      } else {
+        // Handle other errors
+        console.error("Error fetching data:", error);
+      }
     }
   };
 
