@@ -72,7 +72,7 @@ function Report({ Base_url }) {
           (d) => d.Date.substring(0, 10) === date
         );
         setDatas(filteredData);
-        console.log(filteredData);
+        console.log(filteredData, "bank");
       } catch (error) {
         console.error("Error fetching bank data", error);
       }

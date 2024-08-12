@@ -40,18 +40,22 @@ function SalesMessage({ Base_url }) {
           (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
         );
 
-        console.log(submit);
-        if (submit.length > 10) {
-          const response1 = await axios.get(
-            `${Base_url}/user/getdailyData`,
-            headers
-          );
-          setData(response1.data);
-          // console.log(data);
-        } else {
-          setData(response.data);
-          // console.log(data);
-        }
+        // console.log(submit);
+        // if (submit.length > 10) {
+        const response1 = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        const filteredData = response1.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        setData(filteredData);
+        console.log(data, "data");
+        //   // console.log(data);
+        // } else {
+        // setData(response.data);
+        // console.log(data);
+        // }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate("/"); // Replace '/login' with the path to your login page
@@ -65,7 +69,12 @@ function SalesMessage({ Base_url }) {
     const getBankData = async () => {
       try {
         const response = await axios.get(`${Base_url}/user/bank`, headers);
-        setFilteredData(response.data);
+        const filteredData = response.data.filter(
+          (d) => d.Date.substring(0, 10) === date
+        );
+        // setDatas(filteredData);
+        setFilteredData(filteredData);
+        console.log(filteredData, "filter");
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate("/"); // Replace '/login' with the path to your login page
@@ -97,9 +106,10 @@ function SalesMessage({ Base_url }) {
         BANK: 0,
         "POS CARD": 0,
         "SALES VALUE": 0,
-        "Premium closing bottle": 0,
+
         "Ordinary closing bottle": 0,
         "Medium closing bottle": 0,
+        "Premium closing bottle": 0,
 
         "BEER 650 ML closing bottle": 0,
         "BEER 500 ML closing bottle": 0,
@@ -107,17 +117,18 @@ function SalesMessage({ Base_url }) {
 
         "Total closing Stock value": 0,
 
-        "Premium receipt case": 0, // Added entry for receipt cases
+        // Added entry for receipt cases
         "Ordinary receipt case": 0, // Added entry for receipt cases
         "Medium receipt case": 0, // Added entry for receipt cases
-        // Added entry for receipt cases
+        "Premium receipt case": 0, // Added entry for receipt cases
         "BEER 650 ML receipt case": 0, // Added entry for receipt cases
         "BEER 500 ML receipt case": 0, // Added entry for receipt cases
         "BEER 325 ML receipt case": 0,
         "TOTAL RECEIPT BOTTLES": 0,
-        "Premium sales case": 0,
+
         "Ordinary sales case": 0,
         "Medium sales case": 0,
+        "Premium sales case": 0,
 
         "BEER 650 ML sales case": 0,
         "BEER 500 ML sales case": 0,
@@ -156,33 +167,135 @@ function SalesMessage({ Base_url }) {
 
         switch (Range) {
           case "Premium":
-            newTotals["Premium receipt case"] += Math.round(receiptBottle / 9); // Convert receipt bottles to cases
-            newTotals["IMFL VALUE"] += saleValue;
-            newTotals["Premium sales case"] += Math.round(salesBottle / 9);
+            if (size == 180) {
+              newTotals["Premium receipt case"] += Math.round(
+                receiptBottle / 48
+              ); // Convert receipt bottles to cases
+
+              newTotals["Premium sales case"] += Math.round(salesBottle / 48);
+              newTotals["Premium closing bottle"] += Math.round(
+                closingBottle / 48
+              );
+            } else if (size == 375) {
+              newTotals["Premium receipt case"] += Math.round(
+                receiptBottle / 24
+              ); // Convert receipt bottles to cases
+
+              newTotals["Premium sales case"] += Math.round(salesBottle / 24);
+              newTotals["Premium closing bottle"] += Math.round(
+                closingBottle / 24
+              );
+            } else if (size == 1000) {
+              newTotals["Premium receipt case"] += Math.round(
+                receiptBottle / 9
+              ); // Convert receipt bottles to cases
+              newTotals["Premium sales case"] += Math.round(salesBottle / 9);
+              newTotals["Premium closing bottle"] += Math.round(
+                closingBottle / 9
+              );
+            } else if (size == 750) {
+              newTotals["Premium receipt case"] += Math.round(
+                receiptBottle / 12
+              ); // Convert receipt bottles to cases
+
+              newTotals["Premium sales case"] += Math.round(salesBottle / 12);
+              newTotals["Premium closing bottle"] += Math.round(
+                closingBottle / 12
+              );
+            }
+
             premiumClosingValue += closingValue;
-            newTotals["Premium closing bottle"] += Math.round(
-              closingBottle / 9
-            );
+            newTotals["IMFL VALUE"] += saleValue;
+
             break;
           case "Ordinary":
-            newTotals["Ordinary receipt case"] += Math.round(
-              receiptBottle / 12
-            );
+            if (size == 180) {
+              newTotals["Ordinary receipt case"] += Math.round(
+                receiptBottle / 48
+              );
+
+              newTotals["Ordinary sales case"] += Math.round(salesBottle / 48);
+
+              newTotals["Ordinary closing bottle"] += Math.round(
+                closingBottle / 48
+              );
+            } else if (size == 375) {
+              newTotals["Ordinary receipt case"] += Math.round(
+                receiptBottle / 24
+              );
+
+              newTotals["Ordinary sales case"] += Math.round(salesBottle / 24);
+
+              newTotals["Ordinary closing bottle"] += Math.round(
+                closingBottle / 24
+              );
+            } else if (size == 750) {
+              newTotals["Ordinary receipt case"] += Math.round(
+                receiptBottle / 12
+              );
+
+              newTotals["Ordinary sales case"] += Math.round(salesBottle / 12);
+
+              newTotals["Ordinary closing bottle"] += Math.round(
+                closingBottle / 12
+              );
+            } else if (size == 1000) {
+              newTotals["Ordinary receipt case"] += Math.round(
+                receiptBottle / 9
+              );
+
+              newTotals["Ordinary sales case"] += Math.round(salesBottle / 9);
+
+              newTotals["Ordinary closing bottle"] += Math.round(
+                closingBottle / 9
+              );
+            }
+
             newTotals["IMFL VALUE"] += saleValue;
-            newTotals["Ordinary sales case"] += Math.round(salesBottle / 12);
+
             ordinaryClosingValue += closingValue;
-            newTotals["Ordinary closing bottle"] += Math.round(
-              closingBottle / 12
-            );
+
             break;
           case "Medium":
-            newTotals["Medium receipt case"] += Math.round(receiptBottle / 24); // Convert receipt bottles to cases
+            if (size == 180) {
+              newTotals["Medium receipt case"] += Math.round(
+                receiptBottle / 48
+              ); // Convert receipt bottles to cases
+
+              newTotals["Medium sales case"] += Math.round(salesBottle / 48);
+              newTotals["Medium closing bottle"] += Math.round(
+                closingBottle / 48
+              );
+            } else if (size == 375) {
+              newTotals["Medium receipt case"] += Math.round(
+                receiptBottle / 24
+              ); // Convert receipt bottles to cases
+
+              newTotals["Medium sales case"] += Math.round(salesBottle / 24);
+              newTotals["Medium closing bottle"] += Math.round(
+                closingBottle / 24
+              );
+            } else if (size == 750) {
+              newTotals["Medium receipt case"] += Math.round(
+                receiptBottle / 12
+              ); // Convert receipt bottles to cases
+
+              newTotals["Medium sales case"] += Math.round(salesBottle / 12);
+              newTotals["Medium closing bottle"] += Math.round(
+                closingBottle / 12
+              );
+            }
+            if (size == 1000) {
+              newTotals["Medium receipt case"] += Math.round(receiptBottle / 9); // Convert receipt bottles to cases
+
+              newTotals["Medium sales case"] += Math.round(salesBottle / 9);
+              newTotals["Medium closing bottle"] += Math.round(
+                closingBottle / 9
+              );
+            }
             newTotals["IMFL VALUE"] += saleValue;
-            newTotals["Medium sales case"] += Math.round(salesBottle / 24);
             mediumClosingValue += closingValue;
-            newTotals["Medium closing bottle"] += Math.round(
-              closingBottle / 24
-            );
+
             break;
           default:
             break;
@@ -272,7 +385,7 @@ function SalesMessage({ Base_url }) {
     setTotals(totals);
   }, [data, filteredData]);
   const formattedTotals = Object.values(totals)
-    .map((value) => `*${value}*`)
+    .map((value) => `*${value}`)
     .join("");
   return (
     <div id="wrapper">
