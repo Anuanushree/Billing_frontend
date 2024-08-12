@@ -40,22 +40,22 @@ function SalesMessage({ Base_url }) {
           (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
         );
 
-        // console.log(submit);
-        // if (submit.length > 10) {
-        const response1 = await axios.get(
-          `${Base_url}/user/getdailyData`,
-          headers
-        );
-        const filteredData = response1.data.filter(
-          (d) => d.Date.substring(0, 10) === date
-        );
-        setData(filteredData);
-        console.log(data, "data");
-        //   // console.log(data);
-        // } else {
-        // setData(response.data);
-        // console.log(data);
-        // }
+        console.log(submit);
+        if (submit.length > 10) {
+          const response1 = await axios.get(
+            `${Base_url}/user/getdailyData`,
+            headers
+          );
+          const filteredData = response1.data.filter(
+            (d) => d.Date.substring(0, 10) === date
+          );
+          setData(filteredData);
+          console.log(data, "data");
+          // console.log(data);
+        } else {
+          setData(response.data);
+          console.log(data);
+        }
       } catch (error) {
         if (error.response && error.response.status === 401) {
           navigate("/"); // Replace '/login' with the path to your login page
