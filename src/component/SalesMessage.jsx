@@ -121,19 +121,23 @@ function SalesMessage({ Base_url }) {
         "Ordinary receipt case": 0, // Added entry for receipt cases
         "Medium receipt case": 0, // Added entry for receipt cases
         "Premium receipt case": 0, // Added entry for receipt cases
+        "Total receipt case": 0,
+
         "BEER 650 ML receipt case": 0, // Added entry for receipt cases
         "BEER 500 ML receipt case": 0, // Added entry for receipt cases
         "BEER 325 ML receipt case": 0,
-        "TOTAL RECEIPT BOTTLES": 0,
+        "Total Beer receipt": 0,
 
         "Ordinary sales case": 0,
         "Medium sales case": 0,
         "Premium sales case": 0,
+        "sale Case Total": 0,
 
         "BEER 650 ML sales case": 0,
         "BEER 500 ML sales case": 0,
         "BEER 325 ML sales case": 0,
-        "TOTAL SALES BOTTLES": 0,
+        "total beer Case": 0,
+
         "ORDINARY CLOSING VALUE": 0,
         "MEDIUM CLOSING VALUE": 0,
         "PREMIUM CLOSING VALUE": 0,
@@ -161,7 +165,7 @@ function SalesMessage({ Base_url }) {
         const closingBottle = item.Closing_bottle || 0;
 
         totalSalesBottles += salesBottle;
-        totalReceiptBottles += receiptBottle; // Aggregate receipt bottles
+        // totalReceiptBottles += receiptBottle; // Aggregate receipt bottles
         totalSalesValue += saleValue;
         totalClosingValue += closingValue;
 
@@ -364,12 +368,38 @@ function SalesMessage({ Base_url }) {
         newTotals["SALES VALUE"] += item.Sale || 0;
       });
 
-      totalClosingValue =
-        ordinaryClosingValue +
-        mediumClosingValue +
-        premiumClosingValue +
-        beerClosingValue;
+      // totalClosingValue =
+      //   ordinaryClosingValue +
+      //   mediumClosingValue +
+      //   premiumClosingValue +
+      //   beerClosingValue;
+      // "Total":0,
+      var totalReceipt =
+        newTotals["Medium receipt case"] +
+        newTotals["Ordinary receipt case"] +
+        newTotals["Premium receipt case"];
 
+      var totalBeerReceipt =
+        newTotals["BEER 650 ML receipt case"] + // Added entry for receipt cases
+        newTotals["BEER 500 ML receipt case"] + // Added entry for receipt cases
+        newTotals["BEER 325 ML receipt case"];
+
+      var totalsale =
+        newTotals["Ordinary sales case"] +
+        newTotals["Medium sales case"] +
+        newTotals["Premium sales case"];
+
+      var totalBeerSale =
+        newTotals["BEER 650 ML sales case"] +
+        newTotals["BEER 500 ML sales case"] +
+        newTotals["BEER 325 ML sales case"];
+
+      newTotals["total beer Case"] = totalBeerSale;
+      newTotals["sale Case Total"] = totalsale;
+
+      newTotals["Total Beer receipt"] = totalBeerReceipt;
+      newTotals["Total receipt case"] = totalReceipt;
+      newTotals["Total closing Stock value"] = totalClosingValue;
       newTotals["TOTAL SALES BOTTLES"] = totalSalesBottles;
       newTotals["TOTAL RECEIPT BOTTLES"] = totalReceiptBottles; // Added total receipt bottles
       newTotals["ORDINARY CLOSING VALUE"] = ordinaryClosingValue;
