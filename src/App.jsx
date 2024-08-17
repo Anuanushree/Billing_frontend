@@ -31,7 +31,7 @@ import Admin from "./Admindashboard/Admin";
 import Adminsale from "./Admindashboard/Adminsale";
 import Calc from "./component/Calc";
 import AdminInward from "./Admindashboard/AdminInward";
-import SalesMessage from "./component/SalesMessage";
+// import SalesMessage from "./component/SalesMessage";
 import Signup from "./component/login/Signup";
 // import GoogleForm from "./component/GoogleForm";
 
@@ -114,10 +114,10 @@ function App() {
               path="/Report"
               element={<Data2 Base_url={Base_url} issubmit={issubmit} />}
             />
-            <Route
+            {/* <Route
               path="/saleMessage"
               element={<SalesMessage Base_url={Base_url} issubmit={issubmit} />}
-            />
+            /> */}
             {/* <Route
               path="/googleForm"
               element={<GoogleForm Base_url={Base_url} />}
