@@ -118,10 +118,10 @@ function App() {
               path="/saleMessage"
               element={<SalesMessage Base_url={Base_url} issubmit={issubmit} />}
             />
-            <Route
+            {/* <Route
               path="/googleForm"
               element={<GoogleForm Base_url={Base_url} />}
-            />
+            /> */}
             <Route
               path="/itemMaster"
               element={<ItemMaster Base_url={Base_url} />}
