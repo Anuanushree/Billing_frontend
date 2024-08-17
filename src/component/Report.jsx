@@ -18,24 +18,6 @@ function Report({ Base_url }) {
   };
 
   useEffect(() => {
-    const fetchDailyData = async () => {
-      try {
-        const response1 = await axios.get(
-          `${Base_url}/user/getdailyData`,
-          headers
-        );
-        const filteredData = response1.data.filter(
-          (d) => d.Date.substring(0, 10) === date
-        );
-        setData(filteredData);
-      } catch (error) {
-        console.error("Error fetching daily data", error);
-      }
-    };
-    fetchDailyData();
-  }, [date]);
-
-  useEffect(() => {
     const fetchFormDetails = async () => {
       try {
         const response = await axios.get(`${Base_url}/user/getData`, headers);
@@ -63,6 +45,21 @@ function Report({ Base_url }) {
     };
     fetchFormDetails();
   }, []);
+  useEffect(() => {
+    const fetchDailyData = async () => {
+      try {
+        const response1 = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+
+        setData(response1.data);
+      } catch (error) {
+        console.error("Error fetching daily data", error);
+      }
+    };
+    fetchDailyData();
+  }, [date]);
 
   useEffect(() => {
     const fetchBankData = async () => {
@@ -154,7 +151,8 @@ function Report({ Base_url }) {
     return datas.reduce((total, { Bank = 0 }) => total + Bank, 0);
   }, [datas]);
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault();
     const filteredData = data.filter((d) => d.Date.substring(0, 10) === date);
     setFormDetails(filteredData);
   };

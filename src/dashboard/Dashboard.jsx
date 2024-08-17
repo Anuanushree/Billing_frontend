@@ -124,6 +124,12 @@ function Dashboard({ Base_url }) {
               <span>saleMessage</span>
             </Link>
           </li>
+          <li className={`nav-item ${isActive("/calc")}`}>
+            <Link className="nav-link" to="/googleForm">
+              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              <span>Google form</span>
+            </Link>
+          </li>
           <li className="nav-item">
             <div className="nav-link" onClick={handleLogout}>
               <i

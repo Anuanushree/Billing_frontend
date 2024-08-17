@@ -21,6 +21,7 @@ function SalesMessage({ Base_url }) {
   const [totals, setTotals] = useState({});
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [today, setToday] = useState("");
+  const [datas, setDatas] = useState([]);
 
   const token = localStorage.getItem("token");
   const headers = {
@@ -35,7 +36,11 @@ function SalesMessage({ Base_url }) {
       try {
         const response = await axios.get(`${Base_url}/user/getData`, headers);
         // console.log(response.data);
-
+        const response2 = await axios.get(
+          `${Base_url}/user/getdailyData`,
+          headers
+        );
+        setDatas(response2.data);
         const submit = response.data.filter(
           (d) => d.isSubmit == true && d.Date.substring(0, 10) === date
         );
@@ -142,8 +147,6 @@ function SalesMessage({ Base_url }) {
         "MEDIUM CLOSING VALUE": 0,
         "PREMIUM CLOSING VALUE": 0,
         "BEER CLOSING VALUE": 0,
-        // Added entry for receipt bottles
-        // Added entry for receipt cases
       };
 
       let totalSalesBottles = 0;
@@ -154,55 +157,67 @@ function SalesMessage({ Base_url }) {
       let totalSalesValue = 0;
       let totalClosingValue = 0;
       let totalReceiptBottles = 0;
+      let premiumSalesCases = 0;
+      let total180mlBottles = 0;
+      let total375mlBottles = 0;
+      let total750mlBottles = 0;
+      let total1000mlBottles = 0;
 
       data.forEach((item) => {
         const size = item.Size;
         const Range = item.Range;
+        // console.log(Range);
         const salesBottle = item.Sales_bottle || 0;
         const receiptBottle = item.Receipt_bottle || 0; // Added receipt bottle handling
         const saleValue = item.Sale_value || 0;
         const closingValue = item.Closing_value || 0;
         const closingBottle = item.Closing_bottle || 0;
 
-        totalSalesBottles += salesBottle;
+        // totalSalesBottles += salesBottle;
         // totalReceiptBottles += receiptBottle; // Aggregate receipt bottles
         totalSalesValue += saleValue;
         totalClosingValue += closingValue;
-
+        var s = 0;
         switch (Range) {
           case "Premium":
             if (size == 180) {
+              // console.log(salesBottle, "salesbottle");
               newTotals["Premium receipt case"] += Math.round(
                 receiptBottle / 48
-              ); // Convert receipt bottles to cases
-
-              newTotals["Premium sales case"] += Math.round(salesBottle / 48);
+              );
+              // newTotals["Premium sales case"] += Math.round(salesBottle / 48);
+              total180mlBottles += salesBottle;
+              s += Math.round(salesBottle / 48);
               newTotals["Premium closing bottle"] += Math.round(
                 closingBottle / 48
               );
             } else if (size == 375) {
+              s += Math.round(salesBottle / 24);
               newTotals["Premium receipt case"] += Math.round(
                 receiptBottle / 24
-              ); // Convert receipt bottles to cases
-
-              newTotals["Premium sales case"] += Math.round(salesBottle / 24);
+              );
+              // newTotals["Premium sales case"] += Math.round(salesBottle / 24);
+              total375mlBottles += salesBottle;
               newTotals["Premium closing bottle"] += Math.round(
                 closingBottle / 24
               );
             } else if (size == 1000) {
               newTotals["Premium receipt case"] += Math.round(
                 receiptBottle / 9
-              ); // Convert receipt bottles to cases
-              newTotals["Premium sales case"] += Math.round(salesBottle / 9);
+              );
+              s += Math.round(salesBottle / 9);
+              // newTotals["Premium sales case"] += Math.round(salesBottle / 9);
+              total1000mlBottles += salesBottle;
               newTotals["Premium closing bottle"] += Math.round(
                 closingBottle / 9
               );
             } else if (size == 750) {
               newTotals["Premium receipt case"] += Math.round(
                 receiptBottle / 12
-              ); // Convert receipt bottles to cases
-
-              newTotals["Premium sales case"] += Math.round(salesBottle / 12);
+              );
+              s += Math.round(salesBottle / 12);
+              // newTotals["Premium sales case"] += Math.round(salesBottle / 12);
+              total750mlBottles += salesBottle;
               newTotals["Premium closing bottle"] += Math.round(
                 closingBottle / 12
               );
@@ -211,6 +226,7 @@ function SalesMessage({ Base_url }) {
             premiumClosingValue += closingValue;
             newTotals["IMFL VALUE"] += saleValue;
 
+            // console.log(salesBottle, "sale premium bottle");
             break;
           case "Ordinary":
             if (size == 180) {
@@ -304,6 +320,7 @@ function SalesMessage({ Base_url }) {
           default:
             break;
         }
+        console.log(s, "s");
         switch (size) {
           case 1000:
             newTotals["1000 ML"] += salesBottle;
@@ -367,13 +384,12 @@ function SalesMessage({ Base_url }) {
         newTotals["POS CARD"] += item.Pos || 0;
         newTotals["SALES VALUE"] += item.Sale || 0;
       });
+      premiumSalesCases += Math.round(total180mlBottles / 48);
+      premiumSalesCases += Math.round(total375mlBottles / 24);
+      premiumSalesCases += Math.round(total750mlBottles / 12);
+      premiumSalesCases += Math.round(total1000mlBottles / 9);
 
-      // totalClosingValue =
-      //   ordinaryClosingValue +
-      //   mediumClosingValue +
-      //   premiumClosingValue +
-      //   beerClosingValue;
-      // "Total":0,
+      newTotals["Premium sales case"] = premiumSalesCases;
       var totalReceipt =
         newTotals["Medium receipt case"] +
         newTotals["Ordinary receipt case"] +
@@ -400,8 +416,7 @@ function SalesMessage({ Base_url }) {
       newTotals["Total Beer receipt"] = totalBeerReceipt;
       newTotals["Total receipt case"] = totalReceipt;
       newTotals["Total closing Stock value"] = totalClosingValue;
-      newTotals["TOTAL SALES BOTTLES"] = totalSalesBottles;
-      newTotals["TOTAL RECEIPT BOTTLES"] = totalReceiptBottles; // Added total receipt bottles
+      // Added total receipt bottles
       newTotals["ORDINARY CLOSING VALUE"] = ordinaryClosingValue;
       newTotals["MEDIUM CLOSING VALUE"] = mediumClosingValue;
       newTotals["PREMIUM CLOSING VALUE"] = premiumClosingValue;
@@ -414,13 +429,29 @@ function SalesMessage({ Base_url }) {
     const totals = calculateTotals(data, filteredData);
     setTotals(totals);
   }, [data, filteredData]);
-  const formattedTotals = Object.values(totals)
-    .map((value) => `*${value}`)
-    .join("");
+
+  const day = new Date(date).getDate();
+
+  const formattedTotals =
+    day +
+    Object.values(totals)
+      .map((value) => `*${value}`)
+      .join("");
+
+  const handleSearch = () => {
+    const filteredData = datas.filter((d) => d.Date.substring(0, 10) === date);
+    setData(filteredData);
+  };
   return (
     <div id="wrapper">
       <Dashboard />
       <div style={{ width: "50%" }}>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
@@ -432,12 +463,12 @@ function SalesMessage({ Base_url }) {
             <TableBody>
               <TableRow>
                 <TableCell>Date</TableCell>
-                <TableCell>{today}</TableCell>
+                <TableCell>{date}</TableCell>
               </TableRow>
               {Object.entries(totals).map(([category, value]) => (
                 <TableRow key={category}>
                   <TableCell>{category}</TableCell>
-                  <TableCell>{value.toFixed(2)}</TableCell>{" "}
+                  <TableCell>{value}</TableCell>{" "}
                   {/* Format value to 2 decimal places */}
                 </TableRow>
               ))}
