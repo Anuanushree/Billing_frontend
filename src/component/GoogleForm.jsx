@@ -34,6 +34,7 @@ function GoogleForm({ Base_url }) {
   const [date, setDate] = useState(new Date());
 
   const token = localStorage.getItem("token");
+  console.log(token);
   const headers = { headers: { authorization: `${token}` } };
 
   useEffect(() => {
