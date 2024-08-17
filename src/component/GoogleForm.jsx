@@ -106,7 +106,9 @@ function GoogleForm({ Base_url }) {
               views={["month", "year"]}
               value={selectedDate}
               onChange={handleDateChange}
-              renderInput={(params) => <TextField {...params} fullWidth />}
+              slots={{
+                textField: (params) => <TextField {...params} fullWidth />,
+              }}
             />
           </LocalizationProvider>
         </Box>
