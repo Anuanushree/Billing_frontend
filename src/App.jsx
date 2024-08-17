@@ -33,7 +33,7 @@ import Calc from "./component/Calc";
 import AdminInward from "./Admindashboard/AdminInward";
 import SalesMessage from "./component/SalesMessage";
 import Signup from "./component/login/Signup";
-import GoogleForm from "./component/GoogleForm";
+// import GoogleForm from "./component/GoogleForm";
 
 // const Base_url = "http://localhost:4000";
 const Base_url = "https://billing-backend-1.onrender.com";
