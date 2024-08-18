@@ -219,7 +219,7 @@ function Report({ Base_url }) {
 
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
 
       <div>
         <input

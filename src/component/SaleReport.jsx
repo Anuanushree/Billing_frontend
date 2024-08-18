@@ -209,8 +209,8 @@ function DailySalesReport({ Base_url }) {
   };
 
   return (
-    <div id="wrapper">
-      <Dashboard />
+    <div>
+      {/* <Dashboard /> */}
       <ToastContainer />
       <div className="container-fluid form-container">
         <div className="form-group">

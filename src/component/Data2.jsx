@@ -184,7 +184,7 @@ function Data2({ Base_url }) {
 
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
 
       <table className="table table-dark table-bordered border border-primary p-2 m-4">
         <thead>

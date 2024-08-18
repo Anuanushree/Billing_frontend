@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import SignIn from "./signIn";
+import Dashboard from "../../dashboard/Dashboard";
+import { Outlet } from "react-router-dom";
 
 function Signup() {
   const [isSignInOpen, setSignInOpen] = useState(true);
@@ -23,6 +25,10 @@ function Signup() {
       {isSignInOpen && (
         <SignIn open={isSignInOpen} handleClose={handleSignInClose} />
       )}
+      <Dashboard />
+      {/* <div id="wrapper">
+        <Outlet />
+      </div> */}
     </div>
   );
 }

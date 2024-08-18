@@ -272,8 +272,7 @@ function ExcelDetails({ Base_url }) {
   }, [formDetails]);
 
   return (
-    <div id="wrapper">
-      <Dashboard />
+    <div>
       {loading ? (
         <CircularProgress
           size={24} // Spinner size

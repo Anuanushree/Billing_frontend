@@ -51,7 +51,7 @@ function Calc() {
 
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
       <Container>
         <Typography variant="h4" gutterBottom>
           Calc

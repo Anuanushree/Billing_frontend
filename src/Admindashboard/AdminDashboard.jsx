@@ -35,7 +35,7 @@ function AdminDashboard() {
           <br />
           <li className="nav-item">
             <NavLink className="nav-link" activeClassName="active" to="/inward">
-              <i className="far fa-id-badge" style={{ fontSize: "20px" }}></i>
+              
               <span>Inward</span>
             </NavLink>
           </li>
@@ -47,7 +47,7 @@ function AdminDashboard() {
               activeClassName="active"
               to="/CreateUser"
             >
-              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+           
               <span>Create user</span>
             </NavLink>
           </li>
@@ -58,7 +58,7 @@ function AdminDashboard() {
               activeClassName="active"
               to="/AdminSaleView"
             >
-              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              
               <span>Sale details</span>
             </NavLink>
           </li>
@@ -69,13 +69,13 @@ function AdminDashboard() {
               activeClassName="active"
               to="/AdminInward"
             >
-              <i className="fas fa-poll icon" style={{ fontSize: "20px" }}></i>
+              
               <span>Item Master</span>
             </NavLink>
           </li>
           <li className="nav-item">
             <div className="nav-link" onClick={handleLogout}>
-              <i style={{ fontSize: "20px" }}></i>
+            
               <span>Logout</span>
             </div>
           </li>

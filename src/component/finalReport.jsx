@@ -3,16 +3,14 @@ import * as XLSX from "xlsx";
 import Dashboard from "../dashboard/Dashboard";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
+
 function FinalReport({ Base_url }) {
   const [data, setData] = useState([]);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [formDetails, setFormDetails] = useState([]);
   const id = localStorage.getItem("id");
   const token = localStorage.getItem("token");
-
-  const headers = {
-    headers: { authorization: `${token}` },
-  };
+  const headers = { headers: { authorization: `${token}` } };
 
   useEffect(() => {
     const get1 = async () => {
@@ -24,34 +22,33 @@ function FinalReport({ Base_url }) {
         setFormDetails(response.data);
       } catch (error) {
         if (error.response && error.response.status === 401) {
-          navigate("/"); // Replace '/login' with the path to your login page
+          navigate("/"); // Replace with the path to your login page
         } else {
-          // Handle other errors
-
           console.error("Error fetching data:", error);
         }
       }
     };
     get1();
   }, []);
+
   useEffect(() => {
     get();
   }, []);
-  var get = async () => {
+
+  const get = async () => {
     try {
       const response = await axios.get(`${Base_url}/user/getData`, headers);
       console.log(response.data);
       setData(response.data);
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        navigate("/"); // Replace '/login' with the path to your login page
+        navigate("/"); // Replace with the path to your login page
       } else {
-        // Handle other errors
-
         console.error("Error fetching data:", error);
       }
     }
   };
+
   const exportToExcels = (data) => {
     const groupedData = {};
 
@@ -185,6 +182,7 @@ function FinalReport({ Base_url }) {
     // Save workbook as Excel file
     XLSX.writeFile(workbook, "Daily_Stock_Details.xlsx");
   };
+
   const handleClick = () => {
     exportToExcels(data);
   };
@@ -249,27 +247,6 @@ function FinalReport({ Base_url }) {
       );
     }
 
-    // Add product-wise total rows before grand total
-    for (const productName in groupedData) {
-      rows.push(
-        <tr
-          key={`${productName}-before-grand-total`}
-          style={{ fontWeight: "bold" }}
-        >
-          <td colSpan={5}>{`TOTAL ${productName.toUpperCase()}`}</td>
-          <td>{groupedData[productName].totalBottles}</td>
-          <td>{groupedData[productName].totalValue}</td>
-        </tr>
-      );
-
-      // Add a spacer row
-      //   rows.push(
-      //     <tr key={`${productName}-spacer-before-grand-total`}>
-      //       <td colSpan={7}></td>
-      //     </tr>
-      //   );
-    }
-
     // Grand total row
     rows.push(
       <tr key="grand-total" style={{ fontWeight: "bold" }}>
@@ -285,26 +262,28 @@ function FinalReport({ Base_url }) {
 
     return rows;
   };
+
   const handleSearch = async () => {
     const filt = formDetails.filter((d) => d.Date.substring(0, 10) === date);
     setData(filt);
   };
+
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
       <ToastContainer />
 
       <div>
-        <th>
+        <div>
           <input
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
           />
-        </th>
-        <th>
+        </div>
+        <div>
           <button onClick={handleSearch}>Search</button>
-        </th>
+        </div>
         <button onClick={() => exportToExcels(data)}>Export to Excel</button>
         <div className="table-container">
           <table className="table table-dark table-bordered border border-primary p-2 m-4">

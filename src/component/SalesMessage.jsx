@@ -444,7 +444,7 @@ function SalesMessage({ Base_url }) {
   };
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
       <div style={{ width: "50%" }}>
         <input
           type="date"

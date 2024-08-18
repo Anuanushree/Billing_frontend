@@ -346,7 +346,7 @@ function Invoice({ Base_url }) {
   console.log(data);
   return (
     <div id="wrapper">
-      <Dashboard />
+      {/* <Dashboard /> */}
       <ToastContainer />
 
       <div>
@@ -395,9 +395,9 @@ function Invoice({ Base_url }) {
                 <th rowSpan={2}>S.no</th>
                 <th rowSpan={2}>Invoice Date</th>
                 <th colSpan={4}>STOCK TRANSFER IN CASES</th>
-                <th colSpan={6}>STOCK TRANSFER IN BOTTELS IMFL</th>
-                <th colSpan={5}>STOCK TRANSFER IN BOTTLES IN BEAR</th>
-                <th rowSpan={2}>Total bottle</th>
+                <th colSpan={6}>STOCK TRANSFER IN BOTTLES (IMFL)</th>
+                <th colSpan={5}>STOCK TRANSFER IN BOTTLES (BEER)</th>
+                <th rowSpan={2}>Total Bottles</th>
                 <th rowSpan={2}>Total Amount</th>
               </tr>
               <tr>
@@ -472,29 +472,27 @@ function Invoice({ Base_url }) {
                   </tr>
                 ))}
             </tbody>
-            <tbody className="bg-warning" style={{ backgroundColor: "red" }}>
-              <tr className="bg-warning" style={{ backgroundColor: "red" }}>
-                <td className="bg-warning" colSpan={3}>
-                  {grandTotals.Invoice}
-                </td>
-                <td className="bg-warning">{grandTotals.IMFS_case}</td>
-                <td className="bg-warning">{grandTotals.Beer_Case}</td>
-                <td className="bg-warning">{grandTotals.Total_Case}</td>
-                <td className="bg-warning">{grandTotals.IMFS_sie_1000}</td>
-                <td className="bg-warning">{grandTotals.IMFS_sie_750}</td>
-                <td className="bg-warning">{grandTotals.IMFS_sie_375}</td>
-                <td className="bg-warning">{grandTotals.IMFS_sie_180}</td>
-                <td className="bg-warning">{grandTotals.IMFS_total_bottle}</td>
-                <td className="bg-warning">{grandTotals.IMFS_total_value}</td>
-                <td className="bg-warning">{grandTotals.Beer_size_650}</td>
-                <td className="bg-warning">{grandTotals.Beer_size_500}</td>
-                <td className="bg-warning">{grandTotals.Beer_size_325}</td>
-                <td className="bg-warning">{grandTotals.Beer_total_bottle}</td>
-                <td className="bg-warning">{grandTotals.Beer_total_value}</td>
-                <td className="bg-warning">{grandTotals.Total_Bottle}</td>
-                <td className="bg-warning">{grandTotals.Total_amount}</td>
+            <tfoot>
+              <tr className="bg-warning">
+                <td colSpan={3}>{grandTotals.Invoice}</td>
+                <td>{grandTotals.IMFS_case}</td>
+                <td>{grandTotals.Beer_Case}</td>
+                <td>{grandTotals.Total_Case}</td>
+                <td>{grandTotals.IMFS_sie_1000}</td>
+                <td>{grandTotals.IMFS_sie_750}</td>
+                <td>{grandTotals.IMFS_sie_375}</td>
+                <td>{grandTotals.IMFS_sie_180}</td>
+                <td>{grandTotals.IMFS_total_bottle}</td>
+                <td>{grandTotals.IMFS_total_value}</td>
+                <td>{grandTotals.Beer_size_650}</td>
+                <td>{grandTotals.Beer_size_500}</td>
+                <td>{grandTotals.Beer_size_325}</td>
+                <td>{grandTotals.Beer_total_bottle}</td>
+                <td>{grandTotals.Beer_total_value}</td>
+                <td>{grandTotals.Total_Bottle}</td>
+                <td>{grandTotals.Total_amount}</td>
               </tr>
-            </tbody>
+            </tfoot>
           </table>
         </div>
       </div>
