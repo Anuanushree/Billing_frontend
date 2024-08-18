@@ -5,12 +5,6 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [react()],
   build: {
-    minify: "terser", // Minification tool to use, options are 'terser' or 'esbuild'
-    terserOptions: {
-      compress: {
-        drop_console: true, // Optionally remove console statements
-      },
-    },
     sourcemap: true, // Enable source maps for easier debugging
   },
 });
